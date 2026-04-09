@@ -26,11 +26,13 @@ for path in "${required[@]}"; do
 done
 
 if [[ ! -f "dist/robots.txt" ]]; then
-  echo "[check-build] WARN: dist/robots.txt not found (add before cutover if required)."
+  echo "[check-build] Missing required artifact: dist/robots.txt" >&2
+  exit 1
 fi
 
 if [[ ! -f "dist/sitemap-index.xml" && ! -f "dist/sitemap-0.xml" ]]; then
-  echo "[check-build] WARN: sitemap files not found in dist (add/generate before cutover)."
+  echo "[check-build] Missing required sitemap artifact in dist/" >&2
+  exit 1
 fi
 
 echo "[check-build] Route directories:"

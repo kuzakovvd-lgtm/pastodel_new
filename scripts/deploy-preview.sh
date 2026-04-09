@@ -59,6 +59,7 @@ done
 DEPLOY_HOST="${DEPLOY_HOST:-}"
 DEPLOY_USER="${DEPLOY_USER:-root}"
 DEPLOY_BASE="${DEPLOY_BASE:-/var/www/pastodel_new}"
+DEPLOY_OWNER_GROUP="${DEPLOY_OWNER_GROUP:-root:root}"
 SSH_PORT="${SSH_PORT:-22}"
 
 if [[ -z "$DEPLOY_HOST" ]]; then
@@ -84,6 +85,7 @@ RELEASE_DIR="${DEPLOY_BASE}/releases/${RELEASE_ID}"
 
 REMOTE_PREP="mkdir -p '${RELEASE_DIR}' '${DEPLOY_BASE}/releases'"
 REMOTE_LINK="ln -sfn '${RELEASE_DIR}' '${DEPLOY_BASE}/current'"
+REMOTE_OWNER="chown -R '${DEPLOY_OWNER_GROUP}' '${RELEASE_DIR}' && chown -h '${DEPLOY_OWNER_GROUP}' '${DEPLOY_BASE}/current'"
 REMOTE_PERMS="find '${DEPLOY_BASE}' -type d -exec chmod 755 {} +; find '${DEPLOY_BASE}' -type f -exec chmod 644 {} +"
 
 echo "[deploy-preview] Target host: ${SSH_TARGET}:${SSH_PORT}"
@@ -96,6 +98,7 @@ if [[ "$APPLY" -eq 0 ]]; then
   COPYFILE_DISABLE=1 tar -C dist -cf - . | ${SSH_CMD[*]} "tar -xf - -C '${RELEASE_DIR}'"
   ${SSH_CMD[*]} "find '${RELEASE_DIR}' -name '._*' -type f -delete"
   ${SSH_CMD[*]} "$REMOTE_LINK"
+  ${SSH_CMD[*]} "$REMOTE_OWNER"
   ${SSH_CMD[*]} "$REMOTE_PERMS"
 DRYRUN
   exit 0
@@ -112,6 +115,9 @@ echo "[deploy-preview] Cleaning macOS metadata files if present..."
 
 echo "[deploy-preview] Switching current symlink to new release..."
 "${SSH_CMD[@]}" "$REMOTE_LINK"
+
+echo "[deploy-preview] Normalizing ownership (${DEPLOY_OWNER_GROUP})..."
+"${SSH_CMD[@]}" "$REMOTE_OWNER"
 
 echo "[deploy-preview] Normalizing permissions under ${DEPLOY_BASE}..."
 "${SSH_CMD[@]}" "$REMOTE_PERMS"
