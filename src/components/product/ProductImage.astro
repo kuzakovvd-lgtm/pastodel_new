@@ -1,0 +1,30 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  image?: ImageMetadata;
+  alt: string;
+  className?: string;
+  loading?: 'eager' | 'lazy';
+  sizes?: string;
+}
+
+const {
+  image,
+  alt,
+  className = 'product-image',
+  loading = 'lazy',
+  sizes = '(max-width: 719px) calc(100vw - 56px), (max-width: 959px) calc(50vw - 40px), calc((100vw - 96px) / 3)'
+} = Astro.props;
+---
+<div class={className}>
+  {image ? (
+    <Image src={image} alt={alt} loading={loading} sizes={sizes} />
+  ) : (
+    <div class="product-image__fallback" role="img" aria-label={alt}>
+      <strong>{alt}</strong>
+      <span>Изображение временно недоступно в локальном снапшоте.</span>
+    </div>
+  )}
+</div>

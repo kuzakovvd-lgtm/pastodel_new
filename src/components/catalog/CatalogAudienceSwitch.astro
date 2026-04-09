@@ -1,0 +1,99 @@
+<div class="catalog-filter-bar" aria-label="Фильтры каталога">
+  <div class="container">
+    <div class="catalog-filter-shell surface-card">
+      <div class="catalog-toggle" role="tablist" aria-label="Режим каталога">
+        <button class="catalog-toggle__button is-active" type="button" role="tab" id="tab-home" aria-controls="panel-home" data-audience-button data-value="home" aria-selected="true" tabindex="0">
+          Для дома (400 г)
+        </button>
+        <button class="catalog-toggle__button" type="button" role="tab" id="tab-business" aria-controls="panel-business" data-audience-button data-value="business" aria-selected="false" tabindex="-1">
+          Для HoReCa
+        </button>
+      </div>
+      <div class="catalog-filter-meta">
+        <div class="catalog-mode-note" id="panel-home" role="tabpanel" aria-labelledby="tab-home" data-audience-panel="home">
+          Все 11 блюд в формате 400 г: выбирайте вкус на сегодня и открывайте карточку блюда.
+        </div>
+        <div class="catalog-mode-note" id="panel-business" role="tabpanel" aria-labelledby="tab-business" data-audience-panel="business" hidden>
+          Для HoReCa сейчас доступны все 11 позиций каталога в отдельном packshot-наборе для бизнес-режима.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const buttons = Array.from(document.querySelectorAll('[data-audience-button]'));
+  const panels = Array.from(document.querySelectorAll('[data-audience-panel]'));
+  const cards = Array.from(document.querySelectorAll('[data-catalog-card]'));
+
+  if (buttons.length > 1) {
+    let audience = 'home';
+    try {
+      audience = localStorage.getItem('catalogAudienceMode') || 'home';
+    } catch {}
+
+    const render = () => {
+      buttons.forEach((button) => {
+        if (!(button instanceof HTMLButtonElement)) return;
+        const active = button.dataset.value === audience;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-selected', String(active));
+        button.setAttribute('tabindex', active ? '0' : '-1');
+      });
+
+      panels.forEach((panel) => {
+        if (!(panel instanceof HTMLElement)) return;
+        panel.hidden = panel.dataset.audiencePanel !== audience;
+      });
+
+      cards.forEach((card) => {
+        if (!(card instanceof HTMLElement)) return;
+        const homeActions = card.querySelector('[data-home-actions]');
+        const businessActions = card.querySelector('[data-business-actions]');
+        const homeImage = card.querySelector('[data-home-image]');
+        const horecaImage = card.querySelector('[data-horeca-image]');
+        const cardTitle = card.querySelector('[data-card-title]');
+        const cardWeight = card.querySelector('[data-card-weight]');
+        const links = card.querySelectorAll('[data-card-link]');
+        const business = audience === 'business';
+
+        if (homeActions instanceof HTMLElement) homeActions.hidden = business;
+        if (businessActions instanceof HTMLElement) businessActions.hidden = !business;
+        if (homeImage instanceof HTMLElement) homeImage.hidden = business;
+        if (horecaImage instanceof HTMLElement) horecaImage.hidden = !business;
+
+        if (cardTitle instanceof HTMLElement) {
+          const titleHome = cardTitle.getAttribute('data-title-home') || '';
+          const titleBusiness = cardTitle.getAttribute('data-title-business') || titleHome;
+          cardTitle.textContent = business ? titleBusiness : titleHome;
+        }
+
+        if (cardWeight instanceof HTMLElement) {
+          const weightHome = cardWeight.getAttribute('data-weight-home') || '';
+          const weightBusiness = cardWeight.getAttribute('data-weight-business') || weightHome;
+          cardWeight.textContent = business ? weightBusiness : weightHome;
+        }
+
+        links.forEach((link) => {
+          if (!(link instanceof HTMLAnchorElement)) return;
+          const homeHref = link.getAttribute('data-home-href') || '#';
+          const businessHref = link.getAttribute('data-business-href') || homeHref;
+          link.href = business ? businessHref : homeHref;
+        });
+      });
+    };
+
+    buttons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) return;
+      button.addEventListener('click', () => {
+        audience = button.dataset.value || 'home';
+        try {
+          localStorage.setItem('catalogAudienceMode', audience);
+        } catch {}
+        render();
+      });
+    });
+
+    render();
+  }
+</script>

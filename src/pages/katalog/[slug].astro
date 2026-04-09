@@ -1,0 +1,19 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductDetailPage from '@/components/product/ProductDetailPage.astro';
+import { getProductBySlug, getProducts } from '@/data/product-utils';
+
+export function getStaticPaths() {
+  return getProducts().map((product) => ({ params: { slug: product.slug } }));
+}
+
+const { slug } = Astro.params;
+const product = slug ? getProductBySlug(slug) : undefined;
+
+if (!product) {
+  return Astro.redirect('/404/');
+}
+---
+<BaseLayout title={product.retail.seoTitle} description={product.retail.seoDescription} canonical={`https://pastodel.ru/katalog/${product.slug}/`}>
+  <ProductDetailPage product={product} audience="retail" />
+</BaseLayout>

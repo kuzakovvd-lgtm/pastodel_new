@@ -1,0 +1,12 @@
+---
+interface Props {
+  stats: string[];
+}
+
+const { stats } = Astro.props;
+---
+<div class="product-meta">
+  {stats.map((item) => (
+    <span>{item}</span>
+  ))}
+</div>

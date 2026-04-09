@@ -1,0 +1,55 @@
+---
+interface Props {
+  microwave: string;
+  pan: string;
+}
+
+const { microwave, pan } = Astro.props;
+const uid = `prep-${Math.random().toString(36).slice(2, 8)}`;
+---
+<div class="prep-tabs" data-prep-tabs>
+  <div class="prep-tabs__nav" role="tablist" aria-label="Способы приготовления">
+    <button class="prep-tabs__button is-active" type="button" id={`${uid}-tab-microwave`} role="tab" data-prep-tab data-tab="microwave" aria-controls={`${uid}-panel-microwave`} aria-selected="true" tabindex="0">Микроволновка</button>
+    <button class="prep-tabs__button" type="button" id={`${uid}-tab-pan`} role="tab" data-prep-tab data-tab="pan" aria-controls={`${uid}-panel-pan`} aria-selected="false" tabindex="-1">Сковорода</button>
+  </div>
+  <div class="prep-tabs__panels">
+    <section class="prep-tabs__panel is-active" id={`${uid}-panel-microwave`} role="tabpanel" data-prep-panel data-panel="microwave" aria-labelledby={`${uid}-tab-microwave`}>
+      <h3>Микроволновка</h3>
+      <p>{microwave}</p>
+    </section>
+    <section class="prep-tabs__panel" id={`${uid}-panel-pan`} role="tabpanel" data-prep-panel data-panel="pan" aria-labelledby={`${uid}-tab-pan`} hidden>
+      <h3>Сковорода</h3>
+      <p>{pan}</p>
+    </section>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('[data-prep-tabs]').forEach((tabsRoot) => {
+    if (!(tabsRoot instanceof HTMLElement)) return;
+    const tabs = Array.from(tabsRoot.querySelectorAll('[data-prep-tab]'));
+    const panels = Array.from(tabsRoot.querySelectorAll('[data-prep-panel]'));
+
+    const activate = (tabName) => {
+      tabs.forEach((tab) => {
+        if (!(tab instanceof HTMLButtonElement)) return;
+        const active = tab.dataset.tab === tabName;
+        tab.classList.toggle('is-active', active);
+        tab.setAttribute('aria-selected', String(active));
+        tab.setAttribute('tabindex', active ? '0' : '-1');
+      });
+
+      panels.forEach((panel) => {
+        if (!(panel instanceof HTMLElement)) return;
+        const active = panel.dataset.panel === tabName;
+        panel.hidden = !active;
+        panel.classList.toggle('is-active', active);
+      });
+    };
+
+    tabs.forEach((tab) => {
+      if (!(tab instanceof HTMLButtonElement)) return;
+      tab.addEventListener('click', () => activate(tab.dataset.tab || 'microwave'));
+    });
+  });
+</script>

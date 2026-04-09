@@ -1,0 +1,56 @@
+---
+import type { ProductRecord } from '@/data/product-types';
+import ProductImage from '@/components/product/ProductImage.astro';
+import ProductMeta from '@/components/product/ProductMeta.astro';
+
+interface Props {
+  product: ProductRecord;
+}
+
+const { product } = Astro.props;
+---
+<article class="catalog-card" data-catalog-card data-horeca-card="true" data-category={product.category} data-line={product.line} data-ingredients={product.ingredientsTag} data-calories={String(product.caloriesPer100)}>
+  <a class="catalog-card__media" href={product.retail.route} aria-hidden="true" tabindex="-1" data-card-link data-home-href={product.retail.route} data-business-href={product.horeca.route}>
+    <div data-home-image>
+      <ProductImage image={product.retail.imageAsset} alt={product.retail.title} className="product-image product-image--card" />
+    </div>
+    <div data-horeca-image hidden>
+      <ProductImage image={product.horeca.imageAsset} alt={product.horeca.title} className="product-image product-image--card" />
+    </div>
+  </a>
+
+  <div class="catalog-card__body">
+    <div class="catalog-card__meta">
+      <span class="pill">{product.line === 'casa' ? 'Классика на каждый день' : product.line === 'chef' ? 'Сытные блюда' : 'Лёгкие вкусы'}</span>
+      <span class="catalog-card__weight" data-card-weight data-weight-home={product.retail.weightLabel} data-weight-business={product.horeca.weightLabel}>{product.retail.weightLabel}</span>
+    </div>
+
+    <h3>
+      <a
+        href={product.retail.route}
+        data-card-title
+        data-card-link
+        data-home-href={product.retail.route}
+        data-business-href={product.horeca.route}
+        data-title-home={product.retail.title}
+        data-title-business={product.horeca.title}
+      >
+        {product.retail.title}
+      </a>
+    </h3>
+
+    <p class="catalog-card__desc">{product.retail.description}</p>
+
+    <ProductMeta stats={product.retail.stats} />
+
+    <div class="catalog-card__actions" data-home-actions>
+      <a class="button button--text" href="/gde-kupit/">Где купить</a>
+    </div>
+
+    <div class="catalog-card__actions catalog-card__actions--business" data-business-actions hidden>
+      <a class="button button--secondary" href={product.horeca.route} data-card-link data-home-href={product.retail.route} data-business-href={product.horeca.route}>Карточка HoReCa</a>
+      <a class="button button--ghost" href={product.horeca.cta.href}>Запросить условия</a>
+      <p class="catalog-card__note">{product.audienceSupportNote}</p>
+    </div>
+  </div>
+</article>

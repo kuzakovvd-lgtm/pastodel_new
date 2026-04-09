@@ -1,0 +1,61 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getProducts } from '@/data/product-utils';
+import ProductCard from '@/components/catalog/ProductCard.astro';
+import CatalogAudienceSwitch from '@/components/catalog/CatalogAudienceSwitch.astro';
+import catalogHero from '@/assets/products/catalog-hero.webp';
+import { Image } from 'astro:assets';
+
+const products = getProducts();
+---
+<BaseLayout
+  title="Каталог Pastodel — паста, ризотто и паэлья за 7 минут"
+  description="Каталог блюд Pastodel: готовая паста, ризотто и паэлья. Выберите блюдо на сегодня, сравните вкусы, состав, КБЖУ и способ приготовления."
+>
+  <section class="catalog-hero section section--compact">
+    <div class="container catalog-hero__inner">
+      <figure class="catalog-hero__media">
+        <Image src={catalogHero} alt="Иллюстрация ассортимента Pastodel" loading="eager" />
+      </figure>
+      <div class="catalog-hero__content page-intro__inner">
+        <p class="eyebrow">Каталог</p>
+        <h1>Наш Ассортимент</h1>
+        <p>11 готовых блюд — паста, ризотто, паэлья. Разогрейте за 7 минут. Откройте любое блюдо, чтобы увидеть полный состав и способ приготовления.</p>
+        <div class="button-group">
+          <a class="button" href="#catalog-grid">Смотреть блюда</a>
+          <a class="button button--secondary" href="/gde-kupit/">Где купить</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CatalogAudienceSwitch />
+
+  <section class="section section--tight-top">
+    <div class="container">
+      <div class="catalog-grid" id="catalog-grid" data-catalog-grid>
+        {products.map((product) => (
+          <ProductCard product={product} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container catalog-support-grid">
+      <article class="surface-card catalog-support-card">
+        <p class="eyebrow">Нужен другой вкус?</p>
+        <h2>Не нашли, что искали?</h2>
+        <p>Если вам нужен другой вкус или вы подбираете решение для бизнеса, оставьте запрос на странице «Партнёрам». Мы посмотрим, какой формат подойдёт лучше.</p>
+        <div class="button-group"><a class="button" href="/partneram/">Партнёрам</a></div>
+      </article>
+      <article class="surface-card catalog-b2b-card">
+        <p class="eyebrow">Для бизнеса</p>
+        <h2>Вы байер или представитель сети?</h2>
+        <p>В разделе «Для партнёров» — условия ввода, логика полки и форма запроса. Пилот от 2 SKU.</p>
+        <div class="button-group"><a class="button button--secondary" href="/partneram/">Для партнёров</a></div>
+        <p class="catalog-b2b-card__footnote">Отдельных B2B-фасовок и PDF-техкарт в каталоге сейчас не показываем.</p>
+      </article>
+    </div>
+  </section>
+</BaseLayout>
