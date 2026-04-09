@@ -48,6 +48,14 @@ body {
 body.body--locked { overflow: hidden; }
 img { display: block; max-width: 100%; height: auto; }
 a { color: inherit; text-decoration: none; }
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--brand-accent);
+  outline-offset: 2px;
+}
 main { overflow: clip; }
 .container { width: var(--container); margin: 0 auto; }
 
@@ -140,6 +148,22 @@ h3 { font-size: clamp(1.25rem, 2vw, 1.875rem); }
   border: 1px solid var(--border);
   border-radius: 34px;
   background: linear-gradient(180deg, #fffdf9e0, #f5ece1fa);
+  display: grid;
+  place-items: center;
+}
+.hero-visual__frame::before {
+  content: '';
+  width: min(72%, 430px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, #f8efe3 0%, #efe0d0 70%, #ead8c4 100%);
+  box-shadow: inset 0 0 0 14px #f6eee4;
+}
+.hero-visual__frame img {
+  position: absolute;
+  width: min(66%, 390px);
+  height: auto;
+  object-fit: contain;
 }
 .hero-visual__badge {
   position: absolute;
@@ -712,9 +736,9 @@ h3 { font-size: clamp(1.25rem, 2vw, 1.875rem); }
 
 @media (min-width: 960px) {
   .hero-section__grid { grid-template-columns: 44fr 56fr; }
-  .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .product-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .catalog-hero__inner { grid-template-columns: minmax(320px, 1fr) minmax(420px, 1.2fr); }
-  .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .catalog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .catalog-support-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .product-hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
   .product-info-grid { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
@@ -762,6 +786,12 @@ h3 { font-size: clamp(1.25rem, 2vw, 1.875rem); }
   .container { width: min(100vw - 32px, 1360px); }
   h1 { font-size: clamp(2.3rem, 11vw, 3rem); }
   .hero-visual__frame { min-height: auto; padding: 16px; }
+  .hero-visual__frame::before {
+    width: min(82%, 290px);
+  }
+  .hero-visual__frame img {
+    width: min(74%, 250px);
+  }
   .product-grid { grid-template-columns: 1fr; }
   .product-card__actions { flex-direction: column; align-items: stretch; }
   .catalog-toggle { grid-template-columns: 1fr; }

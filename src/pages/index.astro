@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import FormRuntime from '@/components/forms/FormRuntime.astro';
 
 const homeCards = [
   {
@@ -58,6 +59,30 @@ const homeCards = [
   </section>
 
   <section class="home-section" id="home-hits">
+    <div class="container cta-strip home-b2b-hero">
+      <p class="eyebrow">B2B</p>
+      <h2>Вы представитель сети или дистрибуции?</h2>
+      <div class="button-group">
+        <a class="button" href="/partneram/">Для партнёров</a>
+        <a class="button button--secondary" href="/horeca/">Для HoReCa</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section">
+    <div class="container">
+      <p class="eyebrow">Почему Pastodel</p>
+      <h2>Почему Pastodel — это не обычная заморозка</h2>
+      <div class="simple-grid simple-grid--four">
+        <article class="surface-card info-card"><h3>Нормальная порция</h3><p>400 г — полноценный ужин для одного или лёгкий перекус на двоих.</p></article>
+        <article class="surface-card info-card"><h3>Вкусы, которые вы знаете</h3><p>Карбонара, альфредо, ризотто с грибами — блюда, которые не надо объяснять.</p></article>
+        <article class="surface-card info-card"><h3>Состав без сюрпризов</h3><p>В карточке любого блюда на сайте можно увидеть полный состав.</p></article>
+        <article class="surface-card info-card"><h3>Готово за 7 минут</h3><p>Разогрев в микроволновке или на плите без отдельной готовки ингредиентов.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section" id="home-hits">
     <div class="container">
       <p class="eyebrow">Хиты</p>
       <h2>Выберите вкус сегодняшнего ужина</h2>
@@ -84,13 +109,58 @@ const homeCards = [
   </section>
 
   <section class="home-section">
-    <div class="container cta-strip">
-      <p class="eyebrow">B2B</p>
-      <h2>Вы представитель сети или дистрибуции?</h2>
-      <div class="button-group">
-        <a class="button" href="/partneram/">Для партнёров</a>
-        <a class="button button--secondary" href="/horeca/">Для HoReCa</a>
+    <div class="container">
+      <p class="eyebrow">Доверие</p>
+      <h2>Почему нам доверяют</h2>
+      <div class="simple-grid simple-grid--three">
+        <article class="surface-card info-card"><h3>Готово за минуты</h3><p>Продукт уже приготовлен — вам остаётся только разогреть и подать.</p></article>
+        <article class="surface-card info-card"><h3>Открытый состав</h3><p>В карточке каждого блюда — состав, КБЖУ и условия хранения.</p></article>
+        <article class="surface-card info-card"><h3>Удобно держать дома</h3><p>Это еда, которая выручает, когда нужен быстрый ужин без готовки.</p></article>
       </div>
     </div>
   </section>
+
+  <section class="home-section">
+    <div class="container">
+      <p class="eyebrow">B2B</p>
+      <h2>Решения для бизнеса</h2>
+      <div class="split-grid">
+        <article class="surface-card info-card">
+          <h3>Ритейл</h3>
+          <p>Готовые решения для полки: стабильный ассортимент и понятный вход в категорию.</p>
+          <div class="button-group"><a class="button button--secondary" href="/partneram/">Для бизнеса</a></div>
+        </article>
+        <article class="surface-card info-card">
+          <h3>HoReCa</h3>
+          <p>Продукт для кухни с прогнозируемым результатом и понятной экономикой порции.</p>
+          <div class="button-group"><a class="button button--secondary" href="/horeca/">Для HoReCa</a></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section">
+    <div class="container pd-form-shell" id="home-b2b-form">
+      <form class="surface-card form-card" data-validated-form data-form-name="home-b2b" data-success-message="Спасибо. Заявка отправлена. Мы свяжемся с вами в течение одного рабочего дня." novalidate>
+        <p class="eyebrow">Форма заявки</p>
+        <h2>Стать партнёром</h2>
+        <p class="section-lead">Оставьте контакты, и мы вернёмся с ассортиментом и условиями для вашего бизнеса.</p>
+        <div class="form-grid">
+          <div class="field"><label for="home-name">Имя</label><input id="home-name" name="name" type="text" placeholder="Как к вам обращаться" data-required-field /><p class="pd-form-error" data-error-for="name"></p></div>
+          <div class="field"><label for="home-company">Компания</label><input id="home-company" name="company" type="text" placeholder="Название компании" data-required-field /><p class="pd-form-error" data-error-for="company"></p></div>
+          <div class="field"><label for="home-email">Email</label><input id="home-email" name="email" type="email" placeholder="name@company.ru" data-required-field /><p class="pd-form-error" data-error-for="email"></p></div>
+          <div class="field"><label for="home-phone">Телефон</label><input id="home-phone" name="phone" type="tel" placeholder="+7 (___) ___-__-__" data-required-field data-phone-field /><p class="pd-form-error" data-error-for="phone"></p></div>
+        </div>
+        <label class="pd-checkbox"><input type="checkbox" name="privacy" required /><span>Я согласен с <a href="/politika-konfidentsialnosti/">политикой конфиденциальности</a> и обработкой персональных данных.</span></label>
+        <p class="pd-form-error" data-error-for="privacy"></p>
+        <div class="form-honeypot" aria-hidden="true"><label for="home-company-site">Не заполняйте это поле</label><input id="home-company-site" name="company_site" type="text" tabindex="-1" autocomplete="off" /></div>
+        <div class="button-group"><button class="button" type="submit">Стать партнёром</button></div>
+        <p class="pd-form-note">Свяжемся с вами в течение одного рабочего дня.</p>
+        <p class="pd-form-note pd-form-note--muted">Интеграция с production endpoint будет подключена после подтверждения API.</p>
+        <p class="pd-form-error" data-form-request-error hidden></p>
+        <p class="pd-form-success" data-form-success hidden>Спасибо. Заявка отправлена. Мы свяжемся с вами в течение одного рабочего дня.</p>
+      </form>
+    </div>
+  </section>
+  <FormRuntime />
 </BaseLayout>

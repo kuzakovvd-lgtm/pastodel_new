@@ -1,8 +1,9 @@
 ---
 import type { ProductAudience, ProductRecord } from '@/data/product-types';
-import { getAudienceData, getCategoryLabel } from '@/data/product-utils';
+import { getAudienceData, getCategoryLabel, getProducts } from '@/data/product-utils';
 import ProductImage from '@/components/product/ProductImage.astro';
 import PrepTabs from '@/components/product/PrepTabs.astro';
+import ProductCard from '@/components/catalog/ProductCard.astro';
 
 interface Props {
   product: ProductRecord;
@@ -12,6 +13,7 @@ interface Props {
 const { product, audience } = Astro.props;
 const data = getAudienceData(product, audience);
 const categoryLabel = getCategoryLabel(product.category);
+const recommendations = getProducts().filter((item) => item.slug !== product.slug).slice(0, 4);
 const breadcrumbs = [
   { href: '/', label: 'Главная' },
   { href: '/katalog/', label: 'Каталог' },
@@ -120,5 +122,17 @@ const breadcrumbs = [
         <a class="button button--secondary" href="/katalog/">Вернуться в каталог</a>
       </div>
     </article>
+  </div>
+</section>
+
+<section class="section section--compact">
+  <div class="container">
+    <p class="eyebrow">Ассортимент</p>
+    <h2>Попробуйте ещё</h2>
+    <div class="catalog-grid">
+      {recommendations.map((item) => (
+        <ProductCard product={item} />
+      ))}
+    </div>
   </div>
 </section>
