@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Pastodel">
+  <defs>
+    <linearGradient id="g" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#d47a49" />
+      <stop offset="100%" stop-color="#a64e28" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="url(#g)" />
+  <path
+    d="M22 17h13.5c8.3 0 13.5 4.5 13.5 11.6 0 7.3-5.3 11.9-13.8 11.9H29v13H22V17Zm13.1 18c4.6 0 7.2-2.1 7.2-6.1 0-3.8-2.6-5.8-7.2-5.8H29v11.9h6.1Z"
+    fill="#fffaf6"
+  />
+</svg>

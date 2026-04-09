@@ -1,0 +1,28 @@
+---
+import { mainNav } from '@/data/navigation';
+---
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+    <div class="site-footer__brand">
+      <a class="brand-mark brand-mark--footer" href="/" aria-label="Pastodel — на главную">
+        <img src="/images/logo-pastodel-clean.webp" width="784" height="334" alt="Pastodel" class="brand-mark__image" loading="lazy" />
+      </a>
+      <p class="site-footer__text">Паста, ризотто и паэлья — вкусный ужин за 7 минут.</p>
+      <a class="button" href="/kontakty/">Написать нам</a>
+    </div>
+
+    <div class="site-footer__links">
+      <p class="site-footer__title">Разделы</p>
+      <ul class="site-footer__list">
+        {mainNav.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+        <li><a href="/politika-konfidentsialnosti/">Политика конфиденциальности</a></li>
+      </ul>
+    </div>
+
+    <div class="site-footer__meta">
+      <p>© 2026 Pastodel</p>
+    </div>
+  </div>
+</footer>

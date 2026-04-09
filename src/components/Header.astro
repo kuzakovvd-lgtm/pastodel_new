@@ -1,0 +1,87 @@
+---
+import { mainNav } from '@/data/navigation';
+
+const pathname = Astro.url.pathname;
+---
+<header class="site-header" data-site-header>
+  <div class="container site-header__inner">
+    <a class="brand-mark brand-mark--header" href="/" aria-label="Pastodel — на главную">
+      <img
+        src="/images/logo-pastodel-header.webp"
+        alt="Pastodel"
+        width="560"
+        height="239"
+        loading="eager"
+        fetchpriority="high"
+        class="brand-mark__image"
+      />
+    </a>
+
+    <button
+      class="nav-toggle"
+      type="button"
+      aria-label="Открыть меню"
+      aria-expanded="false"
+      aria-controls="site-nav"
+      data-nav-toggle
+    >
+      <span class="sr-only">Открыть меню</span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </button>
+
+    <a class="site-header__cta" href="/stat-partnerom/">Стать партнёром</a>
+
+    <nav id="site-nav" class="site-nav" data-site-nav data-open="false" aria-label="Основная навигация">
+      <ul class="nav-list">
+        {mainNav.map((item) => (
+          <li>
+            <a href={item.href} class={pathname === item.href ? 'active' : undefined} aria-current={pathname === item.href ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="site-nav__footer">
+        <a class="button" href="/katalog/">Выбрать вкус</a>
+        <a class="button button--secondary" href="/stat-partnerom/">Стать партнёром</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector('[data-site-header]');
+  const toggle = document.querySelector('[data-nav-toggle]');
+  const nav = document.querySelector('[data-site-nav]');
+
+  if (header instanceof HTMLElement && toggle instanceof HTMLButtonElement && nav instanceof HTMLElement) {
+    let isOpen = false;
+
+    const setOpen = (open: boolean) => {
+      isOpen = open;
+      nav.dataset.open = open ? 'true' : 'false';
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+      document.body.classList.toggle('body--locked', open);
+    };
+
+    toggle.addEventListener('click', () => setOpen(!isOpen));
+
+    nav.addEventListener('click', (event) => {
+      if (event.target instanceof HTMLAnchorElement) setOpen(false);
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024 && isOpen) setOpen(false);
+    });
+
+    const syncCompact = () => {
+      header.classList.toggle('is-compact', window.scrollY > 12);
+    };
+
+    window.addEventListener('scroll', syncCompact, { passive: true });
+    syncCompact();
+  }
+</script>
