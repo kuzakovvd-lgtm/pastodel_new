@@ -28,6 +28,18 @@ curl -s http://localhost:4321/stat-partnerom/ | head -n 20
 curl -s http://localhost:4321/kontakty/ | head -n 20
 ```
 
+## Pre-deploy scripts
+
+```bash
+scripts/check-build.sh
+DEPLOY_HOST=<server-host> DEPLOY_USER=root scripts/deploy-preview.sh
+DEPLOY_HOST=<server-host> DEPLOY_USER=root scripts/deploy-preview.sh --apply
+```
+
+Notes:
+- `deploy-preview.sh` by default runs in dry-run mode.
+- deploy target is a separate root (`/var/www/pastodel_new`) and does not switch live traffic.
+
 ## Важно по формам
 
 - Production endpoint отправки форм **не подключён намеренно**, пока не подтвержден API.
@@ -43,5 +55,6 @@ curl -s http://localhost:4321/kontakty/ | head -n 20
 - `src/styles` — глобальные стили и дизайн-токены
 - `src/assets` — изображения для Astro asset pipeline
 - `docs` — архитектура, прогресс, деплой, handoff
+- `scripts` — служебные скрипты проверки сборки и staging deploy
 
 Подробности: `docs/architecture.md`.

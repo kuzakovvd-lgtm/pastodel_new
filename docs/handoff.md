@@ -1,54 +1,45 @@
 # Handoff
 
-## Текущее состояние
+## Current state
 
-Проект `pastodel_new` покрывает:
-- главную (v1),
-- каталог и dynamic SKU routes,
-- ключевые B2B/content/legal страницы,
-- UI+runtime слой форм без угадывания production endpoint.
+The new Astro project has been staged on server in a separate directory and is previewable without touching live traffic.
 
-После текущего этапа выполнен приоритетный visual QA pass и закрыты ключевые structural расхождения по `/`, `/katalog/*`, `/partneram/`, `/horeca/`, `/stat-partnerom/`, `/kontakty/`.
+- Live remains active and unchanged.
+- Staged build location:
+  - `/var/www/pastodel_new/releases/20260409-151205`
+  - `/var/www/pastodel_new/current` -> staged release
+- Preview endpoint:
+  - `http://127.0.0.1:8081` (localhost-only nginx server block)
 
-Сборка подтверждена: `npm run build`.
+## What was completed
 
-## Что сделано
+- Safe server discovery (nginx + current live root mapping).
+- Real staging deploy (separate root, no overwrite of old live paths).
+- Permission normalization and metadata cleanup on staged release.
+- Preview server block configured and validated (`nginx -t`, reload, `HTTP 200` on preview).
+- Confirmed live domain still returns `HTTP 200` after staging actions.
+- Added deploy tooling:
+  - `scripts/check-build.sh`
+  - `scripts/deploy-preview.sh` (dry-run default)
+- Updated deployment runbook and rollout/rollback instructions in `docs/deploy.md`.
 
-- Реализованы страницы:
-  - `/partneram/`, `/horeca/`, `/gde-kupit/`, `/o-kompanii/`, `/otzyvy/`, `/kontakty/`, `/dokumenty/`, `/novosti/`, `/proizvodstvo-i-kachestvo/`, `/stat-partnerom/`, `/politika-konfidentsialnosti/`, `/soglasie-na-obrabotku-dannyh/`.
-- Добавлены reusable общие блоки:
-  - `PageIntro`, `Breadcrumbs`, `SectionHead`.
-- Добавлен form runtime:
-  - `FormRuntime.astro` (валидация, prefill, phone formatting, success/error, gateway steps, margin calc).
-- Добавлены intro-иллюстрации страниц в `src/assets/page-intro/*`.
-- Расширен `global.css` под новые страницы/формы.
-- Проведён structured visual QA (desktop/tablet/mobile для top routes, desktop для B2B/contact routes).
-- Добавлен отчёт `docs/visual-qa.md`.
-- Исправлены critical/medium визуальные расхождения:
-  - структура главной страницы приведена ближе к live,
-  - добавлен рекомендательный блок на product routes,
-  - скорректированы grid/hero-пропорции и focus-visible базовый стиль.
+## What is not done
 
-## Что не сделано
+- No live domain switch/cutover.
+- No nginx live-root change.
+- No production forms endpoint integration.
+- No robots/sitemap integration in current build output.
 
-- Production form endpoint integration (осознанно отложено до подтверждения API).
-- Финальная pixel-level доводка UI для полного визуального совпадения с live.
-- Финальный cross-page контентный и a11y pass.
+## Risks
 
-## Риски
+- `robots.txt` and sitemap are currently missing in `dist`, which should be resolved before final release.
+- Forms still use placeholder adapter by design; backend integration is a separate confirmed step.
+- Cutover was intentionally deferred; final release still requires explicit go-ahead.
 
-- Без подтверждённого backend endpoint формы работают в безопасном stub-режиме.
-- Разделы `novosti`, `dokumenty`, legal по live имеют каркасный характер; контент ограничен тем, что реально подтверждается live.
-- Прямой screenshot-захват `https://pastodel.ru` из Playwright в текущем окружении нестабилен (timeout), поэтому в visual QA использован локально обслуживаемый live snapshot baseline (`/dist`).
+## Next step
 
-## Решение по `public/images/product-paelya.webp`
-
-- Файл нужен текущей домашней странице v1.
-- Это не мусор и не candidate на удаление прямо сейчас.
-- Локальная несвязанная модификация откатана, чтобы не тянуть случайные изменения в коммит.
-
-## Следующий шаг
-
-1. Закрыть low-priority визуальный polish (spacing/type fine-tuning).
-2. Провести финальный ручной regression pass всех routes из списка перед pre-deploy.
-3. Сохранить forms endpoint в placeholder-режиме до подтверждения API.
+1. Add/confirm SEO static files strategy (`robots.txt` + sitemap generation).
+2. Run final pre-cutover smoke checklist against preview (`127.0.0.1:8081`).
+3. Prepare cutover change as a minimal nginx root switch with backup.
+4. Execute switch only after explicit approval, then run post-switch verification.
+5. Keep rollback command path ready (restore backup config + nginx reload).

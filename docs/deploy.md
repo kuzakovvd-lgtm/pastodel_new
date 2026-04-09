@@ -1,68 +1,162 @@
-# Deploy Plan (safe, without touching old live)
+# Deploy Plan (safe, separate from live)
 
-## Принцип
+## Current Server State (as of April 9, 2026)
 
-Новый сайт деплоится в **отдельную папку** на сервере. Текущий live в старой директории не изменяется.
+Staging deploy for the new site was executed to a separate root, without traffic switch.
 
-## Предложение по структуре на сервере
+- Live site remains on: `/var/www/pastodel` (symlink to live release)
+- New site staging root: `/var/www/pastodel_new`
+- Current staged release: `/var/www/pastodel_new/releases/20260409-151205`
+- Active staging symlink: `/var/www/pastodel_new/current -> /var/www/pastodel_new/releases/20260409-151205`
+- Preview nginx endpoint: `127.0.0.1:8081` (localhost-only, no public domain switch)
 
-- Текущий live: `/var/www/pastodel_current` (пример)
-- Новый проект: `/var/www/pastodel_new`
-- Релизы нового проекта:
-  - `/var/www/pastodel_new/releases/<timestamp>`
-  - `/var/www/pastodel_new/current` -> symlink на активный релиз
+## Build and Artifacts
 
-## Базовый поток деплоя
+Astro static output is deployed from `dist/`.
 
-1. Собрать проект локально/в CI: `npm ci && npm run build`.
-2. Передать `dist/` в новую release-папку.
-3. Проверить новый сайт по отдельному hostname или временной location в nginx.
-4. Только после QA переключить routing/host на новый `current`.
+Expected minimum artifacts:
+- `dist/index.html`
+- `dist/_astro/*` (hashed assets)
+- `dist/favicon.svg`
 
-## Safe rollout
+Build verification command:
 
-- Шаг 1: deploy в изолированную папку.
-- Шаг 2: smoke-тесты по preview URL.
-- Шаг 3: ручная проверка SEO/accessibility/responsive/forms.
-- Шаг 4: controlled switch (nginx change + reload).
+```bash
+scripts/check-build.sh
+```
 
-## Rollback
+Known readiness warnings before cutover:
+- `dist/robots.txt` not present
+- sitemap file not present (`sitemap-index.xml` or `sitemap-0.xml`)
 
-- Держать предыдущий release.
-- При проблеме вернуть symlink `current` на прошлый релиз.
-- Перезагрузить nginx.
+## Server Directory Layout
 
-## Важно
+```text
+/var/www/
+  pastodel -> /var/www/pastodel-releases/<live-release>
+  pastodel_new/
+    releases/
+      20260409-151205/
+    current -> /var/www/pastodel_new/releases/20260409-151205
+```
 
-- Не хранить SSH ключи/секреты в репозитории.
-- Не удалять старый live до полного принятия нового сайта.
+## Staging Deploy Commands
 
-## Pre-Deploy Baseline Checklist (без деплоя)
+### Scripted (recommended)
 
-1. Build
-- `npm run build` проходит без ошибок.
+Dry-run:
 
-2. Route coverage
-- Проверены ключевые маршруты:
-  - `/`, `/katalog/`, `/katalog/[slug]/`, `/katalog/horeca/[slug]/`
-  - `/partneram/`, `/horeca/`, `/stat-partnerom/`, `/kontakty/`
-  - content/legal pages.
+```bash
+DEPLOY_HOST=<server-host> DEPLOY_USER=root scripts/deploy-preview.sh
+```
 
-3. Forms placeholder status
-- Подтверждено: production endpoint не подключён.
-- `FormRuntime` работает через safe adapter placeholder (`window.__PASTODEL_FORMS_ENDPOINT`).
+Apply:
 
-4. SEO basics
-- На страницах есть `title`, `description`, `canonical`.
-- Базовые Open Graph/Twitter meta через `BaseLayout`.
+```bash
+DEPLOY_HOST=<server-host> DEPLOY_USER=root scripts/deploy-preview.sh --apply
+```
 
-5. Cache strategy
-- `/_astro/*` hashed assets (immutable strategy).
-- HTML должен отдаваться с коротким cache TTL.
+### Manual equivalent commands
 
-6. Manual QA points
-- Header/nav/sticky/compact behavior.
-- Hero/section order/cards/CTA.
-- Forms UX (validation/loading/success/error, gateway flow).
-- Responsive: desktop/tablet/mobile.
-- Accessibility base: skip link, keyboard focus-visible, aria атрибуты.
+```bash
+npm run build
+
+RELEASE_ID=$(date +%Y%m%d-%H%M%S)
+DEPLOY_BASE=/var/www/pastodel_new
+SERVER=<user>@<host>
+
+ssh "$SERVER" "mkdir -p ${DEPLOY_BASE}/releases/${RELEASE_ID} ${DEPLOY_BASE}/releases"
+COPYFILE_DISABLE=1 tar -C dist -cf - . | ssh "$SERVER" "tar -xf - -C ${DEPLOY_BASE}/releases/${RELEASE_ID}"
+ssh "$SERVER" "find ${DEPLOY_BASE}/releases/${RELEASE_ID} -name '._*' -type f -delete"
+ssh "$SERVER" "ln -sfn ${DEPLOY_BASE}/releases/${RELEASE_ID} ${DEPLOY_BASE}/current"
+ssh "$SERVER" "find ${DEPLOY_BASE} -type d -exec chmod 755 {} +; find ${DEPLOY_BASE} -type f -exec chmod 644 {} +"
+```
+
+## Preview Verification Before Any Cutover
+
+On server:
+
+```bash
+curl -sI http://127.0.0.1:8081/
+curl -s http://127.0.0.1:8081/ | head -n 30
+```
+
+From local machine (via tunnel):
+
+```bash
+ssh -L 8081:127.0.0.1:8081 <user>@<host>
+# then open http://127.0.0.1:8081
+```
+
+Recommended pre-cutover checks on preview:
+- priority routes: `/`, `/katalog/`, `/katalog/[slug]/`, `/katalog/horeca/[slug]/`, `/partneram/`, `/horeca/`, `/stat-partnerom/`, `/kontakty/`
+- forms placeholder behavior (no production endpoint integration)
+- hashed assets served from `/_astro/`
+- no broken links/images
+
+## Nginx Preview Config (safe)
+
+Current preview uses a separate localhost-only server block. Example:
+
+```nginx
+server {
+  listen 127.0.0.1:8081;
+  server_name _;
+
+  root /var/www/pastodel_new/current;
+  index index.html;
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+
+  location /_astro/ {
+    access_log off;
+    add_header Cache-Control "public, max-age=31536000, immutable";
+    try_files $uri =404;
+  }
+
+  location ~* \.(?:css|js|mjs|png|jpg|jpeg|gif|svg|webp|ico|woff2?)$ {
+    access_log off;
+    add_header Cache-Control "public, max-age=31536000, immutable";
+    try_files $uri =404;
+  }
+}
+```
+
+## Safe Rollout Plan (future, only after explicit approval)
+
+1. Freeze target release id in `/var/www/pastodel_new/releases/<id>`.
+2. Re-run preview smoke + manual QA checklist.
+3. Backup live nginx config file and capture current live symlink target.
+4. Change live nginx `root` from live path to `/var/www/pastodel_new/current`.
+5. `nginx -t` and only then `systemctl reload nginx`.
+6. Validate live with route smoke checks and UI sanity checks.
+7. Keep previous live release untouched for immediate rollback.
+
+## Rollback Plan
+
+If switch causes issues:
+
+1. Restore previous live nginx `root` (or previous symlink target, depending on chosen switch method).
+2. Run `nginx -t`.
+3. Reload nginx.
+4. Verify `https://pastodel.ru/` and key routes return expected old live output.
+
+Rollback commands template:
+
+```bash
+# Example if switch is root-based in nginx config:
+# 1) restore backup config
+cp /etc/nginx/sites-available/pastodel.ru.bak.<timestamp> /etc/nginx/sites-available/pastodel.ru
+nginx -t && systemctl reload nginx
+
+# 2) post-rollback smoke
+curl -sI https://pastodel.ru/
+```
+
+## What Was Not Changed in This Stage
+
+- No live domain routing switch.
+- No destructive actions on old site directory.
+- No production forms endpoint integration.

@@ -1,82 +1,48 @@
 # Progress Log
 
-## Статус
+## Status
 
-Текущий этап: `Visual QA (priority routes) выполнен, critical/medium расхождения закрыты`.
+Current phase: `Server pre-release staging completed (without cutover)`.
 
-## Housekeeping
+## What was done in this stage
 
-- Проверен локальный файл `public/images/product-paelya.webp`.
-- Файл **используется** на текущей главной (`src/pages/index.astro`) и не является мусором.
-- Локальная несвязанная модификация была откатана (`git restore`), чтобы исключить случайный шум в коммитах.
-- Для каталога и новых страниц используется современная стратегия через `src/assets/*` и `astro:assets`.
+- Verified server access and inspected existing nginx config safely.
+- Confirmed live remains on `/var/www/pastodel` (symlink-based live release).
+- Built local static output (`npm run build`).
+- Performed real staging deploy to separate directory:
+  - `/var/www/pastodel_new/releases/20260409-151205`
+  - `/var/www/pastodel_new/current -> /var/www/pastodel_new/releases/20260409-151205`
+- Removed macOS metadata files (`._*`) from staged release and normalized permissions.
+- Added isolated preview nginx server block on localhost-only endpoint `127.0.0.1:8081`.
+- Verified preview response (`HTTP 200`) and live response (`https://pastodel.ru`, `HTTP 200`) after changes.
 
-## Сделано в этом этапе
+## Production-readiness checks (no traffic switch)
 
-- Реализованы обязательные страницы:
-  - `/partneram/`
-  - `/horeca/`
-  - `/gde-kupit/`
-  - `/o-kompanii/`
-  - `/otzyvy/`
-  - `/kontakty/`
-  - `/dokumenty/`
-  - `/novosti/`
-  - `/proizvodstvo-i-kachestvo/`
-  - `/stat-partnerom/`
-  - `/politika-konfidentsialnosti/`
-  - `/soglasie-na-obrabotku-dannyh/`
-- Добавлены reusable компоненты:
-  - `src/components/common/Breadcrumbs.astro`
-  - `src/components/common/PageIntro.astro`
-  - `src/components/common/SectionHead.astro`
-- Реализован form runtime слой:
-  - `src/components/forms/FormRuntime.astro`
-  - валидация, prefill, honeypot, loading/success/error
-  - margin calculator
-  - partner gateway step flow + scenario switching
-- Добавлены page intro assets:
-  - `src/assets/page-intro/*`
-- Расширены глобальные стили для новых секций/форм/гридов (`src/styles/global.css`).
+Checked:
+- build output is generated from Astro static mode
+- hashed assets served from `/_astro/*`
+- route output exists for key sections/pages
+- forms remain in placeholder adapter mode (no unconfirmed endpoint integration)
 
-## Формы и интерактив
+Detected and documented for cutover preparation:
+- `robots.txt` not present in `dist`
+- sitemap file not present in `dist`
 
-Готово:
-- `/partneram/` форма заявки
-- `/horeca/` форма заявки
-- `/kontakty/` форма обращения
-- `/stat-partnerom/` gateway form (3 сценария + шаги)
-- prefill из query params и CTA кнопок
-- phone normalization/mask
-- калькулятор маржи на `/partneram/` и `/horeca/`
+## Scripts
 
-Ограничение:
-- Production endpoint форм **не подключён**, используется безопасный adapter-placeholder.
+Added:
+- `scripts/check-build.sh` — build + artifact checks + warnings for robots/sitemap
+- `scripts/deploy-preview.sh` — safe deploy helper (dry-run by default, separate root only)
 
-## Проверено
+## What remains before final cutover
 
-- `npm run build` (успешно)
-- Статическая генерация подтверждает все реализованные маршруты.
+- Add/confirm `robots.txt` and sitemap generation strategy.
+- Execute final preview smoke + visual pass on staged version.
+- Receive explicit approval for live switch.
+- Perform controlled switch + post-switch verification + rollback readiness.
 
-## Visual QA (этот этап)
+## Risks / blockers
 
-- Выполнено structured визуальное сравнение приоритетных страниц:
-  - `/`, `/katalog/`, `/katalog/karbonara/`, `/katalog/horeca/karbonara/`, `/partneram/`, `/horeca/`, `/stat-partnerom/`, `/kontakty/`.
-- Critical/Medium исправления:
-  - главная перестроена под baseline-порядок секций live,
-  - добавлен блок «Попробуйте ещё» на product routes,
-  - выровнены desktop-сетки карточек,
-  - скорректирована hero-композиция главной,
-  - добавлен `focus-visible` accessibility baseline.
-- Отчёт: `docs/visual-qa.md`.
-
-## Что осталось
-
-- Low-level polish: точный spacing/typography pass для максимального визуального совпадения.
-- Финальный cross-page manual QA (включая вторичный приоритет страниц).
-- Pre-deploy smoke pass перед деплоем (без переключения домена на текущем этапе).
-
-## Риски
-
-- Часть live-разделов (`novosti`, `dokumenty`, legal) является каркасной/минимальной — перенос выполнен честно, без выдуманного наполнения.
-- До подтверждения backend API формы работают через placeholder adapter и не отправляют данные в production endpoint.
+- Forms production endpoint still intentionally not integrated.
+- Missing robots/sitemap in current output can affect SEO readiness if not handled pre-release.
+- Live-to-new switch not executed in this phase by design.
