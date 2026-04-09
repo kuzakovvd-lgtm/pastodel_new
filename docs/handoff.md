@@ -2,37 +2,47 @@
 
 ## Текущее состояние
 
-Проект `pastodel_new` инициализирован с нуля на Astro 5 + TypeScript.
-Реализован базовый UI-каркас и первая версия главной страницы.
-Сборка проекта подтверждена командой `npm run build`.
+В новом проекте `pastodel_new` завершён рабочий этап каталога:
+- есть `/katalog/`
+- есть dynamic product routes для retail и HoReCa
+- все SKU-страницы генерируются из typed data layer
+- сборка подтверждена `npm run build`
 
 ## Что сделано
 
-- Базовые конфиги и структура директорий.
-- `BaseLayout` с SEO мета-тегами.
-- `Header` + mobile nav + sticky compact behavior.
-- `Footer`.
-- Главная страница (`/`) в первом приближении.
-- Локально добавлены стартовые ассеты из текущего live-билда (logo/hero/4 product images) и шрифты.
-- Заполнены `README`, `architecture`, `progress`, `deploy`.
+- Data model и utilities:
+  - `src/data/product-types.ts`
+  - `src/data/products.ts`
+  - `src/data/product-assets.ts`
+  - `src/data/product-utils.ts`
+- Компоненты каталога/товара:
+  - `src/components/catalog/CatalogAudienceSwitch.astro`
+  - `src/components/catalog/ProductCard.astro`
+  - `src/components/product/ProductDetailPage.astro`
+  - `src/components/product/ProductImage.astro`
+  - `src/components/product/ProductMeta.astro`
+  - `src/components/product/PrepTabs.astro`
+- Страницы:
+  - `src/pages/katalog/index.astro`
+  - `src/pages/katalog/[slug].astro`
+  - `src/pages/katalog/horeca/[slug].astro`
+- Ассеты:
+  - `src/assets/products/*` (каталог + retail/horeca packshot изображения)
+- UI-стили для новых страниц добавлены в `src/styles/global.css`.
 
 ## Что не сделано
 
-- Не реализованы остальные страницы и dynamic routes.
-- Не перенесены полностью все секции главной 1:1.
-- Не реализованы формы/FAQ/tabs/audience switch в финальном виде.
-- Не настроен production deployment pipeline.
+- Остальные целевые страницы (B2B/content/legal) еще не реализованы.
+- Не проведён финальный визуальный regression-аудит по всем каталогным страницам в браузере на всех брейкпоинтах.
+- Не выполнялись deploy/rollout действия (по задаче и не должны).
 
 ## Риски
 
-- Формы: endpoint не подтвержден.
-- Legal/контентные разделы требуют ручной проверки на актуальность.
-- До завершения полного переноса возможны визуальные расхождения с live.
+- Возможны локальные визуальные отличия от live на уровне мелких отступов/типографики.
+- Если часть live-данных меняется вне HTML (внешний источник), потребуется дополнительная синхронизация data layer.
 
 ## Следующий шаг
 
-1. Завершить перенос ассетов и точность главной.
-2. Реализовать `/katalog/` и dynamic SKU routes.
-3. Реализовать B2B страницы (`/partneram/`, `/horeca/`, `/stat-partnerom/`) с интерактивом.
-4. Закрыть остальные контентные/legal страницы.
-5. Подготовить deploy в отдельную папку + smoke checklist.
+1. Провести браузерный visual QA `/katalog/` и SKU-страниц (desktop/tablet/mobile) против live.
+2. Довести каталог до финального совпадения и зафиксировать правки.
+3. Перейти к следующему этапу: `/partneram/`, `/horeca/`, `/gde-kupit/` и остальные страницы из списка.

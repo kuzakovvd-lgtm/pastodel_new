@@ -2,58 +2,72 @@
 
 ## Статус
 
-Текущий этап: `Этап 1-3 (start)`
+Текущий этап: `Каталог + dynamic product routes (retail/horeca) реализованы`
 
-## Сделано
+## Сделано в этом этапе
 
-- Создан и инициализирован новый репозиторий `pastodel_new`.
-- Инициализирован проект Astro 5 + TypeScript.
-- Добавлены базовые конфиги: `astro.config.mjs`, `tsconfig.json`, `src/env.d.ts`.
-- Создана структура каталогов: `src/components`, `src/layouts`, `src/pages`, `src/data`, `src/styles`, `docs`, `public/fonts`.
-- Реализованы базовые компоненты:
-  - `BaseLayout`
-  - `Header` (включая mobile nav / compact header)
-  - `Footer`
-- Реализована главная страница в первом приближении (`/`): hero, блок хитов, B2B CTA.
-- Созданы документационные файлы:
-  - `README.md`
-  - `docs/architecture.md`
-  - `docs/deploy.md`
-  - `docs/handoff.md`
-  - `docs/progress.md`
+- Реализована data-driven архитектура каталога и SKU-страниц на Astro.
+- Добавлена typed data model:
+  - `src/data/product-types.ts`
+  - `src/data/products.ts`
+  - `src/data/product-assets.ts`
+  - `src/data/product-utils.ts`
+- Перенесены product-изображения в `src/assets/products` и подключены через `astro:assets`.
+- Реализована страница `/katalog/`:
+  - hero блока каталога
+  - audience switch (дом/HoReCa)
+  - grid карточек товаров
+  - support/CTA блоки
+- Реализованы dynamic routes:
+  - `/katalog/[slug]/`
+  - `/katalog/horeca/[slug]/`
+  - `getStaticPaths()` строится из единого data layer.
+- Реализованы product components:
+  - `ProductCard`
+  - `ProductImage`
+  - `ProductMeta`
+  - `PrepTabs`
+  - `CatalogAudienceSwitch`
+  - `ProductDetailPage`
+- Добавлены стили под catalog/product UI в `src/styles/global.css`.
+- Проверка: `npm run build` проходит успешно.
 
-## В работе
+## Реализованные slug/routes
 
-- Расширение главной страницы до полного соответствия live (добавление отсутствующих секций).
-- Подготовка маршрутов и шаблонов для остальных страниц.
+Retail:
+- `/katalog/alfredo-kuritsa/`
+- `/katalog/karbonara/`
+- `/katalog/mak-end-chiz/`
+- `/katalog/vetchina-griby-slivochny-sous/`
+- `/katalog/pasta-frikadelki-tomatny-sous/`
+- `/katalog/chetyre-syra/`
+- `/katalog/kuritsa-pesto-vyalenye-tomaty/`
+- `/katalog/primavera/`
+- `/katalog/rizotto-rizi-bizi-pesto-zeleny-goroshek/`
+- `/katalog/rizotto-griby-slivochny-sous/`
+- `/katalog/paelya-kuritsa-ovoshchi/`
 
-## Проверено
+HoReCa:
+- `/katalog/horeca/alfredo-kuritsa/`
+- `/katalog/horeca/karbonara/`
+- `/katalog/horeca/mak-end-chiz/`
+- `/katalog/horeca/vetchina-griby-slivochny-sous/`
+- `/katalog/horeca/pasta-frikadelki-tomatny-sous/`
+- `/katalog/horeca/chetyre-syra/`
+- `/katalog/horeca/kuritsa-pesto-vyalenye-tomaty/`
+- `/katalog/horeca/primavera/`
+- `/katalog/horeca/rizotto-rizi-bizi-pesto-zeleny-goroshek/`
+- `/katalog/horeca/rizotto-griby-slivochny-sous/`
+- `/katalog/horeca/paelya-kuritsa-ovoshchi/`
 
-- `npm install`
-- `npm run build` (успешно, сборка `dist/` сформирована)
-- Локально подключены базовые ассеты (лого, hero, 4 карточки) и шрифты.
+## Что еще осталось
 
-## Осталось (крупные блоки)
-
-- Доработать главную до более точного соответствия live (секции benefits/trust/business и т.д.).
-- Реализовать остальные ключевые страницы:
-  - `/katalog/`
-  - `/partneram/`
-  - `/horeca/`
-  - `/gde-kupit/`
-  - `/o-kompanii/`
-  - `/otzyvy/`
-  - `/kontakty/`
-  - `/dokumenty/`
-  - `/novosti/`
-  - `/proizvodstvo-i-kachestvo/`
-  - `/stat-partnerom/`
-  - legal pages
-  - dynamic product routes
-- Реализовать интерактив forms/tabs/audience/accordion на новой архитектуре.
-- Подготовить deploy scripts + safe rollout + rollback.
+- Точная доводка визуального соответствия каталога и SKU-страниц по live-сравнению (пиксельные различия, отступы, микротипографика).
+- Реализация следующих страниц этапа 4:
+  - `/partneram/`, `/horeca/`, `/gde-kupit/`, `/o-kompanii/`, `/otzyvy/`, `/kontakty/`, `/dokumenty/`, `/novosti/`, `/proizvodstvo-i-kachestvo/`, `/stat-partnerom/`, legal pages.
+- Контентный QA всех текстов/метрик и точное сравнение с live UI в браузере.
 
 ## Ограничения/риски
 
-- Form endpoint на live не подтвержден из HTML явно — потребуется отдельное согласование интеграции.
-- Некоторые live-страницы выглядят как контентный каркас/заглушка; переносим только подтвержденный контент.
+- Часть текстов в некоторых SKU live-страниц выглядит шаблонно/неоднородно; перенесено как есть из live-снапшота.
+- Если на live есть JS-логика, скрытая за серверными условиями/внешними API, она может потребовать отдельного уточнения при следующих этапах.
