@@ -1,0 +1,23 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageIntro from '@/components/common/PageIntro.astro';
+import SectionHead from '@/components/common/SectionHead.astro';
+import universalIntro from '@/assets/page-intro/universal.KhHo-xsH_ZRJCIk.webp';
+---
+<BaseLayout title="Отзывы о Pastodel" description="Отзывы покупателей и партнёров о Pastodel.">
+  <PageIntro
+    eyebrow="Отзывы"
+    title="Отзывы о нас"
+    description="Мы собираем отзывы покупателей и партнёров о продукции Pastodel. Подтверждённые отзывы публикуются в этом разделе."
+    image={universalIntro}
+    imageAlt="Иллюстрация Pastodel для страницы отзывов"
+    breadcrumbs={[{ href: '/', label: 'Главная' }, { label: 'Отзывы о нас' }]}
+  />
+
+  <section class="section section--tight-top">
+    <div class="container split-grid">
+      <article class="surface-card info-card"><SectionHead compact eyebrow="Публикация" title="Показываем только подтверждённые отзывы" lead="Раздел будет пополняться по мере публикации верифицированных отзывов." /></article>
+      <article class="surface-card info-card"><SectionHead compact eyebrow="Контакт" title="Хотите связаться с нами напрямую?" lead="Если нужен быстрый ответ, отправьте сообщение через форму контактов." /><div class="button-group"><a class="button" href="/kontakty/">Написать нам</a></div></article>
+    </div>
+  </section>
+</BaseLayout>

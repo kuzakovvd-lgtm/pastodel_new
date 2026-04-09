@@ -1,0 +1,24 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageIntro from '@/components/common/PageIntro.astro';
+import SectionHead from '@/components/common/SectionHead.astro';
+import universalIntro from '@/assets/page-intro/universal.KhHo-xsH_ZRJCIk.webp';
+---
+<BaseLayout title="Согласие на обработку данных — Pastodel" description="Базовая legal-страница согласия на обработку данных для форм сайта Pastodel.">
+  <PageIntro
+    eyebrow="Legal"
+    title="Согласие на обработку данных"
+    description="Это базовая legal-заготовка под формы сайта и требует финального согласования перед запуском."
+    image={universalIntro}
+    imageAlt="Иллюстрация Pastodel для страницы согласия на обработку данных"
+    breadcrumbs={[{ href: '/', label: 'Главная' }, { label: 'Согласие на обработку данных' }]}
+  />
+
+  <section class="section section--tight-top">
+    <div class="container simple-stack">
+      <article class="surface-card info-card"><SectionHead compact eyebrow="Статус страницы" title="Это базовая legal-заготовка под формы сайта" lead="До публикации подтверждённых реквизитов и точной схемы обработки данных страница остаётся черновым legal-контуром." /></article>
+      <article class="surface-card info-card"><h3>1. Предмет согласия</h3><p>Пользователь предоставляет данные добровольно через формы сайта для обратной связи по продукту, сотрудничеству или общему запросу.</p><h3>2. Перечень данных</h3><p>В форме могут указываться имя, компания, способ связи, тема обращения и текст сообщения.</p><h3>3. Цель обработки</h3><p>Связаться с пользователем, ответить на запрос и уточнить детали обращения.</p><h3>4. Ограничение</h3><p>Финальные сроки хранения, реквизиты оператора и точная юридическая модель добавляются после юрпроверки.</p></article>
+      <article class="surface-card info-card"><SectionHead compact eyebrow="Связанные разделы" title="Страница используется рядом с формами" /><div class="button-group"><a class="button button--secondary" href="/kontakty/">Контакты</a><a class="button button--secondary" href="/partneram/">Партнёрам</a></div></article>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,105 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageIntro from '@/components/common/PageIntro.astro';
+import SectionHead from '@/components/common/SectionHead.astro';
+import ProductCard from '@/components/catalog/ProductCard.astro';
+import FormRuntime from '@/components/forms/FormRuntime.astro';
+import horecaIntro from '@/assets/page-intro/horeca.lIIIU-Nb_ZMLqwt.webp';
+import { getProducts } from '@/data/product-utils';
+
+const products = getProducts().slice(1, 4);
+---
+<BaseLayout
+  title="Решения для HoReCa Pastodel — продукт для кофеен, отелей и кейтеринга"
+  description="Решения Pastodel для HoReCa: сегменты, калькулятор маржи, дегустация и форма запроса."
+>
+  <PageIntro
+    eyebrow="HoReCa"
+    title="Решения для HoReCa"
+    description="Готовые блюда и базы, которые помогают ускорить отдачу и снизить нагрузку на кухню в пиковые часы."
+    image={horecaIntro}
+    imageAlt="Иллюстрация Pastodel для страницы HoReCa"
+    breadcrumbs={[{ href: '/', label: 'Главная' }, { label: 'Решения для HoReCa' }]}
+    actions={[
+      { href: '#horeca-form', label: 'Заказать дегустацию', attrs: { 'data-prefill-target': 'horeca-request', 'data-prefill-value': 'Заказать дегустацию' } },
+      { href: '#horeca-form', label: 'Обсудить условия', secondary: true }
+    ]}
+  />
+
+  <section class="section section--tight-top">
+    <div class="container">
+      <SectionHead eyebrow="Эффект для кухни" title="Чем это удобно для кухни" />
+      <div class="simple-grid simple-grid--four">
+        <article class="surface-card info-card"><h3>Меньше нагрузки на команду</h3><p>Блюдо уже подготовлено — это ускоряет сборку заказа.</p></article>
+        <article class="surface-card info-card"><h3>Минимум оборудования</h3><p>Достаточно стандартного набора кухонного оборудования.</p></article>
+        <article class="surface-card info-card"><h3>Меньше списаний</h3><p>Замороженный формат упрощает управление остатками.</p></article>
+        <article class="surface-card info-card"><h3>Быстрая отдача</h3><p>Подходит для заведений, где важны скорость и повторяемость.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split-grid">
+      <article class="surface-card info-card">
+        <SectionHead compact eyebrow="Формат" title="Формат для профессионального обсуждения" lead="Оставьте заявку, и мы обсудим позиции и условия под ваш тип заведения." />
+      </article>
+      <article class="surface-card info-card" data-margin-calculator>
+        <SectionHead compact eyebrow="Расчёт" title="Калькулятор маржи" />
+        <div class="form-grid">
+          <div class="field"><label for="horeca-menu-price">Цена блюда в меню</label><input id="horeca-menu-price" type="number" min="0" step="1" placeholder="Например, 690" data-menu-price /></div>
+          <div class="field"><label for="horeca-purchase-price">Закупочная стоимость</label><input id="horeca-purchase-price" type="number" min="0" step="1" placeholder="Например, 260" data-purchase-price /></div>
+        </div>
+        <p class="metric"><span>Маржа</span> <strong data-margin-output>0%</strong></p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <SectionHead eyebrow="Позиции" title="Что можно обсудить на дегустации" lead="Несколько блюд из текущего ассортимента для первого обсуждения." />
+      <div class="catalog-grid">{products.map((product) => <ProductCard product={product} />)}</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container pd-form-shell" id="horeca-form">
+      <form class="surface-card form-card" data-validated-form data-form-name="horeca-request" data-success-message="Спасибо. Заявка отправлена. Мы свяжемся с вами после обработки обращения." novalidate>
+        <SectionHead eyebrow="Форма" title="Заказать дегустацию" lead="Оставьте запрос, и мы вернёмся с удобным форматом коммуникации." />
+        <div class="form-grid">
+          <div class="field"><label for="horeca-name">Имя</label><input id="horeca-name" name="name" type="text" placeholder="Как к вам обращаться" data-required-field /><p class="pd-form-error" data-error-for="name"></p></div>
+          <div class="field"><label for="horeca-company">Компания</label><input id="horeca-company" name="company" type="text" placeholder="Название компании" data-required-field /><p class="pd-form-error" data-error-for="company"></p></div>
+          <div class="field"><label for="horeca-venue-type">Тип заведения</label><input id="horeca-venue-type" name="venue_type" type="text" placeholder="Например, кофейня или отель" data-required-field /><p class="pd-form-error" data-error-for="venue_type"></p></div>
+          <div class="field"><label for="horeca-city">Город</label><input id="horeca-city" name="city" type="text" placeholder="Город" data-required-field /><p class="pd-form-error" data-error-for="city"></p></div>
+          <div class="field"><label for="horeca-phone">Телефон</label><input id="horeca-phone" name="phone" type="tel" inputmode="tel" placeholder="+7 (___) ___-__-__" data-required-field data-phone-field /><p class="pd-form-error" data-error-for="phone"></p></div>
+          <div class="field"><label for="horeca-email">Email</label><input id="horeca-email" name="email" type="email" placeholder="name@company.ru" data-required-field /><p class="pd-form-error" data-error-for="email"></p></div>
+          <div class="field field--full"><label for="horeca-product-interest">Интересующие позиции</label><textarea id="horeca-product-interest" name="product_interest" placeholder="Укажите, какие блюда или категории вам интересны"></textarea></div>
+          <div class="field field--full"><label for="horeca-request-type">Тип запроса</label><select id="horeca-request-type" name="request_type" data-prefill-field="horeca-request" data-query-param="request" data-query-map='{"conditions":"Обсудить условия"}'><option value="Заказать дегустацию">Заказать дегустацию</option><option value="Обсудить условия">Обсудить условия</option><option value="Запрос по HoReCa">Запрос по HoReCa</option></select></div>
+        </div>
+        <label class="pd-checkbox"><input type="checkbox" name="privacy" required /><span>Я согласен с <a href="/politika-konfidentsialnosti/">политикой конфиденциальности</a> и обработкой персональных данных.</span></label>
+        <p class="pd-form-error" data-error-for="privacy"></p>
+        <div class="form-honeypot" aria-hidden="true"><label for="horeca-company-site">Не заполняйте это поле</label><input id="horeca-company-site" name="company_site" type="text" tabindex="-1" autocomplete="off" /></div>
+        <div class="button-group"><button class="button" type="submit">Отправить заявку</button></div>
+        <p class="pd-form-note">Свяжемся с вами после обработки обращения.</p>
+        <p class="pd-form-note pd-form-note--muted">Интеграция с production endpoint будет подключена после подтверждения API.</p>
+        <p class="pd-form-error" data-form-request-error hidden></p>
+        <p class="pd-form-success" data-form-success hidden>Спасибо. Заявка отправлена. Мы свяжемся с вами после обработки обращения.</p>
+      </form>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split-grid">
+      <article class="surface-card info-card">
+        <SectionHead compact eyebrow="Материалы" title="Нужны материалы для обсуждения?" lead="Оставьте заявку, и мы подготовим информацию по продукту и сотрудничеству под ваш запрос." />
+        <div class="button-group"><a class="button button--secondary" href="#horeca-form">Оставить заявку</a></div>
+      </article>
+      <article class="surface-card info-card">
+        <SectionHead compact eyebrow="FAQ" title="Частые вопросы" />
+        <details class="faq-item"><summary>Как быстро можно подготовить блюдо?</summary><p>Точный способ и время зависят от продукта и формата, уточняем по конкретным позициям.</p></details>
+        <details class="faq-item"><summary>Можно ли обсудить формат для моего типа заведения?</summary><p>Да, оставьте заявку на странице, и мы свяжемся для обсуждения.</p></details>
+        <details class="faq-item"><summary>Можно ли получить информацию по условиям?</summary><p>Да, подготовим ответ под ваш формат сотрудничества.</p></details>
+      </article>
+    </div>
+  </section>
+  <FormRuntime />
+</BaseLayout>

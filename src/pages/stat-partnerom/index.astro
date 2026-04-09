@@ -1,0 +1,122 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageIntro from '@/components/common/PageIntro.astro';
+import SectionHead from '@/components/common/SectionHead.astro';
+import FormRuntime from '@/components/forms/FormRuntime.astro';
+import partnerIntro from '@/assets/page-intro/partneram.DMd1JByY_1rJtxO.webp';
+---
+<BaseLayout
+  title="Стать партнёром Pastodel — заявка для ритейла, HoReCa и дистрибуции"
+  description="Gateway-форма Pastodel для ритейла, HoReCa и дистрибуции: выбор сценария, пошаговый запрос и контактные данные."
+>
+  <PageIntro
+    eyebrow="Сотрудничество"
+    title="Ваш бизнес заслуживает честного продукта"
+    description="Присоединяйтесь к Pastodel: обсудим сотрудничество для ритейла, HoReCa и дистрибуции в удобном формате."
+    image={partnerIntro}
+    imageAlt="Иллюстрация Pastodel для страницы стать партнёром"
+    breadcrumbs={[{ href: '/', label: 'Главная' }, { label: 'Стать партнёром' }]}
+    actions={[{ href: '#partner-scenarios', label: 'Выбрать сценарий' }]}
+  />
+
+  <section class="section section--tight-top" id="partner-scenarios">
+    <div class="container">
+      <SectionHead eyebrow="Сценарии" title="Выберите, как вам удобнее начать разговор" lead="Кликните по сценарию, и форма ниже подстроится под тип обращения." />
+      <div class="gateway-scenarios" data-gateway-scenarios>
+        <button class="gateway-scenario-card is-active" type="button" data-scenario-trigger data-scenario="retail" aria-pressed="true"><strong>Я закупщик в сети / ритейле</strong><span>Обсудить запуск, ассортимент и условия</span></button>
+        <button class="gateway-scenario-card" type="button" data-scenario-trigger data-scenario="horeca" aria-pressed="false"><strong>Я шеф-повар / владелец кафе</strong><span>Обсудить формат для HoReCa и дегустацию</span></button>
+        <button class="gateway-scenario-card" type="button" data-scenario-trigger data-scenario="distributor" aria-pressed="false"><strong>Я хочу стать дистрибьютором</strong><span>Обсудить сотрудничество по региону</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight-top">
+    <div class="container" data-gateway-form-shell>
+      <div class="gateway-form-layout">
+        <aside class="surface-card info-card gateway-form-aside">
+          <p class="eyebrow">Формат обращения</p>
+          <h2 data-scenario-heading>Запрос для ритейла</h2>
+          <p data-scenario-copy>Оставьте контакты, и мы вернёмся с ассортиментом и условиями для обсуждения запуска.</p>
+          <div class="gateway-steps" aria-label="Шаги формы">
+            <span class="gateway-step-chip is-active" data-step-indicator="1">1. Контакты</span>
+            <span class="gateway-step-chip" data-step-indicator="2">2. Детали</span>
+            <span class="gateway-step-chip" data-step-indicator="3">3. Цель</span>
+          </div>
+        </aside>
+
+        <div class="pd-form-shell" id="partner-gateway-form">
+          <form class="surface-card form-card gateway-form" data-validated-form data-gateway-form data-form-name="partner-gateway" data-success-message="Спасибо! Мы свяжемся с вами в ближайшее рабочее время." novalidate>
+            <input type="hidden" name="business_type" value="Ритейл" data-business-type-field />
+
+            <div class="gateway-form__panel" data-form-step="1">
+              <SectionHead compact eyebrow="Шаг 1" title="Как с вами связаться" />
+              <div class="form-grid">
+                <div class="field"><label for="gateway-name">Имя</label><input id="gateway-name" name="name" type="text" placeholder="Как к вам обращаться" data-step-required /><p class="pd-form-error" data-error-for="name"></p></div>
+                <div class="field"><label for="gateway-phone">Телефон</label><input id="gateway-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" data-step-required data-phone-field /><p class="pd-form-error" data-error-for="phone"></p></div>
+                <div class="field"><label for="gateway-email">Email</label><input id="gateway-email" name="email" type="email" autocomplete="email" placeholder="name@company.ru" data-step-required /><p class="pd-form-error" data-error-for="email"></p></div>
+              </div>
+              <div class="button-group gateway-form__actions"><button class="button" type="button" data-step-next>Далее</button></div>
+            </div>
+
+            <div class="gateway-form__panel" data-form-step="2" hidden>
+              <SectionHead compact eyebrow="Шаг 2" title="Детали запроса" />
+
+              <div class="gateway-scenario-fields" data-scenario-panel="retail">
+                <div class="form-grid">
+                  <div class="field"><label for="gateway-retail-company">Название сети</label><input id="gateway-retail-company" name="retail_company" type="text" placeholder="Название сети" data-scenario-required="retail" /><p class="pd-form-error" data-error-for="retail_company"></p></div>
+                  <div class="field"><label for="gateway-retail-stores">Количество ТТ</label><input id="gateway-retail-stores" name="retail_store_count" type="number" min="1" step="1" placeholder="Например, 12" data-scenario-required="retail" /><p class="pd-form-error" data-error-for="retail_store_count"></p></div>
+                  <div class="field field--full"><label for="gateway-retail-city">Город</label><input id="gateway-retail-city" name="retail_city" type="text" placeholder="Город" data-scenario-required="retail" /><p class="pd-form-error" data-error-for="retail_city"></p></div>
+                </div>
+              </div>
+
+              <div class="gateway-scenario-fields" data-scenario-panel="horeca" hidden>
+                <div class="form-grid">
+                  <div class="field"><label for="gateway-horeca-company">Компания</label><input id="gateway-horeca-company" name="horeca_company" type="text" placeholder="Название компании" data-scenario-required="horeca" /><p class="pd-form-error" data-error-for="horeca_company"></p></div>
+                  <div class="field"><label for="gateway-horeca-type">Тип заведения</label><input id="gateway-horeca-type" name="horeca_venue_type" type="text" placeholder="Например, кофейня" data-scenario-required="horeca" /><p class="pd-form-error" data-error-for="horeca_venue_type"></p></div>
+                  <div class="field field--full"><label for="gateway-horeca-city">Город</label><input id="gateway-horeca-city" name="horeca_city" type="text" placeholder="Город" data-scenario-required="horeca" /><p class="pd-form-error" data-error-for="horeca_city"></p></div>
+                </div>
+              </div>
+
+              <div class="gateway-scenario-fields" data-scenario-panel="distributor" hidden>
+                <div class="form-grid">
+                  <div class="field"><label for="gateway-distributor-company">Компания</label><input id="gateway-distributor-company" name="distributor_company" type="text" placeholder="Название компании" data-scenario-required="distributor" /><p class="pd-form-error" data-error-for="distributor_company"></p></div>
+                  <div class="field"><label for="gateway-distributor-region">Регион</label><input id="gateway-distributor-region" name="distributor_region" type="text" placeholder="Регион" data-scenario-required="distributor" /><p class="pd-form-error" data-error-for="distributor_region"></p></div>
+                  <div class="field field--full"><label for="gateway-distributor-interest">Коротко о запросе</label><textarea id="gateway-distributor-interest" name="distributor_interest" rows="4" placeholder="Опишите интерес к сотрудничеству" data-scenario-required="distributor"></textarea><p class="pd-form-error" data-error-for="distributor_interest"></p></div>
+                </div>
+              </div>
+
+              <div class="button-group gateway-form__actions"><button class="button button--ghost" type="button" data-step-back>Назад</button><button class="button" type="button" data-step-next>Далее</button></div>
+            </div>
+
+            <div class="gateway-form__panel" data-form-step="3" hidden>
+              <SectionHead compact eyebrow="Шаг 3" title="Что нужно сейчас" />
+              <div class="form-grid">
+                <div class="field field--full"><label for="gateway-request-type">Цель обращения</label><select id="gateway-request-type" name="request_type" data-request-field data-step-required><option value="Получить условия">Получить условия</option><option value="Заказать дегустацию">Заказать дегустацию</option><option value="Обсудить сотрудничество">Обсудить сотрудничество</option></select><p class="pd-form-error" data-error-for="request_type"></p></div>
+              </div>
+              <label class="pd-checkbox"><input type="checkbox" name="privacy" required /><span>Я согласен с <a href="/politika-konfidentsialnosti/">политикой конфиденциальности</a> и обработкой персональных данных.</span></label>
+              <p class="pd-form-error" data-error-for="privacy"></p>
+              <div class="form-honeypot" aria-hidden="true"><label for="gateway-company-site">Не заполняйте это поле</label><input id="gateway-company-site" name="company_site" type="text" tabindex="-1" autocomplete="off" /></div>
+              <div class="button-group gateway-form__actions"><button class="button button--ghost" type="button" data-step-back>Назад</button><button class="button" type="submit">Отправить заявку</button></div>
+              <p class="pd-form-note">Спасибо! Мы свяжемся с вами в ближайшее рабочее время.</p>
+              <p class="pd-form-note pd-form-note--muted">Интеграция с production endpoint будет подключена после подтверждения API.</p>
+              <p class="pd-form-error" data-form-request-error hidden></p>
+              <p class="pd-form-success" data-form-success hidden>Спасибо! Мы свяжемся с вами в ближайшее рабочее время.</p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <SectionHead eyebrow="Почему Pastodel" title="Почему удобно начать диалог с Pastodel" />
+      <div class="simple-grid simple-grid--three">
+        <article class="surface-card info-card"><h3>Понятный формат обращения</h3><p>Сразу выбираете тип бизнеса и не тратите время на лишние поля.</p></article>
+        <article class="surface-card info-card"><h3>Быстрый вход в разговор</h3><p>Можно оставить запрос по нужному сценарию: ритейл, HoReCa или дистрибуция.</p></article>
+        <article class="surface-card info-card"><h3>Без лишних шагов</h3><p>Форма собирает только информацию, которая нужна для старта обсуждения.</p></article>
+      </div>
+    </div>
+  </section>
+  <FormRuntime />
+</BaseLayout>

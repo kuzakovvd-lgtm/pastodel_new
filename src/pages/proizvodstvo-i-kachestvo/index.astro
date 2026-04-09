@@ -1,0 +1,37 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageIntro from '@/components/common/PageIntro.astro';
+import SectionHead from '@/components/common/SectionHead.astro';
+import universalIntro from '@/assets/page-intro/universal.KhHo-xsH_ZRJCIk.webp';
+---
+<BaseLayout
+  title="Производство и качество Pastodel"
+  description="Качество продукта и производственный подход Pastodel без лишней технической риторики."
+>
+  <PageIntro
+    eyebrow="Качество"
+    title="Качество продукта и производственный подход без лишней технической риторики"
+    description="Качество связано с удобством, предсказуемостью и понятной подачей продукта."
+    image={universalIntro}
+    imageAlt="Иллюстрация Pastodel для страницы производства и качества"
+    breadcrumbs={[{ href: '/', label: 'Главная' }, { label: 'Производство и качество' }]}
+  />
+
+  <section class="section section--tight-top">
+    <div class="container">
+      <SectionHead eyebrow="Подход" title="Что важно в замороженном формате" />
+      <div class="simple-grid simple-grid--three">
+        <article class="surface-card info-card"><h3>Понятный сценарий хранения</h3><p>Формат помогает держать запас и планировать потребление без лишней нагрузки.</p></article>
+        <article class="surface-card info-card"><h3>Удобство для полки и дома</h3><p>Продукт одинаково понятен покупателю и партнёру при обсуждении запуска.</p></article>
+        <article class="surface-card info-card"><h3>Приготовление как часть качества</h3><p>На карточке SKU всегда есть способ приготовления и КБЖУ.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split-grid">
+      <article class="surface-card info-card"><SectionHead compact eyebrow="Коммуникация" title="Как упаковка и подача поддерживают доверие к продукту" lead="Понятная информация на сайте и в карточке продукта снижает барьер покупки." /></article>
+      <article class="surface-card info-card"><SectionHead compact eyebrow="Навигация" title="После этой страницы логично перейти" lead="Документы, B2B-раздел или прямой контакт — в зависимости от задачи." /><div class="button-group"><a class="button" href="/dokumenty/">Документы</a><a class="button button--secondary" href="/partneram/">Партнёрам</a><a class="button button--secondary" href="/kontakty/">Контакты</a></div></article>
+    </div>
+  </section>
+</BaseLayout>

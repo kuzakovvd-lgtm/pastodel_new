@@ -1,0 +1,39 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageIntro from '@/components/common/PageIntro.astro';
+import SectionHead from '@/components/common/SectionHead.astro';
+import buyIntro from '@/assets/page-intro/gde-kupit.ZwO_ySWU_1Fdvpr.webp';
+---
+<BaseLayout
+  title="Где купить Pastodel — доставка и точки продаж"
+  description="Информация о доступности Pastodel в онлайне и офлайне."
+>
+  <PageIntro
+    eyebrow="Где купить"
+    title="Где купить Pastodel"
+    description="Мы расширяем присутствие Pastodel в рознице и онлайн. Как только появятся подтверждённые точки продаж, раздел будет обновлён."
+    image={buyIntro}
+    imageAlt="Иллюстрация Pastodel для страницы где купить"
+    breadcrumbs={[{ href: '/', label: 'Главная' }, { label: 'Где купить' }]}
+  />
+
+  <section class="section section--tight-top">
+    <div class="container split-grid">
+      <article class="surface-card info-card">
+        <SectionHead compact eyebrow="Онлайн" title="Онлайн-доставка" lead="Как только появятся подтверждённые площадки заказа, они будут опубликованы здесь." />
+      </article>
+      <article class="surface-card info-card">
+        <SectionHead compact eyebrow="Магазины" title="Оффлайн" lead="Список офлайн-точек продаж появится после подтверждения и публикации." />
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <article class="surface-card info-card">
+        <SectionHead compact eyebrow="Для партнёров" title="Вашего региона ещё нет в списке?" lead="Если вы хотите обсудить запуск Pastodel в своём регионе, оставьте заявку на странице «Партнёрам»." />
+        <div class="button-group"><a class="button" href="/partneram/">Перейти в раздел для партнёров</a></div>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

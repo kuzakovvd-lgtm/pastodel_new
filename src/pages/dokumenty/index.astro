@@ -1,0 +1,23 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageIntro from '@/components/common/PageIntro.astro';
+import SectionHead from '@/components/common/SectionHead.astro';
+import universalIntro from '@/assets/page-intro/universal.KhHo-xsH_ZRJCIk.webp';
+---
+<BaseLayout title="Документы Pastodel" description="Раздел документов Pastodel.">
+  <PageIntro
+    eyebrow="Документы"
+    title="Документы"
+    description="Раздел для публикации подтверждённых документов бренда и материалов для партнёров."
+    image={universalIntro}
+    imageAlt="Иллюстрация Pastodel для страницы документов"
+    breadcrumbs={[{ href: '/', label: 'Главная' }, { label: 'Документы' }]}
+  />
+  <section class="section section--tight-top">
+    <div class="container">
+      <article class="surface-card info-card">
+        <SectionHead compact eyebrow="Статус" title="Раздел пока в каркасном состоянии" lead="На текущей live-версии раздел минимальный, без опубликованного списка документов. Добавление файлов выполняется после отдельной контентной валидации." />
+      </article>
+    </div>
+  </section>
+</BaseLayout>

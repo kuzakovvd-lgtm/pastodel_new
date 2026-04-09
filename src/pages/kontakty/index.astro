@@ -1,0 +1,64 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageIntro from '@/components/common/PageIntro.astro';
+import SectionHead from '@/components/common/SectionHead.astro';
+import FormRuntime from '@/components/forms/FormRuntime.astro';
+import contactsIntro from '@/assets/page-intro/kontakty.qDvV3qrU_2iDTaQ.webp';
+---
+<BaseLayout
+  title="Контакты Pastodel — отдел продаж, качество и сотрудничество"
+  description="Контакты Pastodel для вопросов по качеству, сотрудничеству и поставкам."
+>
+  <PageIntro
+    eyebrow="Контакты"
+    title="Всегда на связи"
+    description="Свяжитесь с Pastodel по вопросам качества, сотрудничества и поставок. Подскажем, кому лучше адресовать запрос."
+    image={contactsIntro}
+    imageAlt="Иллюстрация Pastodel для страницы контактов"
+    breadcrumbs={[{ href: '/', label: 'Главная' }, { label: 'Контакты' }]}
+    actions={[
+      { href: '#sales', label: 'Отдел продаж', attrs: { 'data-prefill-target': 'contact-topic', 'data-prefill-value': 'Сотрудничество и продажи' } },
+      { href: '#quality', label: 'Служба качества', secondary: true, attrs: { 'data-prefill-target': 'contact-topic', 'data-prefill-value': 'Качество и упаковка' } }
+    ]}
+  />
+
+  <section class="section section--tight-top">
+    <div class="container">
+      <SectionHead eyebrow="Связь" title="Какой у вас вопрос?" />
+      <div class="simple-grid simple-grid--three">
+        <article class="surface-card info-card" id="sales"><h3>Отдел продаж</h3><p>Запросы по сотрудничеству, дистрибуции и запуску в рознице.</p><div class="button-group"><a class="button button--ghost" href="/partneram/">Стать партнёром</a></div></article>
+        <article class="surface-card info-card" id="quality"><h3>Служба качества</h3><p>Вопросы по продукту, качеству или упаковке.</p><div class="button-group"><a class="button button--ghost" href="#contact-form" data-prefill-target="contact-topic" data-prefill-value="Качество и упаковка">Написать нам</a></div></article>
+        <article class="surface-card info-card" id="purchasing"><h3>Закупки</h3><p>Предложения по сырью и коммерческим поставкам.</p><div class="button-group"><a class="button button--ghost" href="#contact-form" data-prefill-target="contact-topic" data-prefill-value="Закупки и коммерческие предложения">Оставить запрос</a></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container"><article class="surface-card info-card"><SectionHead compact eyebrow="Доверие" title="Открыты к диалогу" lead="Если нужен официальный контакт, реквизиты или информация по сотрудничеству, оставьте обращение через форму ниже." /></article></div>
+  </section>
+
+  <section class="section">
+    <div class="container pd-form-shell" id="contact-form">
+      <form class="surface-card form-card" data-validated-form data-form-name="contacts" data-success-message="Спасибо. Сообщение отправлено, мы ответим после обработки." novalidate>
+        <SectionHead eyebrow="Форма обращения" title="Напишите нам" lead="Если вопрос нестандартный, опишите его в форме — мы передадим обращение в нужный отдел." />
+        <div class="form-grid">
+          <div class="field"><label for="contact-name">Имя</label><input id="contact-name" name="name" type="text" placeholder="Как к вам обращаться" data-required-field /><p class="pd-form-error" data-error-for="name"></p></div>
+          <div class="field"><label for="contact-company">Компания</label><input id="contact-company" name="company" type="text" placeholder="Компания или организация" /><p class="pd-form-error" data-error-for="company"></p></div>
+          <div class="field"><label for="contact-topic">Тема</label><select id="contact-topic" name="topic" data-required-field data-prefill-field="contact-topic" data-query-param="topic"><option value="">Выберите тему обращения</option><option value="Сотрудничество и продажи">Сотрудничество и продажи</option><option value="Качество и упаковка">Качество и упаковка</option><option value="Закупки и коммерческие предложения">Закупки и коммерческие предложения</option><option value="Общий вопрос">Общий вопрос</option></select><p class="pd-form-error" data-error-for="topic"></p></div>
+          <div class="field"><label for="contact-phone">Телефон</label><input id="contact-phone" name="phone" type="tel" inputmode="tel" placeholder="+7 (___) ___-__-__" data-phone-field /><p class="pd-form-error" data-error-for="phone"></p></div>
+          <div class="field"><label for="contact-email">Email</label><input id="contact-email" name="email" type="email" placeholder="name@company.ru" data-required-field /><p class="pd-form-error" data-error-for="email"></p></div>
+          <div class="field field--full"><label for="contact-message">Сообщение</label><textarea id="contact-message" name="message" placeholder="Опишите ваш вопрос или запрос." data-required-field></textarea><p class="pd-form-error" data-error-for="message"></p></div>
+        </div>
+        <label class="pd-checkbox"><input type="checkbox" name="privacy" required /><span>Я согласен с <a href="/politika-konfidentsialnosti/">политикой конфиденциальности</a> и обработкой персональных данных.</span></label>
+        <p class="pd-form-error" data-error-for="privacy"></p>
+        <div class="form-honeypot" aria-hidden="true"><label for="contact-company-site">Не заполняйте это поле</label><input id="contact-company-site" name="company_site" type="text" tabindex="-1" autocomplete="off" /></div>
+        <div class="button-group"><button class="button" type="submit">Отправить сообщение</button></div>
+        <p class="pd-form-note">Ответим после обработки обращения.</p>
+        <p class="pd-form-note pd-form-note--muted">Интеграция с production endpoint будет подключена после подтверждения API.</p>
+        <p class="pd-form-error" data-form-request-error hidden></p>
+        <p class="pd-form-success" data-form-success hidden>Спасибо. Сообщение отправлено, мы ответим после обработки.</p>
+      </form>
+    </div>
+  </section>
+  <FormRuntime />
+</BaseLayout>

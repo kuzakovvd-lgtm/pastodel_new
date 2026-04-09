@@ -1,0 +1,27 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageIntro from '@/components/common/PageIntro.astro';
+import SectionHead from '@/components/common/SectionHead.astro';
+import universalIntro from '@/assets/page-intro/universal.KhHo-xsH_ZRJCIk.webp';
+---
+<BaseLayout title="Новости Pastodel" description="Новости, обновления и будущие кейсы запусков Pastodel.">
+  <PageIntro
+    eyebrow="Новости"
+    title="Новости, обновления и будущие кейсы запусков"
+    description="Каркас под редакционный контур сайта."
+    image={universalIntro}
+    imageAlt="Иллюстрация Pastodel для страницы новостей"
+    breadcrumbs={[{ href: '/', label: 'Главная' }, { label: 'Новости' }]}
+  />
+
+  <section class="section section--tight-top">
+    <div class="container split-grid">
+      <article class="surface-card info-card"><SectionHead compact eyebrow="План" title="Каркас под редакционный контур сайта" lead="Раздел подготовлен под публикацию запусков в сетях, обновлений ассортимента и корпоративных новостей." /></article>
+      <article class="surface-card info-card"><SectionHead compact eyebrow="Статус" title="Пока раздел пуст" lead="На live-сайте в этом разделе сейчас нет опубликованных новостей, поэтому контент не выдумывается." /></article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container"><article class="surface-card info-card"><SectionHead compact eyebrow="Навигация" title="Куда логично перейти сейчас" lead="Пока раздел пуст, дальше логично идти в продукцию, документы или B2B-контур." /><div class="button-group"><a class="button" href="/katalog/">Каталог</a><a class="button button--secondary" href="/dokumenty/">Документы</a><a class="button button--secondary" href="/partneram/">Для партнёров</a></div></article></div>
+  </section>
+</BaseLayout>

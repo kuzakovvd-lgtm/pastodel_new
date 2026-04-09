@@ -1,0 +1,46 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Breadcrumbs from '@/components/common/Breadcrumbs.astro';
+
+interface Action {
+  href: string;
+  label: string;
+  secondary?: boolean;
+  attrs?: Record<string, string>;
+}
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  description?: string;
+  image: ImageMetadata;
+  imageAlt: string;
+  breadcrumbs?: { href?: string; label: string }[];
+  actions?: Action[];
+}
+
+const { eyebrow, title, description, image, imageAlt, breadcrumbs = [], actions = [] } = Astro.props;
+---
+<section class="section page-intro section--compact">
+  <div class="container">
+    {breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
+    <div class="page-intro__layout">
+      <figure class="page-intro__media">
+        <Image src={image} alt={imageAlt} loading="eager" />
+      </figure>
+      <div class="page-intro__inner">
+        <p class="eyebrow">{eyebrow}</p>
+        <h1>{title}</h1>
+        {description && <p class="section-lead section-lead--strong">{description}</p>}
+        {actions.length > 0 && (
+          <div class="button-group">
+            {actions.map((action) => (
+              <a href={action.href} class:list={["button", action.secondary && "button--secondary"]} {...action.attrs}>{action.label}</a>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</section>

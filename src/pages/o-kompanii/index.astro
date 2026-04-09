@@ -1,0 +1,56 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageIntro from '@/components/common/PageIntro.astro';
+import SectionHead from '@/components/common/SectionHead.astro';
+import ProductCard from '@/components/catalog/ProductCard.astro';
+import aboutIntro from '@/assets/page-intro/o-kompanii.B6_GtjQ__18xrDF.webp';
+import { getProducts } from '@/data/product-utils';
+
+const products = [
+  getProducts().find((item) => item.slug === 'karbonara'),
+  getProducts().find((item) => item.slug === 'rizotto-griby-slivochny-sous'),
+  getProducts().find((item) => item.slug === 'paelya-kuritsa-ovoshchi')
+].filter(Boolean);
+---
+<BaseLayout
+  title="О компании Pastodel — бренд готовых замороженных блюд"
+  description="О бренде Pastodel: подход к продукту, принципы и открытая коммуникация по составу и приготовлению."
+>
+  <PageIntro
+    eyebrow="О компании"
+    title="Мы делаем готовые блюда, которые удобно держать дома."
+    description="Pastodel — бренд замороженных готовых блюд для домашнего ужина без лишней готовки."
+    image={aboutIntro}
+    imageAlt="Иллюстрация Pastodel для страницы о компании"
+    breadcrumbs={[{ href: '/', label: 'Главная' }, { label: 'О компании' }]}
+  />
+
+  <section class="section section--tight-top">
+    <div class="container split-grid">
+      <article class="surface-card info-card"><SectionHead compact eyebrow="Бренд" title="О бренде" lead="Честный состав, нормальный вкус и понятный способ приготовления дома." /></article>
+      <article class="surface-card info-card"><SectionHead compact eyebrow="Подход" title="Как мы подходим к продукту" lead="Блюдо должно быть удобным в хранении, быстро готовиться и оставаться вкусным после разогрева." /></article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <SectionHead eyebrow="Принципы" title="Что для нас важно" />
+      <div class="simple-grid simple-grid--three">
+        <article class="surface-card info-card"><h3>Честный подход</h3><p>Мы говорим о продукте просто и без лишних обещаний.</p></article>
+        <article class="surface-card info-card"><h3>Понятный результат</h3><p>Достать, разогреть и подать без лишней возни.</p></article>
+        <article class="surface-card info-card"><h3>Прозрачность</h3><p>Состав, КБЖУ и способ приготовления показываются прямо в карточке SKU.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <SectionHead eyebrow="Ассортимент" title="Что можно посмотреть уже сейчас" />
+      <div class="catalog-grid">{products.map((product) => <ProductCard product={product} />)}</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container"><article class="surface-card info-card"><SectionHead compact eyebrow="Связь" title="Для покупателей и партнёров" lead="Если нужен официальный контакт или информация по сотрудничеству, используйте страницу контактов." /><div class="button-group"><a class="button" href="/kontakty/">Контакты</a></div></article></div>
+  </section>
+</BaseLayout>

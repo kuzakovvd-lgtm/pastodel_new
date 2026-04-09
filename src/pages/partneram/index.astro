@@ -1,0 +1,97 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageIntro from '@/components/common/PageIntro.astro';
+import SectionHead from '@/components/common/SectionHead.astro';
+import ProductCard from '@/components/catalog/ProductCard.astro';
+import FormRuntime from '@/components/forms/FormRuntime.astro';
+import partnerIntro from '@/assets/page-intro/partneram.DMd1JByY_1rJtxO.webp';
+import { getProducts } from '@/data/product-utils';
+
+const products = getProducts().slice(0, 3);
+---
+<BaseLayout
+  title="Решения для сетевого ритейла Pastodel — ассортимент и условия запуска"
+  description="Запуск Pastodel в ритейле: ассортимент, стартовые условия, калькулятор маржи и форма для коммерческого обсуждения."
+>
+  <PageIntro
+    eyebrow="Ритейл"
+    title="Решения для сетевого ритейла"
+    description="Понятный продуктовый ассортимент и удобный формат обсуждения запуска в торговой сети."
+    image={partnerIntro}
+    imageAlt="Иллюстрация Pastodel для страницы партнёров"
+    breadcrumbs={[{ href: '/', label: 'Главная' }, { label: 'Партнёрам' }]}
+    actions={[
+      { href: '#partner-form', label: 'Оставить заявку' },
+      { href: '/katalog/', label: 'Смотреть ассортимент', secondary: true }
+    ]}
+  />
+
+  <section class="section section--tight-top">
+    <div class="container">
+      <SectionHead eyebrow="Почему сейчас" title="Почему категория заморозки снова в фокусе" />
+      <div class="simple-grid simple-grid--three">
+        <article class="surface-card info-card"><h3>Готовая еда стала привычкой</h3><p>Покупатель всё чаще выбирает сценарии быстрого ужина без потери вкуса.</p></article>
+        <article class="surface-card info-card"><h3>Долгий срок хранения снижает риск</h3><p>Замороженный формат помогает управлять остатками и снижать списания.</p></article>
+        <article class="surface-card info-card"><h3>Качество важно не меньше срока</h3><p>Решение должно быть не только удобным, но и предсказуемым по вкусу.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split-grid">
+      <article class="surface-card info-card">
+        <SectionHead compact eyebrow="Полка" title="Что важно для полки" lead="Ниже риск списаний, удобный вход в категорию и стабильный продукт для повторных покупок." />
+      </article>
+      <article class="surface-card info-card" data-margin-calculator>
+        <SectionHead compact eyebrow="Расчёт" title="Калькулятор маржи" lead="Быстрый ориентир для первичного обсуждения экономики." />
+        <div class="form-grid">
+          <div class="field"><label for="menu-price">Цена продажи</label><input id="menu-price" type="number" min="0" step="1" placeholder="Например, 320" data-menu-price /></div>
+          <div class="field"><label for="purchase-price">Закупочная стоимость</label><input id="purchase-price" type="number" min="0" step="1" placeholder="Например, 180" data-purchase-price /></div>
+        </div>
+        <p class="metric"><span>Маржа</span> <strong data-margin-output>0%</strong></p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <SectionHead eyebrow="Ассортимент" title="Что можно обсудить на старте" lead="Паста, ризотто и паэлья в едином формате 400 г." />
+      <div class="catalog-grid">
+        {products.map((product) => <ProductCard product={product} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container pd-form-shell" id="partner-form">
+      <form class="surface-card form-card" data-validated-form data-form-name="partneram-b2b" data-success-message="Спасибо. Заявка отправлена. Мы свяжемся с вами в течение одного рабочего дня." novalidate>
+        <SectionHead eyebrow="Форма заявки" title="Запросить условия сотрудничества" lead="Оставьте контакты, и мы вернёмся с предложением по запуску." />
+        <div class="form-grid">
+          <div class="field"><label for="partner-company">Название сети</label><input id="partner-company" name="company" type="text" placeholder="Название сети" data-required-field /><p class="pd-form-error" data-error-for="company"></p></div>
+          <div class="field"><label for="partner-stores">Количество ТТ</label><input id="partner-stores" name="store_count" type="text" placeholder="Например, 25" data-required-field /><p class="pd-form-error" data-error-for="store_count"></p></div>
+          <div class="field"><label for="partner-city">Город</label><input id="partner-city" name="city" type="text" placeholder="Город" data-required-field /><p class="pd-form-error" data-error-for="city"></p></div>
+          <div class="field"><label for="partner-email">Email</label><input id="partner-email" name="email" type="email" placeholder="name@company.ru" data-required-field /><p class="pd-form-error" data-error-for="email"></p></div>
+          <div class="field"><label for="partner-phone">Телефон</label><input id="partner-phone" name="phone" type="tel" inputmode="tel" placeholder="+7 (___) ___-__-__" data-required-field data-phone-field /><p class="pd-form-error" data-error-for="phone"></p></div>
+          <div class="field field--full">
+            <label for="partner-request-type">Тип запроса</label>
+            <select id="partner-request-type" name="request_type" data-prefill-field="partner-request" data-query-param="request" data-query-map='{"conditions":"Запрос условий","commercial":"Коммерческое предложение","pilot":"Обсуждение пилота"}'>
+              <option value="Запрос условий">Запрос условий</option>
+              <option value="Коммерческое предложение">Коммерческое предложение</option>
+              <option value="Обсуждение пилота">Обсуждение пилота</option>
+            </select>
+          </div>
+        </div>
+        <input type="hidden" name="product" value="" data-prefill-field="partner-product" data-query-param="product" />
+        <label class="pd-checkbox"><input type="checkbox" name="privacy" required /><span>Я согласен с <a href="/politika-konfidentsialnosti/">политикой конфиденциальности</a> и обработкой персональных данных.</span></label>
+        <p class="pd-form-error" data-error-for="privacy"></p>
+        <div class="form-honeypot" aria-hidden="true"><label for="partner-company-site">Не заполняйте это поле</label><input id="partner-company-site" name="company_site" type="text" tabindex="-1" autocomplete="off" /></div>
+        <div class="button-group"><button class="button" type="submit">Получить коммерческое предложение</button></div>
+        <p class="pd-form-note">Ответим в течение 1 рабочего дня.</p>
+        <p class="pd-form-note pd-form-note--muted">Интеграция с production endpoint будет подключена после подтверждения API.</p>
+        <p class="pd-form-error" data-form-request-error hidden></p>
+        <p class="pd-form-success" data-form-success hidden>Спасибо. Заявка отправлена. Мы свяжемся с вами в течение одного рабочего дня.</p>
+      </form>
+    </div>
+  </section>
+  <FormRuntime />
+</BaseLayout>

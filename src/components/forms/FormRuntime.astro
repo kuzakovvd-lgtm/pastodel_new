@@ -1,0 +1,369 @@
+<script>
+  const getDigits = (value) => String(value || '').replace(/\D/g, '');
+
+  const normalizePhoneValue = (rawValue) => {
+    const digits = getDigits(rawValue);
+    const local = digits.startsWith('7') ? digits.slice(1) : digits.startsWith('8') ? digits.slice(1) : digits;
+    const safe = local.slice(0, 10);
+    const p1 = safe.slice(0, 3);
+    const p2 = safe.slice(3, 6);
+    const p3 = safe.slice(6, 8);
+    const p4 = safe.slice(8, 10);
+    let out = '+7';
+    if (p1) out += ` (${p1}`;
+    if (p1.length === 3) out += ')';
+    if (p2) out += ` ${p2}`;
+    if (p3) out += `-${p3}`;
+    if (p4) out += `-${p4}`;
+    return out;
+  };
+
+  const parseQueryMap = (raw) => {
+    if (!raw) return undefined;
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+
+  const prefillFromQuery = () => {
+    const url = new URL(window.location.href);
+    document.querySelectorAll('[data-prefill-field]').forEach((field) => {
+      if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement)) return;
+      const queryParam = field.dataset.queryParam;
+      if (!queryParam) return;
+      const raw = url.searchParams.get(queryParam);
+      if (!raw) return;
+      const queryMap = parseQueryMap(field.dataset.queryMap);
+      const value = queryMap && queryMap[raw] ? queryMap[raw] : raw;
+      field.value = value;
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  };
+
+  const initPrefillButtons = () => {
+    document.querySelectorAll('[data-prefill-target]').forEach((trigger) => {
+      if (!(trigger instanceof HTMLElement)) return;
+      trigger.addEventListener('click', () => {
+        const target = trigger.dataset.prefillTarget;
+        const value = trigger.dataset.prefillValue;
+        if (!target || !value) return;
+        const field = document.querySelector(`[data-prefill-field="${target}"]`);
+        if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement)) return;
+        field.value = value;
+        field.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    });
+  };
+
+  const setFieldError = (form, fieldName, message) => {
+    const errorNode = form.querySelector(`[data-error-for="${fieldName}"]`);
+    if (!(errorNode instanceof HTMLElement)) return;
+    errorNode.textContent = message;
+  };
+
+  const clearFormErrors = (form) => {
+    form.querySelectorAll('[data-error-for]').forEach((node) => {
+      if (node instanceof HTMLElement) node.textContent = '';
+    });
+    const requestError = form.querySelector('[data-form-request-error]');
+    if (requestError instanceof HTMLElement) {
+      requestError.hidden = true;
+      requestError.textContent = '';
+    }
+  };
+
+  const showSuccess = (form) => {
+    const success = form.querySelector('[data-form-success]');
+    if (success instanceof HTMLElement) success.hidden = false;
+  };
+
+  const showRequestError = (form, message) => {
+    const error = form.querySelector('[data-form-request-error]');
+    if (!(error instanceof HTMLElement)) return;
+    error.hidden = false;
+    error.textContent = message;
+  };
+
+  const validateForm = (form) => {
+    let valid = true;
+    form.querySelectorAll('[data-required-field]').forEach((field) => {
+      if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement)) return;
+      const value = field.value.trim();
+      if (!value) {
+        valid = false;
+        setFieldError(form, field.name, 'Пожалуйста, заполните обязательное поле.');
+      }
+      if (field instanceof HTMLInputElement && field.type === 'email' && value) {
+        const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        if (!ok) {
+          valid = false;
+          setFieldError(form, field.name, 'Проверьте формат email.');
+        }
+      }
+    });
+
+    form.querySelectorAll('[data-phone-field]').forEach((field) => {
+      if (!(field instanceof HTMLInputElement)) return;
+      const digits = getDigits(field.value);
+      if (field.hasAttribute('data-required-field') && digits.length < 11) {
+        valid = false;
+        setFieldError(form, field.name, 'Пожалуйста, укажите телефон в формате +7 (___) ___-__-__.');
+      }
+    });
+
+    form.querySelectorAll('input[type="checkbox"][required]').forEach((field) => {
+      if (!(field instanceof HTMLInputElement)) return;
+      if (!field.checked) {
+        valid = false;
+        setFieldError(form, field.name, 'Необходимо согласие для отправки формы.');
+      }
+    });
+
+    return valid;
+  };
+
+  const getFormPayload = (form) => {
+    const data = new FormData(form);
+    const payload = {};
+    for (const [key, value] of data.entries()) {
+      payload[key] = typeof value === 'string' ? value : '';
+    }
+    return payload;
+  };
+
+  // TODO: attach real verified endpoint via window.__PASTODEL_FORMS_ENDPOINT after backend confirmation.
+  const submitViaAdapter = async (form) => {
+    const endpoint = window.__PASTODEL_FORMS_ENDPOINT;
+    const payload = getFormPayload(form);
+
+    if (payload.company_site) {
+      return { ok: true, mode: 'honeypot' };
+    }
+
+    if (typeof endpoint === 'string' && endpoint.startsWith('http')) {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ form: form.dataset.formName || 'unknown', payload })
+      });
+      return { ok: res.ok, mode: 'remote' };
+    }
+
+    return { ok: true, mode: 'stub' };
+  };
+
+  const initPhoneMasks = (form) => {
+    form.querySelectorAll('[data-phone-field]').forEach((field) => {
+      if (!(field instanceof HTMLInputElement)) return;
+      field.addEventListener('input', () => {
+        field.value = normalizePhoneValue(field.value);
+      });
+      field.addEventListener('blur', () => {
+        field.value = normalizePhoneValue(field.value);
+      });
+    });
+  };
+
+  const initValidatedForms = () => {
+    document.querySelectorAll('[data-validated-form]').forEach((form) => {
+      if (!(form instanceof HTMLFormElement)) return;
+      const submitButton = form.querySelector('button[type="submit"]');
+      const successNode = form.querySelector('[data-form-success]');
+      if (successNode instanceof HTMLElement) successNode.hidden = true;
+      initPhoneMasks(form);
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        clearFormErrors(form);
+
+        if (!validateForm(form)) return;
+
+        if (submitButton instanceof HTMLButtonElement) {
+          submitButton.disabled = true;
+          submitButton.dataset.prevLabel = submitButton.textContent || '';
+          submitButton.textContent = 'Отправка...';
+        }
+
+        try {
+          const result = await submitViaAdapter(form);
+          if (!result.ok) {
+            showRequestError(form, 'Не удалось отправить форму. Попробуйте позже.');
+            return;
+          }
+          showSuccess(form);
+          form.reset();
+        } catch {
+          showRequestError(form, 'Не удалось отправить форму. Попробуйте позже.');
+        } finally {
+          if (submitButton instanceof HTMLButtonElement) {
+            submitButton.disabled = false;
+            submitButton.textContent = submitButton.dataset.prevLabel || 'Отправить';
+          }
+        }
+      });
+    });
+  };
+
+  const initMarginCalculator = () => {
+    document.querySelectorAll('[data-margin-calculator]').forEach((calculator) => {
+      if (!(calculator instanceof HTMLElement)) return;
+      const menuPrice = calculator.querySelector('[data-menu-price]');
+      const purchasePrice = calculator.querySelector('[data-purchase-price]');
+      const output = calculator.querySelector('[data-margin-output]');
+      if (!(menuPrice instanceof HTMLInputElement) || !(purchasePrice instanceof HTMLInputElement) || !(output instanceof HTMLElement)) return;
+
+      const recalc = () => {
+        const menu = Number(menuPrice.value);
+        const purchase = Number(purchasePrice.value);
+        if (!menu || !purchase || menu <= purchase) {
+          output.textContent = '0%';
+          return;
+        }
+        const margin = Math.round(((menu - purchase) / menu) * 100);
+        output.textContent = `${margin}%`;
+      };
+
+      menuPrice.addEventListener('input', recalc);
+      purchasePrice.addEventListener('input', recalc);
+      recalc();
+    });
+  };
+
+  const initGatewayForm = () => {
+    const shell = document.querySelector('[data-gateway-form-shell]');
+    if (!(shell instanceof HTMLElement)) return;
+    const form = shell.querySelector('[data-gateway-form]');
+    if (!(form instanceof HTMLFormElement)) return;
+
+    const scenarioButtons = Array.from(shell.querySelectorAll('[data-scenario-trigger]'));
+    const scenarioPanels = Array.from(shell.querySelectorAll('[data-scenario-panel]'));
+    const heading = shell.querySelector('[data-scenario-heading]');
+    const copy = shell.querySelector('[data-scenario-copy]');
+    const businessTypeField = form.querySelector('[data-business-type-field]');
+
+    const steps = Array.from(form.querySelectorAll('[data-form-step]'));
+    const indicators = Array.from(shell.querySelectorAll('[data-step-indicator]'));
+    const nextButtons = Array.from(form.querySelectorAll('[data-step-next]'));
+    const backButtons = Array.from(form.querySelectorAll('[data-step-back]'));
+    const requestField = form.querySelector('[data-request-field]');
+
+    let currentScenario = 'retail';
+    let currentStep = 1;
+
+    const scenarioMeta = {
+      retail: {
+        heading: 'Запрос для ритейла',
+        copy: 'Оставьте контакты, и мы вернёмся с ассортиментом и условиями для обсуждения запуска.',
+        businessType: 'Ритейл',
+        request: 'Получить условия'
+      },
+      horeca: {
+        heading: 'Запрос для HoReCa',
+        copy: 'Расскажите о формате заведения, и мы подготовим предложения по позициям и условиям.',
+        businessType: 'HoReCa',
+        request: 'Заказать дегустацию'
+      },
+      distributor: {
+        heading: 'Запрос дистрибьютора',
+        copy: 'Оставьте регион и детали запроса, чтобы обсудить формат дистрибуции.',
+        businessType: 'Дистрибьютор',
+        request: 'Обсудить сотрудничество'
+      }
+    };
+
+    const syncRequired = () => {
+      form.querySelectorAll('[data-required-field]').forEach((field) => {
+        field.removeAttribute('data-required-field');
+      });
+
+      form.querySelectorAll('[data-step-required]').forEach((field) => {
+        if (currentStep === 1 || currentStep === 3) {
+          field.setAttribute('data-required-field', '');
+        }
+      });
+
+      form.querySelectorAll('[data-scenario-required]').forEach((field) => {
+        if (field.getAttribute('data-scenario-required') === currentScenario && currentStep === 2) {
+          field.setAttribute('data-required-field', '');
+        }
+      });
+    };
+
+    const syncScenario = () => {
+      const meta = scenarioMeta[currentScenario] || scenarioMeta.retail;
+      if (heading instanceof HTMLElement) heading.textContent = meta.heading;
+      if (copy instanceof HTMLElement) copy.textContent = meta.copy;
+      if (businessTypeField instanceof HTMLInputElement) businessTypeField.value = meta.businessType;
+      if (requestField instanceof HTMLSelectElement) requestField.value = meta.request;
+
+      scenarioButtons.forEach((btn) => {
+        if (!(btn instanceof HTMLButtonElement)) return;
+        const active = btn.dataset.scenario === currentScenario;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-pressed', String(active));
+      });
+
+      scenarioPanels.forEach((panel) => {
+        if (!(panel instanceof HTMLElement)) return;
+        const active = panel.dataset.scenarioPanel === currentScenario;
+        panel.hidden = !active;
+      });
+
+      syncRequired();
+    };
+
+    const syncStep = () => {
+      steps.forEach((panel) => {
+        if (!(panel instanceof HTMLElement)) return;
+        const step = Number(panel.dataset.formStep || '1');
+        panel.hidden = step !== currentStep;
+      });
+      indicators.forEach((chip) => {
+        if (!(chip instanceof HTMLElement)) return;
+        const step = Number(chip.dataset.stepIndicator || '1');
+        chip.classList.toggle('is-active', step === currentStep);
+      });
+      syncRequired();
+    };
+
+    scenarioButtons.forEach((btn) => {
+      if (!(btn instanceof HTMLButtonElement)) return;
+      btn.addEventListener('click', () => {
+        currentScenario = btn.dataset.scenario || 'retail';
+        syncScenario();
+      });
+    });
+
+    nextButtons.forEach((btn) => {
+      if (!(btn instanceof HTMLButtonElement)) return;
+      btn.addEventListener('click', () => {
+        if (currentStep < 3) {
+          currentStep += 1;
+          syncStep();
+        }
+      });
+    });
+
+    backButtons.forEach((btn) => {
+      if (!(btn instanceof HTMLButtonElement)) return;
+      btn.addEventListener('click', () => {
+        if (currentStep > 1) {
+          currentStep -= 1;
+          syncStep();
+        }
+      });
+    });
+
+    syncScenario();
+    syncStep();
+  };
+
+  prefillFromQuery();
+  initPrefillButtons();
+  initValidatedForms();
+  initMarginCalculator();
+  initGatewayForm();
+</script>
