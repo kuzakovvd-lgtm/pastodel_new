@@ -36,3 +36,33 @@
 
 - Не хранить SSH ключи/секреты в репозитории.
 - Не удалять старый live до полного принятия нового сайта.
+
+## Pre-Deploy Baseline Checklist (без деплоя)
+
+1. Build
+- `npm run build` проходит без ошибок.
+
+2. Route coverage
+- Проверены ключевые маршруты:
+  - `/`, `/katalog/`, `/katalog/[slug]/`, `/katalog/horeca/[slug]/`
+  - `/partneram/`, `/horeca/`, `/stat-partnerom/`, `/kontakty/`
+  - content/legal pages.
+
+3. Forms placeholder status
+- Подтверждено: production endpoint не подключён.
+- `FormRuntime` работает через safe adapter placeholder (`window.__PASTODEL_FORMS_ENDPOINT`).
+
+4. SEO basics
+- На страницах есть `title`, `description`, `canonical`.
+- Базовые Open Graph/Twitter meta через `BaseLayout`.
+
+5. Cache strategy
+- `/_astro/*` hashed assets (immutable strategy).
+- HTML должен отдаваться с коротким cache TTL.
+
+6. Manual QA points
+- Header/nav/sticky/compact behavior.
+- Hero/section order/cards/CTA.
+- Forms UX (validation/loading/success/error, gateway flow).
+- Responsive: desktop/tablet/mobile.
+- Accessibility base: skip link, keyboard focus-visible, aria атрибуты.

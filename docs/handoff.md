@@ -8,6 +8,8 @@
 - ключевые B2B/content/legal страницы,
 - UI+runtime слой форм без угадывания production endpoint.
 
+После текущего этапа выполнен приоритетный visual QA pass и закрыты ключевые structural расхождения по `/`, `/katalog/*`, `/partneram/`, `/horeca/`, `/stat-partnerom/`, `/kontakty/`.
+
 Сборка подтверждена: `npm run build`.
 
 ## Что сделано
@@ -20,6 +22,12 @@
   - `FormRuntime.astro` (валидация, prefill, phone formatting, success/error, gateway steps, margin calc).
 - Добавлены intro-иллюстрации страниц в `src/assets/page-intro/*`.
 - Расширен `global.css` под новые страницы/формы.
+- Проведён structured visual QA (desktop/tablet/mobile для top routes, desktop для B2B/contact routes).
+- Добавлен отчёт `docs/visual-qa.md`.
+- Исправлены critical/medium визуальные расхождения:
+  - структура главной страницы приведена ближе к live,
+  - добавлен рекомендательный блок на product routes,
+  - скорректированы grid/hero-пропорции и focus-visible базовый стиль.
 
 ## Что не сделано
 
@@ -31,6 +39,7 @@
 
 - Без подтверждённого backend endpoint формы работают в безопасном stub-режиме.
 - Разделы `novosti`, `dokumenty`, legal по live имеют каркасный характер; контент ограничен тем, что реально подтверждается live.
+- Прямой screenshot-захват `https://pastodel.ru` из Playwright в текущем окружении нестабилен (timeout), поэтому в visual QA использован локально обслуживаемый live snapshot baseline (`/dist`).
 
 ## Решение по `public/images/product-paelya.webp`
 
@@ -40,6 +49,6 @@
 
 ## Следующий шаг
 
-1. Провести визуальный regression QA новых страниц против live (desktop/tablet/mobile).
-2. Довести главную страницу до полного live-соответствия.
-3. После контентного freeze подготовить pre-deploy checklist (без переключения домена на этом этапе).
+1. Закрыть low-priority визуальный polish (spacing/type fine-tuning).
+2. Провести финальный ручной regression pass всех routes из списка перед pre-deploy.
+3. Сохранить forms endpoint в placeholder-режиме до подтверждения API.
