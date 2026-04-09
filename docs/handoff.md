@@ -57,3 +57,13 @@
 ## Known limitation
 
 - Forms production endpoint is still placeholder-safe and intentionally not integrated.
+
+## GitHub sync state
+
+- Repository: `kuzakovvd-lgtm/pastodel_new`
+- Active branch: `main`
+- Remote: `origin -> git@github.com:kuzakovvd-lgtm/pastodel_new.git`
+- Publication issue was resolved:
+  - previously `origin/main` was missing (`[gone]`, no remote heads)
+  - executed safe publish: `git push -u origin main`
+  - remote now contains full project tree (`README.md`, `src`, `docs`, `scripts`, config files) and current commit history.

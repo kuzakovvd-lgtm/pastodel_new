@@ -31,6 +31,12 @@ Current phase: `Cutover executed successfully`.
   - after user report of persistent issue, analyzed live 404 logs and found stale legacy requests (`/_astro/page.D1uwR3nK.js`, `/js/app.js`, `/fonts/*-latin-*.woff2`)
   - added compatibility assets from previous live release into current root (`_astro`, `js`, `fonts`) with `rsync --ignore-existing`
   - validated previously missing legacy URLs now return `200` with correct content-types
+- GitHub repository publication fixed:
+  - verified remote points to `git@github.com:kuzakovvd-lgtm/pastodel_new.git`
+  - diagnosed root cause: `origin/main` was absent on GitHub (`git ls-remote --heads origin` returned empty output)
+  - pushed current local branch safely: `git push -u origin main` (no force push)
+  - confirmed remote branch now exists and tracks local `main`
+  - confirmed GitHub tree contains project roots: `README.md`, `src/`, `docs/`, `scripts/`, configs
 
 ## Live state now
 
