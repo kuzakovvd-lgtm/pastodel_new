@@ -41,6 +41,9 @@
   - `nginx -t` + reload
   - re-ran live smoke; image assets now return `200` with `image/webp`.
   - added compatibility sync for stale hashed assets: previous release `/_astro/*` is merged into new release `/_astro/*` with `rsync --ignore-existing`.
+  - additional compatibility for stale legacy app shell requests:
+    - merged previous release `/js/*` and `/fonts/*` into current release with `rsync --ignore-existing`.
+    - confirmed previously failing URLs from logs now return `200`.
 
 ## Current rollback reference
 

@@ -79,6 +79,7 @@ Prevention for next cutovers:
 - create backup directly in `/etc/nginx/backup/`, never inside `sites-enabled/`.
 - preserve hashed asset backward compatibility for stale HTML caches:
   - before switching symlink, merge previous `current/_astro/` into new `release/_astro/` with `rsync --ignore-existing`.
+  - also preserve legacy `/js/*` and `/fonts/*` from previous current to protect users with stale old app shell.
   - this is now built into `scripts/deploy-preview.sh` (`PRESERVE_ASTRO_ASSETS=1` by default).
 
 ## Preview (unchanged)

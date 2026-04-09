@@ -28,6 +28,9 @@ Current phase: `Cutover executed successfully`.
   - identified nginx include conflict from backup file inside `sites-enabled`
   - moved backup to `/etc/nginx/backup/`, validated `nginx -t`, reloaded nginx
   - re-ran live checks for `/`, `/katalog/`, `/katalog/karbonara/`, `/katalog/horeca/karbonara/` — image assets `200 image/webp`
+  - after user report of persistent issue, analyzed live 404 logs and found stale legacy requests (`/_astro/page.D1uwR3nK.js`, `/js/app.js`, `/fonts/*-latin-*.woff2`)
+  - added compatibility assets from previous live release into current root (`_astro`, `js`, `fonts`) with `rsync --ignore-existing`
+  - validated previously missing legacy URLs now return `200` with correct content-types
 
 ## Live state now
 

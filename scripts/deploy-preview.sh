@@ -87,6 +87,7 @@ RELEASE_DIR="${DEPLOY_BASE}/releases/${RELEASE_ID}"
 REMOTE_PREP="mkdir -p '${RELEASE_DIR}' '${DEPLOY_BASE}/releases'"
 REMOTE_LINK="ln -sfn '${RELEASE_DIR}' '${DEPLOY_BASE}/current'"
 REMOTE_COMPAT_ASTRO="if [ '${PRESERVE_ASTRO_ASSETS}' = '1' ] && [ -d '${DEPLOY_BASE}/current/_astro' ]; then mkdir -p '${RELEASE_DIR}/_astro' && rsync -a --ignore-existing '${DEPLOY_BASE}/current/_astro/' '${RELEASE_DIR}/_astro/'; fi"
+REMOTE_COMPAT_LEGACY="if [ '${PRESERVE_ASTRO_ASSETS}' = '1' ]; then if [ -d '${DEPLOY_BASE}/current/js' ]; then mkdir -p '${RELEASE_DIR}/js' && rsync -a --ignore-existing '${DEPLOY_BASE}/current/js/' '${RELEASE_DIR}/js/'; fi; if [ -d '${DEPLOY_BASE}/current/fonts' ]; then mkdir -p '${RELEASE_DIR}/fonts' && rsync -a --ignore-existing '${DEPLOY_BASE}/current/fonts/' '${RELEASE_DIR}/fonts/'; fi; fi"
 REMOTE_OWNER="chown -R '${DEPLOY_OWNER_GROUP}' '${RELEASE_DIR}' && chown -h '${DEPLOY_OWNER_GROUP}' '${DEPLOY_BASE}/current'"
 REMOTE_PERMS="find '${DEPLOY_BASE}' -type d -exec chmod 755 {} +; find '${DEPLOY_BASE}' -type f -exec chmod 644 {} +"
 
@@ -100,6 +101,7 @@ if [[ "$APPLY" -eq 0 ]]; then
   COPYFILE_DISABLE=1 tar -C dist -cf - . | ${SSH_CMD[*]} "tar -xf - -C '${RELEASE_DIR}'"
   ${SSH_CMD[*]} "find '${RELEASE_DIR}' -name '._*' -type f -delete"
   ${SSH_CMD[*]} "$REMOTE_COMPAT_ASTRO"
+  ${SSH_CMD[*]} "$REMOTE_COMPAT_LEGACY"
   ${SSH_CMD[*]} "$REMOTE_LINK"
   ${SSH_CMD[*]} "$REMOTE_OWNER"
   ${SSH_CMD[*]} "$REMOTE_PERMS"
@@ -118,6 +120,9 @@ echo "[deploy-preview] Cleaning macOS metadata files if present..."
 
 echo "[deploy-preview] Preserving previous _astro assets for cache-compatibility..."
 "${SSH_CMD[@]}" "$REMOTE_COMPAT_ASTRO"
+
+echo "[deploy-preview] Preserving previous legacy js/fonts assets for cache-compatibility..."
+"${SSH_CMD[@]}" "$REMOTE_COMPAT_LEGACY"
 
 echo "[deploy-preview] Switching current symlink to new release..."
 "${SSH_CMD[@]}" "$REMOTE_LINK"
