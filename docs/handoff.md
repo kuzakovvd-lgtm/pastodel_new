@@ -1,43 +1,40 @@
 # Handoff
 
-## Current pre-release state (April 9, 2026)
+## Current production state (April 9, 2026)
 
-- New site staged and verified in isolated root:
+- Live cutover completed.
+- Live domain `https://pastodel.ru` now serves from:
+  - `root /var/www/pastodel_new/current;`
+- Active staging/current release at cutover:
   - `/var/www/pastodel_new/releases/20260409-154930`
   - `/var/www/pastodel_new/current -> /var/www/pastodel_new/releases/20260409-154930`
-- Preview endpoint: `http://127.0.0.1:8081`
-- Live domain `https://pastodel.ru` has NOT been switched.
 
-## What is done
+## What was executed
 
-- Added SEO artifacts and generation:
-  - `public/robots.txt`
-  - Astro sitemap integration in config
-- Added/updated deploy tooling:
-  - `scripts/check-build.sh` (strict artifact checks)
-  - `scripts/deploy-preview.sh` (deploy + owner/perms normalization)
-  - `scripts/smoke-preview.sh` (portable preview smoke without `rg` dependency)
-- Deployed new staging release and validated:
-  - all required routes return HTTP 200 on preview
-  - canonical/title checks pass
-  - robots/sitemap host consistency pass
-  - page asset URLs resolve without 404 in smoke scope
-  - forms remain placeholder-safe
+1. Backup active config file:
+   - source: `/etc/nginx/sites-enabled/pastodel.ru`
+   - backup: `/etc/nginx/sites-enabled/pastodel.ru.bak.cutover-20260409-01`
+2. Root switch in active file (`sites-enabled`).
+3. `nginx -t` + `systemctl reload nginx`.
+4. Post-switch live smoke passed (critical routes + canonical + robots + sitemap + assets on home page).
+5. Synced `sites-available/pastodel.ru` from active config to remove drift.
 
-## What is NOT done
+## Important remediation after cutover
 
-- No live cutover.
-- No nginx live-root modification for domain traffic.
-- No production forms endpoint integration.
+- Backup inside `sites-enabled` caused duplicate `server_name` warnings due wildcard include.
+- Backup was moved (not deleted) to:
+  - `/etc/nginx/backup/pastodel.ru.bak.cutover-20260409-01`
+- Re-validated with `nginx -t` and reloaded nginx.
 
-## Remaining risks
+## Current rollback reference
 
-- Forms endpoint is still placeholder-only by design.
-- Release success in production still depends on controlled cutover and immediate post-switch smoke.
+- Rollback source file:
+  - `/etc/nginx/backup/pastodel.ru.bak.cutover-20260409-01`
+- Rollback command pattern:
+  - copy backup back to `/etc/nginx/sites-enabled/pastodel.ru`
+  - `nginx -t`
+  - `systemctl reload nginx`
 
-## Next step
+## Known limitation
 
-1. Wait for explicit user confirmation to execute cutover.
-2. Perform cutover exactly per `docs/deploy.md` (backup config -> root switch -> nginx test/reload).
-3. Run first-5-minute post-switch smoke.
-4. If needed, execute rollback plan from `docs/deploy.md`.
+- Forms production endpoint is still placeholder-safe and intentionally not integrated.
