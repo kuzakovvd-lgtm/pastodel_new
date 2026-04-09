@@ -2,47 +2,56 @@
 
 ## Status
 
-Current phase: `Server pre-release staging completed (without cutover)`.
+Current phase: `Final pre-cutover validation completed (no cutover executed)`.
 
-## What was done in this stage
+## Confirmed in this phase
 
-- Verified server access and inspected existing nginx config safely.
-- Confirmed live remains on `/var/www/pastodel` (symlink-based live release).
-- Built local static output (`npm run build`).
-- Performed real staging deploy to separate directory:
-  - `/var/www/pastodel_new/releases/20260409-151205`
-  - `/var/www/pastodel_new/current -> /var/www/pastodel_new/releases/20260409-151205`
-- Removed macOS metadata files (`._*`) from staged release and normalized permissions.
-- Added isolated preview nginx server block on localhost-only endpoint `127.0.0.1:8081`.
-- Verified preview response (`HTTP 200`) and live response (`https://pastodel.ru`, `HTTP 200`) after changes.
+- SEO/runtime artifacts implemented and verified:
+  - `robots.txt` in build output
+  - sitemap generation enabled via Astro sitemap integration
+  - canonical links use production host `https://pastodel.ru`
+  - favicon/static essentials present
+- New staging release deployed:
+  - `/var/www/pastodel_new/releases/20260409-154930`
+  - `/var/www/pastodel_new/current -> /var/www/pastodel_new/releases/20260409-154930`
+- Staging ownership normalized (`root:root`) and permissions normalized.
+- Final preview smoke-check passed on `http://127.0.0.1:8081` for all required routes.
+- Confirmed forms remain placeholder-safe (no unverified production endpoint wiring).
 
-## Production-readiness checks (no traffic switch)
+## Smoke scope (passed)
 
-Checked:
-- build output is generated from Astro static mode
-- hashed assets served from `/_astro/*`
-- route output exists for key sections/pages
-- forms remain in placeholder adapter mode (no unconfirmed endpoint integration)
+Routes:
+- `/`
+- `/katalog/`
+- `/katalog/karbonara/`
+- `/katalog/horeca/karbonara/`
+- `/partneram/`
+- `/horeca/`
+- `/stat-partnerom/`
+- `/kontakty/`
+- `/o-kompanii/`
+- `/gde-kupit/`
+- `/otzyvy/`
+- `/dokumenty/`
+- `/novosti/`
+- `/proizvodstvo-i-kachestvo/`
+- `/politika-konfidentsialnosti/`
+- `/soglasie-na-obrabotku-dannyh/`
 
-Detected and documented for cutover preparation:
-- `robots.txt` not present in `dist`
-- sitemap file not present in `dist`
+Checks:
+- HTTP 200
+- title + canonical present
+- canonical host is production domain
+- page assets return 200
+- robots/sitemap host consistency
+- forms placeholder-safe runtime markers
 
-## Scripts
+## Remaining risks
 
-Added:
-- `scripts/check-build.sh` — build + artifact checks + warnings for robots/sitemap
-- `scripts/deploy-preview.sh` — safe deploy helper (dry-run by default, separate root only)
+- Production forms endpoint is intentionally not integrated (known and accepted for this stage).
+- Cutover not performed yet (blocked by explicit approval requirement).
 
-## What remains before final cutover
+## Ready state
 
-- Add/confirm `robots.txt` and sitemap generation strategy.
-- Execute final preview smoke + visual pass on staged version.
-- Receive explicit approval for live switch.
-- Perform controlled switch + post-switch verification + rollback readiness.
-
-## Risks / blockers
-
-- Forms production endpoint still intentionally not integrated.
-- Missing robots/sitemap in current output can affect SEO readiness if not handled pre-release.
-- Live-to-new switch not executed in this phase by design.
+- Ready for controlled switch from infrastructure perspective.
+- Awaiting explicit go/no-go confirmation for live cutover.

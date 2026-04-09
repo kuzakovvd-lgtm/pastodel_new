@@ -1,45 +1,43 @@
 # Handoff
 
-## Current state
+## Current pre-release state (April 9, 2026)
 
-The new Astro project has been staged on server in a separate directory and is previewable without touching live traffic.
+- New site staged and verified in isolated root:
+  - `/var/www/pastodel_new/releases/20260409-154930`
+  - `/var/www/pastodel_new/current -> /var/www/pastodel_new/releases/20260409-154930`
+- Preview endpoint: `http://127.0.0.1:8081`
+- Live domain `https://pastodel.ru` has NOT been switched.
 
-- Live remains active and unchanged.
-- Staged build location:
-  - `/var/www/pastodel_new/releases/20260409-151205`
-  - `/var/www/pastodel_new/current` -> staged release
-- Preview endpoint:
-  - `http://127.0.0.1:8081` (localhost-only nginx server block)
+## What is done
 
-## What was completed
+- Added SEO artifacts and generation:
+  - `public/robots.txt`
+  - Astro sitemap integration in config
+- Added/updated deploy tooling:
+  - `scripts/check-build.sh` (strict artifact checks)
+  - `scripts/deploy-preview.sh` (deploy + owner/perms normalization)
+  - `scripts/smoke-preview.sh` (portable preview smoke without `rg` dependency)
+- Deployed new staging release and validated:
+  - all required routes return HTTP 200 on preview
+  - canonical/title checks pass
+  - robots/sitemap host consistency pass
+  - page asset URLs resolve without 404 in smoke scope
+  - forms remain placeholder-safe
 
-- Safe server discovery (nginx + current live root mapping).
-- Real staging deploy (separate root, no overwrite of old live paths).
-- Permission normalization and metadata cleanup on staged release.
-- Preview server block configured and validated (`nginx -t`, reload, `HTTP 200` on preview).
-- Confirmed live domain still returns `HTTP 200` after staging actions.
-- Added deploy tooling:
-  - `scripts/check-build.sh`
-  - `scripts/deploy-preview.sh` (dry-run default)
-- Updated deployment runbook and rollout/rollback instructions in `docs/deploy.md`.
+## What is NOT done
 
-## What is not done
-
-- No live domain switch/cutover.
-- No nginx live-root change.
+- No live cutover.
+- No nginx live-root modification for domain traffic.
 - No production forms endpoint integration.
-- No robots/sitemap integration in current build output.
 
-## Risks
+## Remaining risks
 
-- `robots.txt` and sitemap are currently missing in `dist`, which should be resolved before final release.
-- Forms still use placeholder adapter by design; backend integration is a separate confirmed step.
-- Cutover was intentionally deferred; final release still requires explicit go-ahead.
+- Forms endpoint is still placeholder-only by design.
+- Release success in production still depends on controlled cutover and immediate post-switch smoke.
 
 ## Next step
 
-1. Add/confirm SEO static files strategy (`robots.txt` + sitemap generation).
-2. Run final pre-cutover smoke checklist against preview (`127.0.0.1:8081`).
-3. Prepare cutover change as a minimal nginx root switch with backup.
-4. Execute switch only after explicit approval, then run post-switch verification.
-5. Keep rollback command path ready (restore backup config + nginx reload).
+1. Wait for explicit user confirmation to execute cutover.
+2. Perform cutover exactly per `docs/deploy.md` (backup config -> root switch -> nginx test/reload).
+3. Run first-5-minute post-switch smoke.
+4. If needed, execute rollback plan from `docs/deploy.md`.

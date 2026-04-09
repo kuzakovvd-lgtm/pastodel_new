@@ -34,11 +34,17 @@ curl -s http://localhost:4321/kontakty/ | head -n 20
 scripts/check-build.sh
 DEPLOY_HOST=<server-host> DEPLOY_USER=root scripts/deploy-preview.sh
 DEPLOY_HOST=<server-host> DEPLOY_USER=root scripts/deploy-preview.sh --apply
+BASE_URL=http://127.0.0.1:8081 scripts/smoke-preview.sh
 ```
 
 Notes:
 - `deploy-preview.sh` by default runs in dry-run mode.
 - deploy target is a separate root (`/var/www/pastodel_new`) and does not switch live traffic.
+- for server-local preview checks, run smoke script over SSH:
+
+```bash
+ssh root@<server-host> 'BASE_URL=http://127.0.0.1:8081 bash -s' < scripts/smoke-preview.sh
+```
 
 ## Важно по формам
 
