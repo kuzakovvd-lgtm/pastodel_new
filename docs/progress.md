@@ -42,6 +42,7 @@ Current phase: `Cutover executed successfully`.
 ## Remaining risks
 
 - Forms endpoint remains placeholder by design (known limitation, unchanged).
+- Browser-side stale HTML cache can reference old hashed `/_astro/*` URLs across cutovers; compatibility sync for `_astro` is now applied in process.
 
 ## Next step
 

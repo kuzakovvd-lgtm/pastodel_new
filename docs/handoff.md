@@ -40,6 +40,7 @@
   - moved backup to `/etc/nginx/backup/`
   - `nginx -t` + reload
   - re-ran live smoke; image assets now return `200` with `image/webp`.
+  - added compatibility sync for stale hashed assets: previous release `/_astro/*` is merged into new release `/_astro/*` with `rsync --ignore-existing`.
 
 ## Current rollback reference
 

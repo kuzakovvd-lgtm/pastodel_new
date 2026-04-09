@@ -60,6 +60,7 @@ DEPLOY_HOST="${DEPLOY_HOST:-}"
 DEPLOY_USER="${DEPLOY_USER:-root}"
 DEPLOY_BASE="${DEPLOY_BASE:-/var/www/pastodel_new}"
 DEPLOY_OWNER_GROUP="${DEPLOY_OWNER_GROUP:-root:root}"
+PRESERVE_ASTRO_ASSETS="${PRESERVE_ASTRO_ASSETS:-1}"
 SSH_PORT="${SSH_PORT:-22}"
 
 if [[ -z "$DEPLOY_HOST" ]]; then
@@ -85,6 +86,7 @@ RELEASE_DIR="${DEPLOY_BASE}/releases/${RELEASE_ID}"
 
 REMOTE_PREP="mkdir -p '${RELEASE_DIR}' '${DEPLOY_BASE}/releases'"
 REMOTE_LINK="ln -sfn '${RELEASE_DIR}' '${DEPLOY_BASE}/current'"
+REMOTE_COMPAT_ASTRO="if [ '${PRESERVE_ASTRO_ASSETS}' = '1' ] && [ -d '${DEPLOY_BASE}/current/_astro' ]; then mkdir -p '${RELEASE_DIR}/_astro' && rsync -a --ignore-existing '${DEPLOY_BASE}/current/_astro/' '${RELEASE_DIR}/_astro/'; fi"
 REMOTE_OWNER="chown -R '${DEPLOY_OWNER_GROUP}' '${RELEASE_DIR}' && chown -h '${DEPLOY_OWNER_GROUP}' '${DEPLOY_BASE}/current'"
 REMOTE_PERMS="find '${DEPLOY_BASE}' -type d -exec chmod 755 {} +; find '${DEPLOY_BASE}' -type f -exec chmod 644 {} +"
 
@@ -97,6 +99,7 @@ if [[ "$APPLY" -eq 0 ]]; then
   ${SSH_CMD[*]} "$REMOTE_PREP"
   COPYFILE_DISABLE=1 tar -C dist -cf - . | ${SSH_CMD[*]} "tar -xf - -C '${RELEASE_DIR}'"
   ${SSH_CMD[*]} "find '${RELEASE_DIR}' -name '._*' -type f -delete"
+  ${SSH_CMD[*]} "$REMOTE_COMPAT_ASTRO"
   ${SSH_CMD[*]} "$REMOTE_LINK"
   ${SSH_CMD[*]} "$REMOTE_OWNER"
   ${SSH_CMD[*]} "$REMOTE_PERMS"
@@ -112,6 +115,9 @@ COPYFILE_DISABLE=1 tar -C dist -cf - . | "${SSH_CMD[@]}" "tar -xf - -C '${RELEAS
 
 echo "[deploy-preview] Cleaning macOS metadata files if present..."
 "${SSH_CMD[@]}" "find '${RELEASE_DIR}' -name '._*' -type f -delete"
+
+echo "[deploy-preview] Preserving previous _astro assets for cache-compatibility..."
+"${SSH_CMD[@]}" "$REMOTE_COMPAT_ASTRO"
 
 echo "[deploy-preview] Switching current symlink to new release..."
 "${SSH_CMD[@]}" "$REMOTE_LINK"
