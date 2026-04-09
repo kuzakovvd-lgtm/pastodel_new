@@ -60,6 +60,24 @@ nginx -t
 systemctl reload nginx
 ```
 
+## Incident note: broken images after cutover
+
+Observed symptom:
+- broken logo/hero/catalog images on live shortly after switch.
+
+Root cause:
+- backup file was created inside `/etc/nginx/sites-enabled/` and got included by wildcard include.
+- this created duplicate `server_name` entries and unstable config selection during requests.
+
+Fix applied:
+1. move backup out of `sites-enabled` into `/etc/nginx/backup/`
+2. `nginx -t`
+3. `systemctl reload nginx`
+4. run live smoke for `/`, `/katalog/`, product pages and image assets.
+
+Prevention for next cutovers:
+- create backup directly in `/etc/nginx/backup/`, never inside `sites-enabled/`.
+
 ## Preview (unchanged)
 
 - Preview config remains untouched:

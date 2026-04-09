@@ -21,6 +21,13 @@ Current phase: `Cutover executed successfully`.
   - `nginx -t` passed again and nginx reloaded again
 - Drift removed:
   - synced `/etc/nginx/sites-available/pastodel.ru` from active `/etc/nginx/sites-enabled/pastodel.ru`.
+- Image delivery incident diagnosed and fixed:
+  - verified live HTML asset URLs for `/` and `/katalog/`
+  - checked status/content-type/body signature for `/_astro/*`, `/images/*`, `/favicon.svg`
+  - confirmed files exist in `/var/www/pastodel_new/current` and current release with correct perms
+  - identified nginx include conflict from backup file inside `sites-enabled`
+  - moved backup to `/etc/nginx/backup/`, validated `nginx -t`, reloaded nginx
+  - re-ran live checks for `/`, `/katalog/`, `/katalog/karbonara/`, `/katalog/horeca/karbonara/` — image assets `200 image/webp`
 
 ## Live state now
 

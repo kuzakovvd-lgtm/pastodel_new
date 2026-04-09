@@ -26,6 +26,21 @@
   - `/etc/nginx/backup/pastodel.ru.bak.cutover-20260409-01`
 - Re-validated with `nginx -t` and reloaded nginx.
 
+## Post-cutover incident (resolved)
+
+- Symptom: broken images on live (`/`, `/katalog/`).
+- Investigation:
+  - extracted real image URLs from live HTML (`src`/`srcset`)
+  - checked HTTP status and content-type for `/_astro/*` and `/images/*`
+  - verified files existed in `/var/www/pastodel_new/current` and release with correct perms
+  - checked active nginx root/location/try_files rules
+- Root cause:
+  - backup config temporarily placed in `/etc/nginx/sites-enabled/` was included by wildcard and created duplicate `server_name` conflict.
+- Fix:
+  - moved backup to `/etc/nginx/backup/`
+  - `nginx -t` + reload
+  - re-ran live smoke; image assets now return `200` with `image/webp`.
+
 ## Current rollback reference
 
 - Rollback source file:
