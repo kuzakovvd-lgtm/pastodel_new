@@ -16,66 +16,63 @@
 - `src/pages/*` — file-based routing
 - `src/layouts/BaseLayout.astro` — SEO-обвязка, skip link, общий каркас
 - `src/components/*` — UI-компоненты
-- `src/data/*` — typed-контент для навигации, SKU, секций
+- `src/data/*` — typed-контент для навигации и SKU
 - `src/assets/*` — локальные изображения под `astro:assets`
-- `src/styles/global.css` — global tokens + базовые стили
+- `src/styles/global.css` — global tokens + общие стили
 
 ## Каталог и product routes
 
-- Страница каталога: `/katalog/`.
-- Dynamic routes:
-  - `/katalog/[slug]/` (retail)
-  - `/katalog/horeca/[slug]/` (horeca)
-- `getStaticPaths()` генерируется из единого data layer (`src/data/products.ts`).
+- `/katalog/`
+- `/katalog/[slug]/` (retail)
+- `/katalog/horeca/[slug]/` (horeca)
+- `getStaticPaths()` генерируется из `src/data/products.ts`.
 
-## Data model (typed)
+## Page section system
 
-- `src/data/product-types.ts`
-  - `ProductRecord` — общая сущность SKU (slug, category, line, shared flags).
-  - `ProductAudienceData` — аудитория-специфичные поля (route, title, weight, SEO, nutrition, prep, CTA и т.д.).
-  - `ProductAudience` — `retail | horeca`.
-- `src/data/products.ts`
-  - Единый массив продуктов `products: ProductRecord[]`.
-  - Для каждого SKU хранятся обе аудитории: `retail` и `horeca`.
-- `src/data/product-assets.ts`
-  - Линковка файлов из `src/assets/products` через `import.meta.glob`.
-- `src/data/product-utils.ts`
-  - `getProducts`, `getProductBySlug`, `getAudienceData`, `getCategoryLabel`.
+- `src/components/common/PageIntro.astro` — hero/intro + breadcrumbs + CTA.
+- `src/components/common/Breadcrumbs.astro` — единый breadcrumb блок.
+- `src/components/common/SectionHead.astro` — стандартизированный заголовок секций.
+- Повторяемые блоки страниц реализуются composable-компонентами + общими CSS-классами (`simple-grid`, `split-grid`, `info-card`).
 
-## Компоненты каталога
+## Form architecture
 
-- `src/components/catalog/CatalogAudienceSwitch.astro`
-  - Переключение режима каталога "Для дома / Для HoReCa".
-  - Минимальный client JS + сохранение выбора в `localStorage`.
-- `src/components/catalog/ProductCard.astro`
-  - Единая карточка SKU с переключаемыми retail/horeca состояниями.
+- Client runtime: `src/components/forms/FormRuntime.astro`.
+- Реализовано:
+  - базовая валидация required/email/phone
+  - prefill через query params (`data-prefill-field`, `data-query-param`, `data-query-map`)
+  - prefill через CTA-кнопки (`data-prefill-target`, `data-prefill-value`)
+  - honeypot-поле
+  - loading/success/error состояния
+  - margin calculator (`data-margin-calculator`)
+  - partner gateway step flow/scenario switch (`data-gateway-form-shell`)
+- Endpoint adapter:
+  - текущий placeholder: `window.__PASTODEL_FORMS_ENDPOINT`
+  - если endpoint не задан, используется безопасный stub-режим без угадывания прод endpoint
+  - место интеграции помечено TODO
 
-## Компоненты product page
+## Реализованные страницы этапа
 
-- `src/components/product/ProductDetailPage.astro`
-  - Breadcrumbs, hero, состав, КБЖУ, facts, prep tabs, CTA.
-- `src/components/product/ProductImage.astro`
-  - Рендер изображения через `astro:assets` с fallback.
-- `src/components/product/ProductMeta.astro`
-  - Короткие бейджи характеристик.
-- `src/components/product/PrepTabs.astro`
-  - Табы "Микроволновка/Сковорода" с минимальным JS.
-
-## JS-стратегия
-
-- Только необходимый client-side JS:
-  - mobile nav + compact header
-  - catalog audience switch
-  - prep tabs
-- Все скрипты инлайн на уровне компонентов, без legacy `public/js`.
+- `/partneram/`
+- `/horeca/`
+- `/gde-kupit/`
+- `/o-kompanii/`
+- `/otzyvy/`
+- `/kontakty/`
+- `/dokumenty/`
+- `/novosti/`
+- `/proizvodstvo-i-kachestvo/`
+- `/stat-partnerom/`
+- `/politika-konfidentsialnosti/`
+- `/soglasie-na-obrabotku-dannyh/`
 
 ## Кеширование и ассеты
 
 - Build-ассеты Astro (`/_astro/*`) hashed по умолчанию.
-- Product images перенесены в `src/assets/products` и обрабатываются через `astro:assets`.
-- Для deploy предполагается immutable cache для `/_astro/*` и более короткий cache для HTML (см. `docs/deploy.md`).
+- Product images и page intro images перенесены в `src/assets/*`.
+- Для deploy предполагается immutable cache для `/_astro/*` и короткий cache для HTML (см. `docs/deploy.md`).
 
 ## Подтверждение данных и ограничения
 
-- Контент каталога и SKU восстановлен из live-снапшота текущей версии сайта (dist-артефакт live), без использования старой архитектуры/кода.
-- На live отсутствуют отдельные B2B-техкарты/PDF внутри SKU-страниц — это отражено как факт, не как пропуск.
+- Контент и структура страниц восстановлены по текущему live-снапшоту (dist-артефакт).
+- Новости/документы воспроизведены как минимально наполненные каркасные разделы, без выдумывания записей.
+- Legal-страницы сохранены как legal-заготовки и требуют финальной юрпроверки перед боевым запуском.

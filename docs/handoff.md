@@ -2,47 +2,44 @@
 
 ## Текущее состояние
 
-В новом проекте `pastodel_new` завершён рабочий этап каталога:
-- есть `/katalog/`
-- есть dynamic product routes для retail и HoReCa
-- все SKU-страницы генерируются из typed data layer
-- сборка подтверждена `npm run build`
+Проект `pastodel_new` покрывает:
+- главную (v1),
+- каталог и dynamic SKU routes,
+- ключевые B2B/content/legal страницы,
+- UI+runtime слой форм без угадывания production endpoint.
+
+Сборка подтверждена: `npm run build`.
 
 ## Что сделано
 
-- Data model и utilities:
-  - `src/data/product-types.ts`
-  - `src/data/products.ts`
-  - `src/data/product-assets.ts`
-  - `src/data/product-utils.ts`
-- Компоненты каталога/товара:
-  - `src/components/catalog/CatalogAudienceSwitch.astro`
-  - `src/components/catalog/ProductCard.astro`
-  - `src/components/product/ProductDetailPage.astro`
-  - `src/components/product/ProductImage.astro`
-  - `src/components/product/ProductMeta.astro`
-  - `src/components/product/PrepTabs.astro`
-- Страницы:
-  - `src/pages/katalog/index.astro`
-  - `src/pages/katalog/[slug].astro`
-  - `src/pages/katalog/horeca/[slug].astro`
-- Ассеты:
-  - `src/assets/products/*` (каталог + retail/horeca packshot изображения)
-- UI-стили для новых страниц добавлены в `src/styles/global.css`.
+- Реализованы страницы:
+  - `/partneram/`, `/horeca/`, `/gde-kupit/`, `/o-kompanii/`, `/otzyvy/`, `/kontakty/`, `/dokumenty/`, `/novosti/`, `/proizvodstvo-i-kachestvo/`, `/stat-partnerom/`, `/politika-konfidentsialnosti/`, `/soglasie-na-obrabotku-dannyh/`.
+- Добавлены reusable общие блоки:
+  - `PageIntro`, `Breadcrumbs`, `SectionHead`.
+- Добавлен form runtime:
+  - `FormRuntime.astro` (валидация, prefill, phone formatting, success/error, gateway steps, margin calc).
+- Добавлены intro-иллюстрации страниц в `src/assets/page-intro/*`.
+- Расширен `global.css` под новые страницы/формы.
 
 ## Что не сделано
 
-- Остальные целевые страницы (B2B/content/legal) еще не реализованы.
-- Не проведён финальный визуальный regression-аудит по всем каталогным страницам в браузере на всех брейкпоинтах.
-- Не выполнялись deploy/rollout действия (по задаче и не должны).
+- Production form endpoint integration (осознанно отложено до подтверждения API).
+- Финальная pixel-level доводка UI для полного визуального совпадения с live.
+- Финальный cross-page контентный и a11y pass.
 
 ## Риски
 
-- Возможны локальные визуальные отличия от live на уровне мелких отступов/типографики.
-- Если часть live-данных меняется вне HTML (внешний источник), потребуется дополнительная синхронизация data layer.
+- Без подтверждённого backend endpoint формы работают в безопасном stub-режиме.
+- Разделы `novosti`, `dokumenty`, legal по live имеют каркасный характер; контент ограничен тем, что реально подтверждается live.
+
+## Решение по `public/images/product-paelya.webp`
+
+- Файл нужен текущей домашней странице v1.
+- Это не мусор и не candidate на удаление прямо сейчас.
+- Локальная несвязанная модификация откатана, чтобы не тянуть случайные изменения в коммит.
 
 ## Следующий шаг
 
-1. Провести браузерный visual QA `/katalog/` и SKU-страниц (desktop/tablet/mobile) против live.
-2. Довести каталог до финального совпадения и зафиксировать правки.
-3. Перейти к следующему этапу: `/partneram/`, `/horeca/`, `/gde-kupit/` и остальные страницы из списка.
+1. Провести визуальный regression QA новых страниц против live (desktop/tablet/mobile).
+2. Довести главную страницу до полного live-соответствия.
+3. После контентного freeze подготовить pre-deploy checklist (без переключения домена на этом этапе).

@@ -18,18 +18,21 @@ npm run build
 npm run preview
 ```
 
-## Локальная проверка каталога
+## Локальная проверка ключевых страниц
 
 ```bash
-# каталог
 curl -s http://localhost:4321/katalog/ | head -n 20
-
-# retail SKU
-curl -s http://localhost:4321/katalog/karbonara/ | head -n 20
-
-# horeca SKU
-curl -s http://localhost:4321/katalog/horeca/karbonara/ | head -n 20
+curl -s http://localhost:4321/partneram/ | head -n 20
+curl -s http://localhost:4321/horeca/ | head -n 20
+curl -s http://localhost:4321/stat-partnerom/ | head -n 20
+curl -s http://localhost:4321/kontakty/ | head -n 20
 ```
+
+## Важно по формам
+
+- Production endpoint отправки форм **не подключён намеренно**, пока не подтвержден API.
+- Текущий form layer реализован через безопасный adapter-подход в `src/components/forms/FormRuntime.astro`.
+- Точка интеграции отмечена TODO: `window.__PASTODEL_FORMS_ENDPOINT`.
 
 ## Структура
 
