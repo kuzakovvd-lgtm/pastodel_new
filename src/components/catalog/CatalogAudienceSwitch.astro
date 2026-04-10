@@ -108,22 +108,10 @@
           const businessSrcset = cardImage.dataset.businessSrcset || homeSrcset;
           const homeAlt = cardImage.dataset.homeAlt || cardImage.alt;
           const businessAlt = cardImage.dataset.businessAlt || homeAlt;
-          const avifSource =
-            cardPicture instanceof HTMLPictureElement
-              ? cardPicture.querySelector('source[type="image/avif"]')
-              : null;
           const webpSource =
             cardPicture instanceof HTMLPictureElement
               ? cardPicture.querySelector('source[type="image/webp"]')
               : null;
-          const homeAvifSrcset =
-            cardPicture instanceof HTMLElement
-              ? cardPicture.dataset.homeAvifSrcset || ""
-              : "";
-          const businessAvifSrcset =
-            cardPicture instanceof HTMLElement
-              ? cardPicture.dataset.businessAvifSrcset || homeAvifSrcset
-              : homeAvifSrcset;
           const homeWebpSrcset =
             cardPicture instanceof HTMLElement
               ? cardPicture.dataset.homeWebpSrcset || homeSrcset
@@ -143,17 +131,6 @@
             );
           } else {
             cardImage.removeAttribute("srcset");
-          }
-
-          if (avifSource instanceof HTMLSourceElement) {
-            const nextAvifSrcset = business
-              ? businessAvifSrcset
-              : homeAvifSrcset;
-            if (nextAvifSrcset) {
-              avifSource.setAttribute("srcset", nextAvifSrcset);
-            } else {
-              avifSource.removeAttribute("srcset");
-            }
           }
 
           if (webpSource instanceof HTMLSourceElement) {

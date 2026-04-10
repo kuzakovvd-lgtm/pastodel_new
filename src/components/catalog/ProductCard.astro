@@ -13,16 +13,6 @@ const cardSizes =
   "(max-width: 719px) calc(100vw - 72px), (max-width: 959px) calc(50vw - 54px), (max-width: 1279px) calc((100vw - 160px) / 3), 290px";
 const cardWidths = [240, 320, 400, 520];
 
-const homeAvif = await getImage({
-  src: product.retail.imageAsset,
-  alt: product.retail.title,
-  widths: cardWidths,
-  sizes: cardSizes,
-  quality: 68,
-  format: "avif",
-  loading: "lazy",
-});
-
 const homeWebp = await getImage({
   src: product.retail.imageAsset,
   alt: product.retail.title,
@@ -30,16 +20,6 @@ const homeWebp = await getImage({
   sizes: cardSizes,
   quality: 68,
   format: "webp",
-  loading: "lazy",
-});
-
-const horecaAvif = await getImage({
-  src: product.horeca.imageAsset,
-  alt: product.horeca.title,
-  widths: cardWidths,
-  sizes: cardSizes,
-  quality: 68,
-  format: "avif",
   loading: "lazy",
 });
 
@@ -53,12 +33,8 @@ const horecaWebp = await getImage({
   loading: "lazy",
 });
 
-const homeAvifSrcSet =
-  homeAvif.srcSet.values.length > 0 ? homeAvif.srcSet.attribute : undefined;
 const homeWebpSrcSet =
   homeWebp.srcSet.values.length > 0 ? homeWebp.srcSet.attribute : undefined;
-const horecaAvifSrcSet =
-  horecaAvif.srcSet.values.length > 0 ? horecaAvif.srcSet.attribute : undefined;
 const horecaWebpSrcSet =
   horecaWebp.srcSet.values.length > 0 ? horecaWebp.srcSet.attribute : undefined;
 ---
@@ -85,7 +61,7 @@ const horecaWebpSrcSet =
       <Picture
         src={product.retail.imageAsset}
         alt={product.retail.title}
-        formats={["avif", "webp"]}
+        formats={["webp"]}
         fallbackFormat="webp"
         widths={cardWidths}
         sizes={cardSizes}
@@ -93,9 +69,7 @@ const horecaWebpSrcSet =
         loading="lazy"
         pictureAttributes={{
           "data-card-picture": "",
-          "data-home-avif-srcset": homeAvifSrcSet,
           "data-home-webp-srcset": homeWebpSrcSet,
-          "data-business-avif-srcset": horecaAvifSrcSet,
           "data-business-webp-srcset": horecaWebpSrcSet,
         }}
         data-card-image
