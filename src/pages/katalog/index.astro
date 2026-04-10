@@ -15,7 +15,15 @@ const products = getProducts();
   <section class="catalog-hero section section--compact">
     <div class="container catalog-hero__inner">
       <figure class="catalog-hero__media">
-        <Image src={catalogHero} alt="Иллюстрация ассортимента Pastodel" loading="eager" />
+        <Image
+          src={catalogHero}
+          alt="Иллюстрация ассортимента Pastodel"
+          loading="eager"
+          widths={[420, 620, 840, 1080]}
+          sizes="(max-width: 719px) calc(100vw - 52px), (max-width: 1279px) 48vw, 620px"
+          quality={72}
+          format="webp"
+        />
       </figure>
       <div class="catalog-hero__content page-intro__inner">
         <p class="eyebrow">Каталог</p>

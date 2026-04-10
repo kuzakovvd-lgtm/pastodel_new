@@ -50,8 +50,7 @@
         if (!(card instanceof HTMLElement)) return;
         const homeActions = card.querySelector('[data-home-actions]');
         const businessActions = card.querySelector('[data-business-actions]');
-        const homeImage = card.querySelector('[data-home-image]');
-        const horecaImage = card.querySelector('[data-horeca-image]');
+        const cardImage = card.querySelector('[data-card-image]');
         const cardTitle = card.querySelector('[data-card-title]');
         const cardWeight = card.querySelector('[data-card-weight]');
         const links = card.querySelectorAll('[data-card-link]');
@@ -59,8 +58,24 @@
 
         if (homeActions instanceof HTMLElement) homeActions.hidden = business;
         if (businessActions instanceof HTMLElement) businessActions.hidden = !business;
-        if (homeImage instanceof HTMLElement) homeImage.hidden = business;
-        if (horecaImage instanceof HTMLElement) horecaImage.hidden = !business;
+
+        if (cardImage instanceof HTMLImageElement) {
+          const homeSrc = cardImage.dataset.homeSrc || cardImage.currentSrc || cardImage.src;
+          const businessSrc = cardImage.dataset.businessSrc || homeSrc;
+          const homeSrcset = cardImage.dataset.homeSrcset || '';
+          const businessSrcset = cardImage.dataset.businessSrcset || homeSrcset;
+          const homeAlt = cardImage.dataset.homeAlt || cardImage.alt;
+          const businessAlt = cardImage.dataset.businessAlt || homeAlt;
+
+          cardImage.src = business ? businessSrc : homeSrc;
+          cardImage.alt = business ? businessAlt : homeAlt;
+
+          if (business ? businessSrcset : homeSrcset) {
+            cardImage.setAttribute('srcset', business ? businessSrcset : homeSrcset);
+          } else {
+            cardImage.removeAttribute('srcset');
+          }
+        }
 
         if (cardTitle instanceof HTMLElement) {
           const titleHome = cardTitle.getAttribute('data-title-home') || '';

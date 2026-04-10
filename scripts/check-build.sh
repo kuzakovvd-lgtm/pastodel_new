@@ -14,8 +14,11 @@ echo "[check-build] Build OK."
 
 required=(
   "dist/index.html"
+  "dist/katalog/index.html"
+  "dist/partneram/index.html"
   "dist/_astro"
   "dist/favicon.svg"
+  "dist/release-meta.json"
 )
 
 for path in "${required[@]}"; do
@@ -32,6 +35,11 @@ fi
 
 if [[ ! -f "dist/sitemap-index.xml" && ! -f "dist/sitemap-0.xml" ]]; then
   echo "[check-build] Missing required sitemap artifact in dist/" >&2
+  exit 1
+fi
+
+if ! grep -q '"gitSha"' dist/release-meta.json || ! grep -q '"buildTimeUtc"' dist/release-meta.json; then
+  echo "[check-build] release-meta.json is missing required keys (gitSha/buildTimeUtc)" >&2
   exit 1
 fi
 

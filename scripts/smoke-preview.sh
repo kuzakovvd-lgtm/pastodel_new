@@ -66,24 +66,24 @@ check_html_meta() {
 check_assets() {
   local path="$1"
   local out="$TMP_DIR/page-assets.html"
+  local assets_file="$TMP_DIR/assets.txt"
   curl -s "${BASE_URL}${path}" > "$out"
 
-  mapfile -t assets < <(
-    grep -Eo '(href|src)="/[^"#?]+(\?[^"#]*)?"' "$out" \
-      | sed -E 's/^(href|src)="//; s/"$//' \
-      | grep -E '^/(_astro|images|fonts|favicon|assets)' \
-      | sort -u
-  )
+  grep -Eo '(href|src)="/[^"#?]+(\?[^"#]*)?"' "$out" \
+    | sed -E 's/^(href|src)="//; s/"$//' \
+    | grep -E '^/(_astro|images|fonts|favicon|assets)' \
+    | sort -u > "$assets_file" || true
 
   local failed=0
-  for asset in "${assets[@]:-}"; do
+  while IFS= read -r asset; do
+    [[ -z "$asset" ]] && continue
     local code
     code="$(curl -s -o /dev/null -w "%{http_code}" "${BASE_URL}${asset}")"
     if [[ "$code" != "200" ]]; then
       echo "[smoke] FAIL asset ${code} ${asset} (from ${path})" >&2
       failed=1
     fi
-  done
+  done < "$assets_file"
 
   if [[ "$failed" -ne 0 ]]; then
     return 1

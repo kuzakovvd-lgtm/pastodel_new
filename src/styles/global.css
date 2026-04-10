@@ -292,6 +292,12 @@ h3 { font-size: clamp(1.25rem, 2vw, 1.875rem); }
   padding: 14px;
   background: linear-gradient(180deg, #fffdf9f5, #efe4d7d4);
 }
+.catalog-card__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+}
 .catalog-card__body {
   display: grid;
   gap: 12px;

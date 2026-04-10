@@ -1,0 +1,716 @@
+{
+  "generated_at": "2026-04-10T11:28:05.713Z",
+  "dist_dir": "/Users/valerijkuzakov/Documents/Сайт/pastodel_new/dist",
+  "routes": [
+    {
+      "route": "/",
+      "request_count": 11,
+      "totals_bytes": {
+        "html": 16701,
+        "css": 15562,
+        "js": 9677,
+        "images": 313243,
+        "fonts": 0,
+        "other": 0,
+        "total": 355183
+      },
+      "totals_kb": {
+        "html": 16.31,
+        "css": 15.2,
+        "js": 9.45,
+        "images": 305.9,
+        "fonts": 0,
+        "other": 0,
+        "total": 346.86
+      },
+      "largest_assets": [
+        {
+          "path": "/images/product-frikadelki.webp",
+          "type": "images",
+          "bytes": 71242,
+          "kb": 69.57
+        },
+        {
+          "path": "/images/product-rizotto.webp",
+          "type": "images",
+          "bytes": 58614,
+          "kb": 57.24
+        },
+        {
+          "path": "/images/product-karbonara.webp",
+          "type": "images",
+          "bytes": 58342,
+          "kb": 56.97
+        },
+        {
+          "path": "/images/hero-plate.webp",
+          "type": "images",
+          "bytes": 54824,
+          "kb": 53.54
+        },
+        {
+          "path": "/images/logo-pastodel-header.webp",
+          "type": "images",
+          "bytes": 27744,
+          "kb": 27.09
+        },
+        {
+          "path": "/images/logo-pastodel-clean.webp",
+          "type": "images",
+          "bytes": 25552,
+          "kb": 24.95
+        },
+        {
+          "path": "/images/product-paelya.webp",
+          "type": "images",
+          "bytes": 16384,
+          "kb": 16
+        },
+        {
+          "path": "/_astro/index.qhkovzem.css",
+          "type": "css",
+          "bytes": 15562,
+          "kb": 15.2
+        },
+        {
+          "path": "/_astro/FormRuntime.astro_astro_type_script_index_0_lang.aDClnr3F.js",
+          "type": "js",
+          "bytes": 9677,
+          "kb": 9.45
+        },
+        {
+          "path": "/favicon.svg",
+          "type": "images",
+          "bytes": 541,
+          "kb": 0.53
+        }
+      ],
+      "assets": [
+        {
+          "path": "/images/product-frikadelki.webp",
+          "type": "images",
+          "bytes": 71242,
+          "kb": 69.57
+        },
+        {
+          "path": "/images/product-rizotto.webp",
+          "type": "images",
+          "bytes": 58614,
+          "kb": 57.24
+        },
+        {
+          "path": "/images/product-karbonara.webp",
+          "type": "images",
+          "bytes": 58342,
+          "kb": 56.97
+        },
+        {
+          "path": "/images/hero-plate.webp",
+          "type": "images",
+          "bytes": 54824,
+          "kb": 53.54
+        },
+        {
+          "path": "/images/logo-pastodel-header.webp",
+          "type": "images",
+          "bytes": 27744,
+          "kb": 27.09
+        },
+        {
+          "path": "/images/logo-pastodel-clean.webp",
+          "type": "images",
+          "bytes": 25552,
+          "kb": 24.95
+        },
+        {
+          "path": "/images/product-paelya.webp",
+          "type": "images",
+          "bytes": 16384,
+          "kb": 16
+        },
+        {
+          "path": "/_astro/index.qhkovzem.css",
+          "type": "css",
+          "bytes": 15562,
+          "kb": 15.2
+        },
+        {
+          "path": "/_astro/FormRuntime.astro_astro_type_script_index_0_lang.aDClnr3F.js",
+          "type": "js",
+          "bytes": 9677,
+          "kb": 9.45
+        },
+        {
+          "path": "/favicon.svg",
+          "type": "images",
+          "bytes": 541,
+          "kb": 0.53
+        }
+      ]
+    },
+    {
+      "route": "/katalog/",
+      "request_count": 28,
+      "totals_bytes": {
+        "html": 44817,
+        "css": 15562,
+        "js": 0,
+        "images": 1481071,
+        "fonts": 0,
+        "other": 0,
+        "total": 1541450
+      },
+      "totals_kb": {
+        "html": 43.77,
+        "css": 15.2,
+        "js": 0,
+        "images": 1446.36,
+        "fonts": 0,
+        "other": 0,
+        "total": 1505.32
+      },
+      "largest_assets": [
+        {
+          "path": "/_astro/pasta-frikadelki-tomatny-sous-horeca.DfoI17oS_Z2s3lmQ.DvITTRF8_11WHfE.webp",
+          "type": "images",
+          "bytes": 87010,
+          "kb": 84.97
+        },
+        {
+          "path": "/_astro/pasta-frikadelki-tomatny-sous.QWMST8gK_1d3SX3.BpIfYQ6i_Z1plv4i.webp",
+          "type": "images",
+          "bytes": 78268,
+          "kb": 76.43
+        },
+        {
+          "path": "/_astro/paelya-kuritsa-ovoshchi-horeca.DVGQgO4p_Z24UCTn.B91HVefP_Z1lL84B.webp",
+          "type": "images",
+          "bytes": 75458,
+          "kb": 73.69
+        },
+        {
+          "path": "/_astro/rizotto-rizi-bizi-pesto-zeleny-goroshek-horeca.Bh8-3jMc_tuMtK.IP0DyejN_106mGs.webp",
+          "type": "images",
+          "bytes": 73598,
+          "kb": 71.87
+        },
+        {
+          "path": "/_astro/primavera-horeca.DKyr1zTC_1AsOPb.BPx0aWae_plcG0.webp",
+          "type": "images",
+          "bytes": 72720,
+          "kb": 71.02
+        },
+        {
+          "path": "/_astro/paelya-kuritsa-ovoshchi.Ds5b_jxz_DPJin.B1o28Kqz_1bW36z.webp",
+          "type": "images",
+          "bytes": 67686,
+          "kb": 66.1
+        },
+        {
+          "path": "/_astro/rizotto-griby-slivochny-sous-horeca.Bayg6BSC_Z2gNnaL.aEfF7u5I_ZWxPEi.webp",
+          "type": "images",
+          "bytes": 67484,
+          "kb": 65.9
+        },
+        {
+          "path": "/_astro/rizotto-rizi-bizi-pesto-zeleny-goroshek.CDQ1G72P_Z1JPmti.DOcrBrGX_c3Paz.webp",
+          "type": "images",
+          "bytes": 65942,
+          "kb": 64.4
+        },
+        {
+          "path": "/_astro/karbonara.CZeJuoEA_Z13FQlg.BI7Pyb4m_Z1xG8V6.webp",
+          "type": "images",
+          "bytes": 64970,
+          "kb": 63.45
+        },
+        {
+          "path": "/_astro/chetyre-syra-horeca.mFhdUiiO_23T4o5.BFUo2eOr_ymnQS.webp",
+          "type": "images",
+          "bytes": 64894,
+          "kb": 63.37
+        }
+      ],
+      "assets": [
+        {
+          "path": "/_astro/pasta-frikadelki-tomatny-sous-horeca.DfoI17oS_Z2s3lmQ.DvITTRF8_11WHfE.webp",
+          "type": "images",
+          "bytes": 87010,
+          "kb": 84.97
+        },
+        {
+          "path": "/_astro/pasta-frikadelki-tomatny-sous.QWMST8gK_1d3SX3.BpIfYQ6i_Z1plv4i.webp",
+          "type": "images",
+          "bytes": 78268,
+          "kb": 76.43
+        },
+        {
+          "path": "/_astro/paelya-kuritsa-ovoshchi-horeca.DVGQgO4p_Z24UCTn.B91HVefP_Z1lL84B.webp",
+          "type": "images",
+          "bytes": 75458,
+          "kb": 73.69
+        },
+        {
+          "path": "/_astro/rizotto-rizi-bizi-pesto-zeleny-goroshek-horeca.Bh8-3jMc_tuMtK.IP0DyejN_106mGs.webp",
+          "type": "images",
+          "bytes": 73598,
+          "kb": 71.87
+        },
+        {
+          "path": "/_astro/primavera-horeca.DKyr1zTC_1AsOPb.BPx0aWae_plcG0.webp",
+          "type": "images",
+          "bytes": 72720,
+          "kb": 71.02
+        },
+        {
+          "path": "/_astro/paelya-kuritsa-ovoshchi.Ds5b_jxz_DPJin.B1o28Kqz_1bW36z.webp",
+          "type": "images",
+          "bytes": 67686,
+          "kb": 66.1
+        },
+        {
+          "path": "/_astro/rizotto-griby-slivochny-sous-horeca.Bayg6BSC_Z2gNnaL.aEfF7u5I_ZWxPEi.webp",
+          "type": "images",
+          "bytes": 67484,
+          "kb": 65.9
+        },
+        {
+          "path": "/_astro/rizotto-rizi-bizi-pesto-zeleny-goroshek.CDQ1G72P_Z1JPmti.DOcrBrGX_c3Paz.webp",
+          "type": "images",
+          "bytes": 65942,
+          "kb": 64.4
+        },
+        {
+          "path": "/_astro/karbonara.CZeJuoEA_Z13FQlg.BI7Pyb4m_Z1xG8V6.webp",
+          "type": "images",
+          "bytes": 64970,
+          "kb": 63.45
+        },
+        {
+          "path": "/_astro/chetyre-syra-horeca.mFhdUiiO_23T4o5.BFUo2eOr_ymnQS.webp",
+          "type": "images",
+          "bytes": 64894,
+          "kb": 63.37
+        },
+        {
+          "path": "/_astro/rizotto-griby-slivochny-sous.C-nnG8bC_avxoH.BwNv5mFs_zg7oq.webp",
+          "type": "images",
+          "bytes": 64554,
+          "kb": 63.04
+        },
+        {
+          "path": "/_astro/mak-end-chiz.C6KgzSw__85pKj.yD5jkugm_zmjyw.webp",
+          "type": "images",
+          "bytes": 61324,
+          "kb": 59.89
+        },
+        {
+          "path": "/_astro/kuritsa-pesto-vyalenye-tomaty.HFynwqNL_1nHfcq.CcVFH6en_1yFs5q.webp",
+          "type": "images",
+          "bytes": 60032,
+          "kb": 58.63
+        },
+        {
+          "path": "/_astro/vetchina-griby-slivochny-sous.Cqe7htBt_ZdXeCo.ZBgPye9a_LdKxs.webp",
+          "type": "images",
+          "bytes": 56762,
+          "kb": 55.43
+        },
+        {
+          "path": "/_astro/mak-end-chiz-horeca.Cz0VqWKl_Z2iQLJU.CrdPM54m_ioQ1x.webp",
+          "type": "images",
+          "bytes": 56078,
+          "kb": 54.76
+        },
+        {
+          "path": "/_astro/primavera.CuHxQPa3_DulQJ.CCaJcB7p_Z1MgXOf.webp",
+          "type": "images",
+          "bytes": 55992,
+          "kb": 54.68
+        },
+        {
+          "path": "/_astro/chetyre-syra.BcpZl_cL_LcvTj.CW1CEpc7_Z1h2jHh.webp",
+          "type": "images",
+          "bytes": 55474,
+          "kb": 54.17
+        },
+        {
+          "path": "/_astro/kuritsa-pesto-vyalenye-tomaty-horeca.DtH-vghS_Z1BAYjk.BfVG7Zdz_1ePzDq.webp",
+          "type": "images",
+          "bytes": 54158,
+          "kb": 52.89
+        },
+        {
+          "path": "/_astro/karbonara-horeca.ZzWAwcHS_Z1Yyu94.DG3Ilk7m_Z3vU51.webp",
+          "type": "images",
+          "bytes": 53230,
+          "kb": 51.98
+        },
+        {
+          "path": "/_astro/alfredo-kuritsa.IpX7MWOn_Z1mrgEb.CKiuqImf_HyUEa.webp",
+          "type": "images",
+          "bytes": 53044,
+          "kb": 51.8
+        },
+        {
+          "path": "/_astro/alfredo-kuritsa-horeca.B9CdtjsN_Z15w9WL.C4EbP5rl_ZFH53H.webp",
+          "type": "images",
+          "bytes": 49132,
+          "kb": 47.98
+        },
+        {
+          "path": "/_astro/vetchina-griby-slivochny-sous-horeca.jWTjw6JA_Z2qxapM.Bkf4mC2m_l3LNC.webp",
+          "type": "images",
+          "bytes": 45390,
+          "kb": 44.33
+        },
+        {
+          "path": "/_astro/catalog-hero.CbO-V9ib_Zhv5sh.webp",
+          "type": "images",
+          "bytes": 44034,
+          "kb": 43
+        },
+        {
+          "path": "/images/logo-pastodel-header.webp",
+          "type": "images",
+          "bytes": 27744,
+          "kb": 27.09
+        },
+        {
+          "path": "/images/logo-pastodel-clean.webp",
+          "type": "images",
+          "bytes": 25552,
+          "kb": 24.95
+        },
+        {
+          "path": "/_astro/index.qhkovzem.css",
+          "type": "css",
+          "bytes": 15562,
+          "kb": 15.2
+        },
+        {
+          "path": "/favicon.svg",
+          "type": "images",
+          "bytes": 541,
+          "kb": 0.53
+        }
+      ]
+    },
+    {
+      "route": "/partneram/",
+      "request_count": 13,
+      "totals_bytes": {
+        "html": 22267,
+        "css": 15562,
+        "js": 9677,
+        "images": 440399,
+        "fonts": 0,
+        "other": 0,
+        "total": 487905
+      },
+      "totals_kb": {
+        "html": 21.75,
+        "css": 15.2,
+        "js": 9.45,
+        "images": 430.08,
+        "fonts": 0,
+        "other": 0,
+        "total": 476.47
+      },
+      "largest_assets": [
+        {
+          "path": "/_astro/karbonara.CZeJuoEA_Z13FQlg.BI7Pyb4m_Z1xG8V6.webp",
+          "type": "images",
+          "bytes": 64970,
+          "kb": 63.45
+        },
+        {
+          "path": "/_astro/mak-end-chiz.C6KgzSw__85pKj.yD5jkugm_zmjyw.webp",
+          "type": "images",
+          "bytes": 61324,
+          "kb": 59.89
+        },
+        {
+          "path": "/_astro/mak-end-chiz-horeca.Cz0VqWKl_Z2iQLJU.CrdPM54m_ioQ1x.webp",
+          "type": "images",
+          "bytes": 56078,
+          "kb": 54.76
+        },
+        {
+          "path": "/_astro/karbonara-horeca.ZzWAwcHS_Z1Yyu94.DG3Ilk7m_Z3vU51.webp",
+          "type": "images",
+          "bytes": 53230,
+          "kb": 51.98
+        },
+        {
+          "path": "/_astro/alfredo-kuritsa.IpX7MWOn_Z1mrgEb.CKiuqImf_HyUEa.webp",
+          "type": "images",
+          "bytes": 53044,
+          "kb": 51.8
+        },
+        {
+          "path": "/_astro/alfredo-kuritsa-horeca.B9CdtjsN_Z15w9WL.C4EbP5rl_ZFH53H.webp",
+          "type": "images",
+          "bytes": 49132,
+          "kb": 47.98
+        },
+        {
+          "path": "/_astro/partneram.DMd1JByY_1rJtxO._QCmfcwM_ZTWvtM.webp",
+          "type": "images",
+          "bytes": 48784,
+          "kb": 47.64
+        },
+        {
+          "path": "/images/logo-pastodel-header.webp",
+          "type": "images",
+          "bytes": 27744,
+          "kb": 27.09
+        },
+        {
+          "path": "/images/logo-pastodel-clean.webp",
+          "type": "images",
+          "bytes": 25552,
+          "kb": 24.95
+        },
+        {
+          "path": "/_astro/index.qhkovzem.css",
+          "type": "css",
+          "bytes": 15562,
+          "kb": 15.2
+        }
+      ],
+      "assets": [
+        {
+          "path": "/_astro/karbonara.CZeJuoEA_Z13FQlg.BI7Pyb4m_Z1xG8V6.webp",
+          "type": "images",
+          "bytes": 64970,
+          "kb": 63.45
+        },
+        {
+          "path": "/_astro/mak-end-chiz.C6KgzSw__85pKj.yD5jkugm_zmjyw.webp",
+          "type": "images",
+          "bytes": 61324,
+          "kb": 59.89
+        },
+        {
+          "path": "/_astro/mak-end-chiz-horeca.Cz0VqWKl_Z2iQLJU.CrdPM54m_ioQ1x.webp",
+          "type": "images",
+          "bytes": 56078,
+          "kb": 54.76
+        },
+        {
+          "path": "/_astro/karbonara-horeca.ZzWAwcHS_Z1Yyu94.DG3Ilk7m_Z3vU51.webp",
+          "type": "images",
+          "bytes": 53230,
+          "kb": 51.98
+        },
+        {
+          "path": "/_astro/alfredo-kuritsa.IpX7MWOn_Z1mrgEb.CKiuqImf_HyUEa.webp",
+          "type": "images",
+          "bytes": 53044,
+          "kb": 51.8
+        },
+        {
+          "path": "/_astro/alfredo-kuritsa-horeca.B9CdtjsN_Z15w9WL.C4EbP5rl_ZFH53H.webp",
+          "type": "images",
+          "bytes": 49132,
+          "kb": 47.98
+        },
+        {
+          "path": "/_astro/partneram.DMd1JByY_1rJtxO._QCmfcwM_ZTWvtM.webp",
+          "type": "images",
+          "bytes": 48784,
+          "kb": 47.64
+        },
+        {
+          "path": "/images/logo-pastodel-header.webp",
+          "type": "images",
+          "bytes": 27744,
+          "kb": 27.09
+        },
+        {
+          "path": "/images/logo-pastodel-clean.webp",
+          "type": "images",
+          "bytes": 25552,
+          "kb": 24.95
+        },
+        {
+          "path": "/_astro/index.qhkovzem.css",
+          "type": "css",
+          "bytes": 15562,
+          "kb": 15.2
+        },
+        {
+          "path": "/_astro/FormRuntime.astro_astro_type_script_index_0_lang.aDClnr3F.js",
+          "type": "js",
+          "bytes": 9677,
+          "kb": 9.45
+        },
+        {
+          "path": "/favicon.svg",
+          "type": "images",
+          "bytes": 541,
+          "kb": 0.53
+        }
+      ]
+    },
+    {
+      "route": "/horeca/",
+      "request_count": 13,
+      "totals_bytes": {
+        "html": 24208,
+        "css": 15562,
+        "js": 9677,
+        "images": 445613,
+        "fonts": 0,
+        "other": 0,
+        "total": 495060
+      },
+      "totals_kb": {
+        "html": 23.64,
+        "css": 15.2,
+        "js": 9.45,
+        "images": 435.17,
+        "fonts": 0,
+        "other": 0,
+        "total": 483.46
+      },
+      "largest_assets": [
+        {
+          "path": "/_astro/karbonara.CZeJuoEA_Z13FQlg.BI7Pyb4m_Z1xG8V6.webp",
+          "type": "images",
+          "bytes": 64970,
+          "kb": 63.45
+        },
+        {
+          "path": "/_astro/mak-end-chiz.C6KgzSw__85pKj.yD5jkugm_zmjyw.webp",
+          "type": "images",
+          "bytes": 61324,
+          "kb": 59.89
+        },
+        {
+          "path": "/_astro/vetchina-griby-slivochny-sous.Cqe7htBt_ZdXeCo.ZBgPye9a_LdKxs.webp",
+          "type": "images",
+          "bytes": 56762,
+          "kb": 55.43
+        },
+        {
+          "path": "/_astro/mak-end-chiz-horeca.Cz0VqWKl_Z2iQLJU.CrdPM54m_ioQ1x.webp",
+          "type": "images",
+          "bytes": 56078,
+          "kb": 54.76
+        },
+        {
+          "path": "/_astro/horeca.lIIIU-Nb_ZMLqwt.CiyeA_jf_Z2luLp9.webp",
+          "type": "images",
+          "bytes": 54022,
+          "kb": 52.76
+        },
+        {
+          "path": "/_astro/karbonara-horeca.ZzWAwcHS_Z1Yyu94.DG3Ilk7m_Z3vU51.webp",
+          "type": "images",
+          "bytes": 53230,
+          "kb": 51.98
+        },
+        {
+          "path": "/_astro/vetchina-griby-slivochny-sous-horeca.jWTjw6JA_Z2qxapM.Bkf4mC2m_l3LNC.webp",
+          "type": "images",
+          "bytes": 45390,
+          "kb": 44.33
+        },
+        {
+          "path": "/images/logo-pastodel-header.webp",
+          "type": "images",
+          "bytes": 27744,
+          "kb": 27.09
+        },
+        {
+          "path": "/images/logo-pastodel-clean.webp",
+          "type": "images",
+          "bytes": 25552,
+          "kb": 24.95
+        },
+        {
+          "path": "/_astro/index.qhkovzem.css",
+          "type": "css",
+          "bytes": 15562,
+          "kb": 15.2
+        }
+      ],
+      "assets": [
+        {
+          "path": "/_astro/karbonara.CZeJuoEA_Z13FQlg.BI7Pyb4m_Z1xG8V6.webp",
+          "type": "images",
+          "bytes": 64970,
+          "kb": 63.45
+        },
+        {
+          "path": "/_astro/mak-end-chiz.C6KgzSw__85pKj.yD5jkugm_zmjyw.webp",
+          "type": "images",
+          "bytes": 61324,
+          "kb": 59.89
+        },
+        {
+          "path": "/_astro/vetchina-griby-slivochny-sous.Cqe7htBt_ZdXeCo.ZBgPye9a_LdKxs.webp",
+          "type": "images",
+          "bytes": 56762,
+          "kb": 55.43
+        },
+        {
+          "path": "/_astro/mak-end-chiz-horeca.Cz0VqWKl_Z2iQLJU.CrdPM54m_ioQ1x.webp",
+          "type": "images",
+          "bytes": 56078,
+          "kb": 54.76
+        },
+        {
+          "path": "/_astro/horeca.lIIIU-Nb_ZMLqwt.CiyeA_jf_Z2luLp9.webp",
+          "type": "images",
+          "bytes": 54022,
+          "kb": 52.76
+        },
+        {
+          "path": "/_astro/karbonara-horeca.ZzWAwcHS_Z1Yyu94.DG3Ilk7m_Z3vU51.webp",
+          "type": "images",
+          "bytes": 53230,
+          "kb": 51.98
+        },
+        {
+          "path": "/_astro/vetchina-griby-slivochny-sous-horeca.jWTjw6JA_Z2qxapM.Bkf4mC2m_l3LNC.webp",
+          "type": "images",
+          "bytes": 45390,
+          "kb": 44.33
+        },
+        {
+          "path": "/images/logo-pastodel-header.webp",
+          "type": "images",
+          "bytes": 27744,
+          "kb": 27.09
+        },
+        {
+          "path": "/images/logo-pastodel-clean.webp",
+          "type": "images",
+          "bytes": 25552,
+          "kb": 24.95
+        },
+        {
+          "path": "/_astro/index.qhkovzem.css",
+          "type": "css",
+          "bytes": 15562,
+          "kb": 15.2
+        },
+        {
+          "path": "/_astro/FormRuntime.astro_astro_type_script_index_0_lang.aDClnr3F.js",
+          "type": "js",
+          "bytes": 9677,
+          "kb": 9.45
+        },
+        {
+          "path": "/favicon.svg",
+          "type": "images",
+          "bytes": 541,
+          "kb": 0.53
+        }
+      ]
+    }
+  ]
+}

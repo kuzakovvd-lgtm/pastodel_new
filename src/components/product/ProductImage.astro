@@ -8,6 +8,8 @@ interface Props {
   className?: string;
   loading?: 'eager' | 'lazy';
   sizes?: string;
+  widths?: number[];
+  quality?: number;
 }
 
 const {
@@ -15,12 +17,14 @@ const {
   alt,
   className = 'product-image',
   loading = 'lazy',
-  sizes = '(max-width: 719px) calc(100vw - 56px), (max-width: 959px) calc(50vw - 40px), calc((100vw - 96px) / 3)'
+  sizes = '(max-width: 719px) calc(100vw - 56px), (max-width: 959px) calc(50vw - 40px), calc((100vw - 96px) / 3)',
+  widths,
+  quality
 } = Astro.props;
 ---
 <div class={className}>
   {image ? (
-    <Image src={image} alt={alt} loading={loading} sizes={sizes} />
+    <Image src={image} alt={alt} loading={loading} sizes={sizes} widths={widths} quality={quality} format="webp" />
   ) : (
     <div class="product-image__fallback" role="img" aria-label={alt}>
       <strong>{alt}</strong>

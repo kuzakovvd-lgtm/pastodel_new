@@ -35,7 +35,15 @@ const breadcrumbs = [
 
     <div class="product-hero-grid">
       <article class="surface-card product-hero-image">
-        <ProductImage image={data.imageAsset} alt={data.h1} className="product-image product-image--detail" loading="eager" sizes="(max-width: 719px) calc(100vw - 52px), (max-width: 959px) calc(50vw - 40px), 42vw" />
+        <ProductImage
+          image={data.imageAsset}
+          alt={data.h1}
+          className="product-image product-image--detail"
+          loading="eager"
+          sizes="(max-width: 719px) calc(100vw - 52px), (max-width: 959px) calc(50vw - 40px), 42vw"
+          widths={[420, 620, 820, 1080]}
+          quality={72}
+        />
       </article>
 
       <article class="surface-card product-summary">

@@ -70,7 +70,7 @@ fi
 
 if [[ "$SKIP_BUILD" -eq 0 ]]; then
   echo "[deploy-preview] Running build check..."
-  scripts/check-build.sh
+  RELEASE_ID="$RELEASE_ID" scripts/check-build.sh
 else
   echo "[deploy-preview] Build step skipped by --skip-build"
 fi

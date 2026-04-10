@@ -27,7 +27,15 @@ const { eyebrow, title, description, image, imageAlt, breadcrumbs = [], actions 
     {breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
     <div class="page-intro__layout">
       <figure class="page-intro__media">
-        <Image src={image} alt={imageAlt} loading="eager" />
+        <Image
+          src={image}
+          alt={imageAlt}
+          loading="eager"
+          widths={[360, 540, 720, 920]}
+          sizes="(max-width: 719px) calc(100vw - 52px), (max-width: 1279px) 40vw, 520px"
+          quality={72}
+          format="webp"
+        />
       </figure>
       <div class="page-intro__inner">
         <p class="eyebrow">{eyebrow}</p>

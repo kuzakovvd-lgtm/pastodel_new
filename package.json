@@ -5,8 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview"
+    "build": "scripts/build.sh",
+    "preview": "astro preview",
+    "check:build": "scripts/check-build.sh",
+    "check:smoke:preview": "BASE_URL=http://127.0.0.1:8081 scripts/smoke-preview.sh",
+    "check:deploy": "scripts/validate-deploy.sh",
+    "snapshot:predeploy": "scripts/pre-deploy-snapshot.sh",
+    "deploy:safe": "scripts/deploy-safe.sh",
+    "manifest:local": "scripts/release-manifest.sh local --root dist --output /tmp/pastodel-local.tsv"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",
