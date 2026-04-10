@@ -32,9 +32,12 @@ curl -s http://localhost:4321/kontakty/ | head -n 20
 
 ```bash
 scripts/check-build.sh
+DEPLOY_HOST=<server-host> DEPLOY_USER=root scripts/pre-deploy-snapshot.sh
 DEPLOY_HOST=<server-host> DEPLOY_USER=root scripts/deploy-preview.sh
 DEPLOY_HOST=<server-host> DEPLOY_USER=root scripts/deploy-preview.sh --apply
+DEPLOY_HOST=<server-host> DEPLOY_USER=root scripts/deploy-safe.sh
 BASE_URL=http://127.0.0.1:8081 scripts/smoke-preview.sh
+BASE_URL=https://pastodel.ru scripts/validate-deploy.sh
 ```
 
 Notes:
@@ -48,9 +51,23 @@ ssh root@<server-host> 'BASE_URL=http://127.0.0.1:8081 bash -s' < scripts/smoke-
 
 ## Важно по формам
 
-- Production endpoint отправки форм **не подключён намеренно**, пока не подтвержден API.
-- Текущий form layer реализован через безопасный adapter-подход в `src/components/forms/FormRuntime.astro`.
-- Точка интеграции отмечена TODO: `window.__PASTODEL_FORMS_ENDPOINT`.
+- Production endpoint отправки форм задаётся через `PUBLIC_PASTODEL_FORMS_ENDPOINT`.
+- Дополнительно можно задать `PUBLIC_PASTODEL_FORMS_TIMEOUT_MS` (по умолчанию `10000`).
+- Если endpoint не задан, в production отправка блокируется с честным сообщением о недоступности (без fake success).
+- Stub-режим разрешён только в dev или при явном `PUBLIC_ALLOW_FORM_STUB=1` для контролируемой диагностики.
+- Runtime override `window.__PASTODEL_FORMS_ENDPOINT` поддерживается для аварийной валидации интеграции без пересборки.
+- Успех показывается только при подтверждённом ответе endpoint (см. `docs/forms-backend-contract.md`).
+
+Пример переменных: `.env.example`.
+
+## Release metadata
+
+- После `npm run build` создаётся `dist/release-meta.json`:
+  - `releaseId`
+  - `gitSha`
+  - `gitShaShort`
+  - `gitBranch`
+  - `buildTimeUtc`
 
 ## Структура
 
@@ -64,3 +81,10 @@ ssh root@<server-host> 'BASE_URL=http://127.0.0.1:8081 bash -s' < scripts/smoke-
 - `scripts` — служебные скрипты проверки сборки и staging deploy
 
 Подробности: `docs/architecture.md`.
+
+## Safe deploy order (Phase 2)
+
+1. `scripts/check-build.sh`
+2. `DEPLOY_HOST=<server-host> DEPLOY_USER=root scripts/pre-deploy-snapshot.sh`
+3. `DEPLOY_HOST=<server-host> DEPLOY_USER=root scripts/deploy-safe.sh`
+4. If validation fails, rollback immediately using printed command and snapshot metadata.

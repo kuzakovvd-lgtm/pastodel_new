@@ -7,6 +7,8 @@
     "dev": "astro dev",
     "build": "scripts/build.sh",
     "preview": "astro preview",
+    "lint": "eslint .",
+    "format": "prettier --write .",
     "check:build": "scripts/check-build.sh",
     "check:smoke:preview": "BASE_URL=http://127.0.0.1:8081 scripts/smoke-preview.sh",
     "check:deploy": "scripts/validate-deploy.sh",
@@ -18,5 +20,15 @@
     "@astrojs/sitemap": "^3.7.2",
     "astro": "^5.14.3",
     "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.2.0",
+    "eslint-plugin-astro": "1.7.0",
+    "eslint-plugin-unused-imports": "4.4.1",
+    "globals": "17.4.0",
+    "prettier": "3.8.2",
+    "prettier-plugin-astro": "0.14.1",
+    "typescript-eslint": "8.58.1"
   }
 }

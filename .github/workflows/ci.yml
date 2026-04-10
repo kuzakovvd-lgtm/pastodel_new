@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-and-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and validate artifacts
+        run: scripts/check-build.sh
+
+      - name: Start preview server
+        run: |
+          nohup npm run preview -- --host 127.0.0.1 --port 8081 >/tmp/pastodel-preview.log 2>&1 &
+          echo $! >/tmp/pastodel-preview.pid
+
+      - name: Wait for preview server
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sSf http://127.0.0.1:8081/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Preview server failed to start in time" >&2
+          exit 1
+
+      - name: Smoke checks
+        run: BASE_URL=http://127.0.0.1:8081 scripts/smoke-preview.sh
+
+      - name: Stop preview server
+        if: always()
+        run: |
+          if [[ -f /tmp/pastodel-preview.pid ]]; then
+            kill "$(cat /tmp/pastodel-preview.pid)" || true
+          fi
+
+      - name: Preview logs
+        if: failure()
+        run: |
+          echo "==== /tmp/pastodel-preview.log ===="
+          cat /tmp/pastodel-preview.log || true

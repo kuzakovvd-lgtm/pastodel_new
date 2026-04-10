@@ -1,40 +1,44 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import FormRuntime from '@/components/forms/FormRuntime.astro';
-import { Image } from 'astro:assets';
-import heroPlate from '@/assets/home/hero-plate.webp';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import FormRuntime from "@/components/forms/FormRuntime.astro";
+import { Image, Picture } from "astro:assets";
+import heroPlate from "@/assets/home/hero-plate.webp";
+import { getProductAsset } from "@/data/product-assets";
 
 const homeCards = [
   {
-    href: '/katalog/pasta-frikadelki-tomatny-sous/',
-    title: 'Паста с фрикадельками и томатным соусом',
-    text: 'Сочные мясные шарики, яркий томат, паста аль денте. Ужин, который никому не надоедает.',
-    image: '/images/product-frikadelki.webp',
-    meta: '400 г • От 7 минут • КБЖУ 198/9/6/25'
+    href: "/katalog/pasta-frikadelki-tomatny-sous/",
+    title: "Паста с фрикадельками и томатным соусом",
+    text: "Сочные мясные шарики, яркий томат, паста аль денте. Ужин, который никому не надоедает.",
+    image: getProductAsset(
+      "pasta-frikadelki-tomatny-sous.QWMST8gK_1d3SX3.webp",
+    ),
+    meta: "400 г • От 7 минут • КБЖУ 198/9/6/25",
   },
   {
-    href: '/katalog/karbonara/',
-    title: 'Карбонара',
-    text: 'Сливочный соус на основе сыра, кусочки бекона, паста. Классика, которая работает всегда.',
-    image: '/images/product-karbonara.webp',
-    meta: '400 г • От 7 минут • КБЖУ 228/9/11/24'
+    href: "/katalog/karbonara/",
+    title: "Карбонара",
+    text: "Сливочный соус на основе сыра, кусочки бекона, паста. Классика, которая работает всегда.",
+    image: getProductAsset("karbonara.CZeJuoEA_Z13FQlg.webp"),
+    meta: "400 г • От 7 минут • КБЖУ 228/9/11/24",
   },
   {
-    href: '/katalog/rizotto-griby-slivochny-sous/',
-    title: 'Ризотто с грибами',
-    text: 'Рис в сливочном соусе с ароматом белых грибов. Ресторанное блюдо без ресторанного времени.',
-    image: '/images/product-rizotto.webp',
-    meta: '400 г • От 7 минут • КБЖУ 191/5/7/27'
+    href: "/katalog/rizotto-griby-slivochny-sous/",
+    title: "Ризотто с грибами",
+    text: "Рис в сливочном соусе с ароматом белых грибов. Ресторанное блюдо без ресторанного времени.",
+    image: getProductAsset("rizotto-griby-slivochny-sous.C-nnG8bC_avxoH.webp"),
+    meta: "400 г • От 7 минут • КБЖУ 191/5/7/27",
   },
   {
-    href: '/katalog/paelya-kuritsa-ovoshchi/',
-    title: 'Паэлья с курицей и овощами',
-    text: 'Рис, курица, болгарский перец. Самый яркий вкус в линейке.',
-    image: '/images/product-paelya.webp',
-    meta: '400 г • От 7 минут • КБЖУ 187/8/5/27'
-  }
+    href: "/katalog/paelya-kuritsa-ovoshchi/",
+    title: "Паэлья с курицей и овощами",
+    text: "Рис, курица, болгарский перец. Самый яркий вкус в линейке.",
+    image: getProductAsset("paelya-kuritsa-ovoshchi.Ds5b_jxz_DPJin.webp"),
+    meta: "400 г • От 7 минут • КБЖУ 187/8/5/27",
+  },
 ];
 ---
+
 <BaseLayout
   title="Pastodel — ресторанная паста и готовые блюда | Купить оптом и в розницу"
   description="Готовые блюда Pastodel: паста, ризотто и паэлья. Ужин за 7 минут, честный состав, удобный формат для дома и решения для ритейла и HoReCa."
@@ -44,13 +48,22 @@ const homeCards = [
       <div class="hero-section__content">
         <p class="hero-section__eyebrow">ГОТОВО ЗА 7 МИНУТ</p>
         <h1>Карбонара. Ризотто. Паэлья. Готово за 7 минут.</h1>
-        <p class="hero-section__subhead">400 г настоящей пасты или ризотто с соусом — просто разогрейте. Никаких полуфабрикатов, только готовое блюдо.</p>
+        <p class="hero-section__subhead">
+          400 г настоящей пасты или ризотто с соусом — просто разогрейте.
+          Никаких полуфабрикатов, только готовое блюдо.
+        </p>
         <div class="hero-section__actions">
           <a class="button" href="#home-hits">Выбрать вкус</a>
-          <a class="button button--secondary" href="/partneram/">Для партнёров</a>
+          <a class="button button--secondary" href="/partneram/"
+            >Для партнёров</a
+          >
         </div>
       </div>
-      <div class="hero-visual" role="img" aria-label="Визуальная композиция продукта Pastodel">
+      <div
+        class="hero-visual"
+        role="img"
+        aria-label="Визуальная композиция продукта Pastodel"
+      >
         <div class="hero-visual__frame">
           <div class="hero-visual__badge hero-visual__badge--time">7 минут</div>
           <div class="hero-visual__badge hero-visual__badge--weight">400 г</div>
@@ -85,10 +98,28 @@ const homeCards = [
       <p class="eyebrow">Почему Pastodel</p>
       <h2>Почему Pastodel — это не обычная заморозка</h2>
       <div class="simple-grid simple-grid--four">
-        <article class="surface-card info-card"><h3>Нормальная порция</h3><p>400 г — полноценный ужин для одного или лёгкий перекус на двоих.</p></article>
-        <article class="surface-card info-card"><h3>Вкусы, которые вы знаете</h3><p>Карбонара, альфредо, ризотто с грибами — блюда, которые не надо объяснять.</p></article>
-        <article class="surface-card info-card"><h3>Состав без сюрпризов</h3><p>В карточке любого блюда на сайте можно увидеть полный состав.</p></article>
-        <article class="surface-card info-card"><h3>Готово за 7 минут</h3><p>Разогрев в микроволновке или на плите без отдельной готовки ингредиентов.</p></article>
+        <article class="surface-card info-card">
+          <h3>Нормальная порция</h3><p>
+            400 г — полноценный ужин для одного или лёгкий перекус на двоих.
+          </p>
+        </article>
+        <article class="surface-card info-card">
+          <h3>Вкусы, которые вы знаете</h3><p>
+            Карбонара, альфредо, ризотто с грибами — блюда, которые не надо
+            объяснять.
+          </p>
+        </article>
+        <article class="surface-card info-card">
+          <h3>Состав без сюрпризов</h3><p>
+            В карточке любого блюда на сайте можно увидеть полный состав.
+          </p>
+        </article>
+        <article class="surface-card info-card">
+          <h3>Готово за 7 минут</h3><p>
+            Разогрев в микроволновке или на плите без отдельной готовки
+            ингредиентов.
+          </p>
+        </article>
       </div>
     </div>
   </section>
@@ -99,22 +130,39 @@ const homeCards = [
       <h2>Выберите вкус сегодняшнего ужина</h2>
       <p class="section-lead">11 блюд. Паста, ризотто, паэлья. От 7 минут.</p>
       <div class="product-grid">
-        {homeCards.map((card) => (
-          <article class="product-card">
-            <a href={card.href} class="product-card__image">
-              <img src={card.image} alt={card.title} width="1080" height="1080" loading="lazy" decoding="async" />
-            </a>
-            <div class="product-card__body">
-              <p class="product-card__meta">{card.meta}</p>
-              <h3><a href={card.href}>{card.title}</a></h3>
-              <p>{card.text}</p>
-              <div class="product-card__actions">
-                <a class="button button--secondary" href={card.href}>Смотреть блюдо</a>
-                <a href="/gde-kupit/">Где купить</a>
+        {
+          homeCards.map((card) => (
+            <article class="product-card">
+              <a href={card.href} class="product-card__image">
+                {card.image && (
+                  <Picture
+                    src={card.image}
+                    alt={card.title}
+                    formats={["avif", "webp"]}
+                    fallbackFormat="webp"
+                    widths={[320, 460, 640]}
+                    sizes="(max-width: 719px) calc(100vw - 72px), (max-width: 1279px) calc((100vw - 116px) / 2), 308px"
+                    quality={66}
+                    loading="lazy"
+                  />
+                )}
+              </a>
+              <div class="product-card__body">
+                <p class="product-card__meta">{card.meta}</p>
+                <h3>
+                  <a href={card.href}>{card.title}</a>
+                </h3>
+                <p>{card.text}</p>
+                <div class="product-card__actions">
+                  <a class="button button--secondary" href={card.href}>
+                    Смотреть блюдо
+                  </a>
+                  <a href="/gde-kupit/">Где купить</a>
+                </div>
               </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          ))
+        }
       </div>
     </div>
   </section>
@@ -124,9 +172,21 @@ const homeCards = [
       <p class="eyebrow">Доверие</p>
       <h2>Почему нам доверяют</h2>
       <div class="simple-grid simple-grid--three">
-        <article class="surface-card info-card"><h3>Готово за минуты</h3><p>Продукт уже приготовлен — вам остаётся только разогреть и подать.</p></article>
-        <article class="surface-card info-card"><h3>Открытый состав</h3><p>В карточке каждого блюда — состав, КБЖУ и условия хранения.</p></article>
-        <article class="surface-card info-card"><h3>Удобно держать дома</h3><p>Это еда, которая выручает, когда нужен быстрый ужин без готовки.</p></article>
+        <article class="surface-card info-card">
+          <h3>Готово за минуты</h3><p>
+            Продукт уже приготовлен — вам остаётся только разогреть и подать.
+          </p>
+        </article>
+        <article class="surface-card info-card">
+          <h3>Открытый состав</h3><p>
+            В карточке каждого блюда — состав, КБЖУ и условия хранения.
+          </p>
+        </article>
+        <article class="surface-card info-card">
+          <h3>Удобно держать дома</h3><p>
+            Это еда, которая выручает, когда нужен быстрый ужин без готовки.
+          </p>
+        </article>
       </div>
     </div>
   </section>
@@ -138,13 +198,25 @@ const homeCards = [
       <div class="split-grid">
         <article class="surface-card info-card">
           <h3>Ритейл</h3>
-          <p>Готовые решения для полки: стабильный ассортимент и понятный вход в категорию.</p>
-          <div class="button-group"><a class="button button--secondary" href="/partneram/">Для бизнеса</a></div>
+          <p>
+            Готовые решения для полки: стабильный ассортимент и понятный вход в
+            категорию.
+          </p>
+          <div class="button-group">
+            <a class="button button--secondary" href="/partneram/"
+              >Для бизнеса</a
+            >
+          </div>
         </article>
         <article class="surface-card info-card">
           <h3>HoReCa</h3>
-          <p>Продукт для кухни с прогнозируемым результатом и понятной экономикой порции.</p>
-          <div class="button-group"><a class="button button--secondary" href="/horeca/">Для HoReCa</a></div>
+          <p>
+            Продукт для кухни с прогнозируемым результатом и понятной экономикой
+            порции.
+          </p>
+          <div class="button-group">
+            <a class="button button--secondary" href="/horeca/">Для HoReCa</a>
+          </div>
         </article>
       </div>
     </div>
@@ -152,24 +224,90 @@ const homeCards = [
 
   <section class="home-section">
     <div class="container pd-form-shell" id="home-b2b-form">
-      <form class="surface-card form-card" data-validated-form data-form-name="home-b2b" data-success-message="Спасибо. Заявка отправлена. Мы свяжемся с вами в течение одного рабочего дня." novalidate>
+      <form
+        class="surface-card form-card"
+        data-validated-form
+        data-form-name="home-b2b"
+        data-success-message="Спасибо. Заявка отправлена. Мы свяжемся с вами в течение одного рабочего дня."
+        novalidate
+      >
         <p class="eyebrow">Форма заявки</p>
         <h2>Стать партнёром</h2>
-        <p class="section-lead">Оставьте контакты, и мы вернёмся с ассортиментом и условиями для вашего бизнеса.</p>
+        <p class="section-lead">
+          Оставьте контакты, и мы вернёмся с ассортиментом и условиями для
+          вашего бизнеса.
+        </p>
         <div class="form-grid">
-          <div class="field"><label for="home-name">Имя</label><input id="home-name" name="name" type="text" placeholder="Как к вам обращаться" data-required-field /><p class="pd-form-error" data-error-for="name"></p></div>
-          <div class="field"><label for="home-company">Компания</label><input id="home-company" name="company" type="text" placeholder="Название компании" data-required-field /><p class="pd-form-error" data-error-for="company"></p></div>
-          <div class="field"><label for="home-email">Email</label><input id="home-email" name="email" type="email" placeholder="name@company.ru" data-required-field /><p class="pd-form-error" data-error-for="email"></p></div>
-          <div class="field"><label for="home-phone">Телефон</label><input id="home-phone" name="phone" type="tel" placeholder="+7 (___) ___-__-__" data-required-field data-phone-field /><p class="pd-form-error" data-error-for="phone"></p></div>
+          <div class="field">
+            <label for="home-name">Имя</label><input
+              id="home-name"
+              name="name"
+              type="text"
+              placeholder="Как к вам обращаться"
+              data-required-field
+            /><p class="pd-form-error" data-error-for="name"></p>
+          </div>
+          <div class="field">
+            <label for="home-company">Компания</label><input
+              id="home-company"
+              name="company"
+              type="text"
+              placeholder="Название компании"
+              data-required-field
+            /><p class="pd-form-error" data-error-for="company"></p>
+          </div>
+          <div class="field">
+            <label for="home-email">Email</label><input
+              id="home-email"
+              name="email"
+              type="email"
+              placeholder="name@company.ru"
+              data-required-field
+            /><p class="pd-form-error" data-error-for="email"></p>
+          </div>
+          <div class="field">
+            <label for="home-phone">Телефон</label><input
+              id="home-phone"
+              name="phone"
+              type="tel"
+              placeholder="+7 (___) ___-__-__"
+              data-required-field
+              data-phone-field
+            /><p class="pd-form-error" data-error-for="phone"></p>
+          </div>
         </div>
-        <label class="pd-checkbox"><input type="checkbox" name="privacy" required /><span>Я согласен с <a href="/politika-konfidentsialnosti/">политикой конфиденциальности</a> и обработкой персональных данных.</span></label>
+        <label class="pd-checkbox"
+          ><input type="checkbox" name="privacy" required /><span
+            >Я согласен с <a href="/politika-konfidentsialnosti/"
+              >политикой конфиденциальности</a
+            > и обработкой персональных данных.</span
+          ></label
+        >
         <p class="pd-form-error" data-error-for="privacy"></p>
-        <div class="form-honeypot" aria-hidden="true"><label for="home-company-site">Не заполняйте это поле</label><input id="home-company-site" name="company_site" type="text" tabindex="-1" autocomplete="off" /></div>
-        <div class="button-group"><button class="button" type="submit">Стать партнёром</button></div>
-        <p class="pd-form-note">Свяжемся с вами в течение одного рабочего дня.</p>
-        <p class="pd-form-note pd-form-note--muted">Интеграция с production endpoint будет подключена после подтверждения API.</p>
+        <div class="form-honeypot" aria-hidden="true">
+          <label for="home-company-site">Не заполняйте это поле</label><input
+            id="home-company-site"
+            name="company_site"
+            type="text"
+            tabindex="-1"
+            autocomplete="off"
+          />
+        </div>
+        <div class="button-group">
+          <button class="button" type="submit">Стать партнёром</button>
+        </div>
+        <p class="pd-form-note">
+          Свяжемся с вами в течение одного рабочего дня.
+        </p>
+        <p class="pd-form-note pd-form-note--muted">
+          Интеграция с production endpoint будет подключена после подтверждения
+          API.
+        </p>
         <p class="pd-form-error" data-form-request-error hidden></p>
-        <p class="pd-form-success" data-form-success hidden>Спасибо. Заявка отправлена. Мы свяжемся с вами в течение одного рабочего дня.</p>
+        <p class="pd-form-success" data-form-success hidden>
+          Спасибо. Заявка отправлена. Мы свяжемся с вами в течение одного
+          рабочего дня.
+        </p>
       </form>
     </div>
   </section>

@@ -88,3 +88,70 @@ Prevention for next cutovers:
   - `/etc/nginx/sites-enabled/pastodel_new_preview.conf`
 - Preview endpoint remains available:
   - `http://127.0.0.1:8081`
+
+## Phase 1 hardening additions
+
+- Build now writes `dist/release-meta.json` for traceability (git SHA + build timestamp + release id).
+- `scripts/check-build.sh` validates release metadata presence and key route artifacts.
+- Repeatable post-deploy verification entrypoint:
+  - `BASE_URL=https://pastodel.ru scripts/validate-deploy.sh`
+- Cleanup guardrail:
+  - compatibility overlay files (`_astro`, `js`, `fonts`) must not be deleted until manifest-based classification is complete.
+- Manifest tooling for evidence-based cleanup preparation:
+  - local: `scripts/release-manifest.sh local --root dist --output local.tsv`
+  - server: `scripts/release-manifest.sh server --host <user@host> --root /var/www/pastodel_new/current --output server.tsv`
+  - classify: `scripts/release-manifest.sh classify --local local.tsv --server server.tsv --output report.md`
+
+## Phase 2 additions
+
+### Real forms endpoint contract
+
+- Frontend variable: `PUBLIC_PASTODEL_FORMS_ENDPOINT` (required in production).
+- Timeout variable: `PUBLIC_PASTODEL_FORMS_TIMEOUT_MS` (default `10000`).
+- Success is shown only when backend response matches contract from `docs/forms-backend-contract.md`.
+- Any timeout/network/non-2xx/malformed response is treated as failure and shown to user.
+
+### Pre-deploy snapshot
+
+Use:
+
+```bash
+DEPLOY_HOST=<server-host> DEPLOY_USER=root scripts/pre-deploy-snapshot.sh
+```
+
+Snapshot captures:
+- current symlink target for `/var/www/pastodel_new/current`
+- tarball of current release directory
+- live nginx config copy
+- nginx log file inventory and byte offsets
+- timestamped `snapshot-meta.json`
+
+Default snapshot location on server:
+- `/var/backups/pastodel-snapshots/<timestamp>/`
+
+### Safe deploy orchestrator
+
+Use:
+
+```bash
+DEPLOY_HOST=<server-host> DEPLOY_USER=root scripts/deploy-safe.sh
+```
+
+Flow:
+1. pre-deploy snapshot
+2. build + deploy release
+3. verify `/release-meta.json` on active release
+4. run production smoke validation
+5. print explicit rollback command if validation fails
+
+### Baseline manifest policy
+
+Create and store baseline artifacts:
+
+```bash
+scripts/release-manifest.sh local --root dist --output docs/baselines/local-<date>.tsv
+scripts/release-manifest.sh server --host <user@host> --root /var/www/pastodel_new/current --output docs/baselines/server-<date>.tsv
+scripts/release-manifest.sh classify --local docs/baselines/local-<date>.tsv --server docs/baselines/server-<date>.tsv --output docs/baselines/classification-<date>.md
+```
+
+Cleanup of compatibility files is prohibited until decisions reference this baseline.

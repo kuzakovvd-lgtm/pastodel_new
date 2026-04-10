@@ -2,19 +2,54 @@
   <div class="container">
     <div class="catalog-filter-shell surface-card">
       <div class="catalog-toggle" role="tablist" aria-label="Режим каталога">
-        <button class="catalog-toggle__button is-active" type="button" role="tab" id="tab-home" aria-controls="panel-home" data-audience-button data-value="home" aria-selected="true" tabindex="0">
+        <button
+          class="catalog-toggle__button is-active"
+          type="button"
+          role="tab"
+          id="tab-home"
+          aria-controls="panel-home"
+          data-audience-button
+          data-value="home"
+          aria-selected="true"
+          tabindex="0"
+        >
           Для дома (400 г)
         </button>
-        <button class="catalog-toggle__button" type="button" role="tab" id="tab-business" aria-controls="panel-business" data-audience-button data-value="business" aria-selected="false" tabindex="-1">
+        <button
+          class="catalog-toggle__button"
+          type="button"
+          role="tab"
+          id="tab-business"
+          aria-controls="panel-business"
+          data-audience-button
+          data-value="business"
+          aria-selected="false"
+          tabindex="-1"
+        >
           Для HoReCa
         </button>
       </div>
       <div class="catalog-filter-meta">
-        <div class="catalog-mode-note" id="panel-home" role="tabpanel" aria-labelledby="tab-home" data-audience-panel="home">
-          Все 11 блюд в формате 400 г: выбирайте вкус на сегодня и открывайте карточку блюда.
+        <div
+          class="catalog-mode-note"
+          id="panel-home"
+          role="tabpanel"
+          aria-labelledby="tab-home"
+          data-audience-panel="home"
+        >
+          Все 11 блюд в формате 400 г: выбирайте вкус на сегодня и открывайте
+          карточку блюда.
         </div>
-        <div class="catalog-mode-note" id="panel-business" role="tabpanel" aria-labelledby="tab-business" data-audience-panel="business" hidden>
-          Для HoReCa сейчас доступны все 11 позиций каталога в отдельном packshot-наборе для бизнес-режима.
+        <div
+          class="catalog-mode-note"
+          id="panel-business"
+          role="tabpanel"
+          aria-labelledby="tab-business"
+          data-audience-panel="business"
+          hidden
+        >
+          Для HoReCa сейчас доступны все 11 позиций каталога в отдельном
+          packshot-наборе для бизнес-режима.
         </div>
       </div>
     </div>
@@ -22,23 +57,27 @@
 </div>
 
 <script>
-  const buttons = Array.from(document.querySelectorAll('[data-audience-button]'));
-  const panels = Array.from(document.querySelectorAll('[data-audience-panel]'));
-  const cards = Array.from(document.querySelectorAll('[data-catalog-card]'));
+  const buttons = Array.from(
+    document.querySelectorAll("[data-audience-button]"),
+  );
+  const panels = Array.from(document.querySelectorAll("[data-audience-panel]"));
+  const cards = Array.from(document.querySelectorAll("[data-catalog-card]"));
 
   if (buttons.length > 1) {
-    let audience = 'home';
+    let audience = "home";
     try {
-      audience = localStorage.getItem('catalogAudienceMode') || 'home';
-    } catch {}
+      audience = localStorage.getItem("catalogAudienceMode") || "home";
+    } catch {
+      // Ignore storage access failures in private mode or restricted contexts.
+    }
 
     const render = () => {
       buttons.forEach((button) => {
         if (!(button instanceof HTMLButtonElement)) return;
         const active = button.dataset.value === audience;
-        button.classList.toggle('is-active', active);
-        button.setAttribute('aria-selected', String(active));
-        button.setAttribute('tabindex', active ? '0' : '-1');
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-selected", String(active));
+        button.setAttribute("tabindex", active ? "0" : "-1");
       });
 
       panels.forEach((panel) => {
@@ -48,51 +87,106 @@
 
       cards.forEach((card) => {
         if (!(card instanceof HTMLElement)) return;
-        const homeActions = card.querySelector('[data-home-actions]');
-        const businessActions = card.querySelector('[data-business-actions]');
-        const cardImage = card.querySelector('[data-card-image]');
-        const cardTitle = card.querySelector('[data-card-title]');
-        const cardWeight = card.querySelector('[data-card-weight]');
-        const links = card.querySelectorAll('[data-card-link]');
-        const business = audience === 'business';
+        const homeActions = card.querySelector("[data-home-actions]");
+        const businessActions = card.querySelector("[data-business-actions]");
+        const cardPicture = card.querySelector("[data-card-picture]");
+        const cardImage = card.querySelector("[data-card-image]");
+        const cardTitle = card.querySelector("[data-card-title]");
+        const cardWeight = card.querySelector("[data-card-weight]");
+        const links = card.querySelectorAll("[data-card-link]");
+        const business = audience === "business";
 
         if (homeActions instanceof HTMLElement) homeActions.hidden = business;
-        if (businessActions instanceof HTMLElement) businessActions.hidden = !business;
+        if (businessActions instanceof HTMLElement)
+          businessActions.hidden = !business;
 
         if (cardImage instanceof HTMLImageElement) {
-          const homeSrc = cardImage.dataset.homeSrc || cardImage.currentSrc || cardImage.src;
+          const homeSrc =
+            cardImage.dataset.homeSrc || cardImage.currentSrc || cardImage.src;
           const businessSrc = cardImage.dataset.businessSrc || homeSrc;
-          const homeSrcset = cardImage.dataset.homeSrcset || '';
+          const homeSrcset = cardImage.dataset.homeSrcset || "";
           const businessSrcset = cardImage.dataset.businessSrcset || homeSrcset;
           const homeAlt = cardImage.dataset.homeAlt || cardImage.alt;
           const businessAlt = cardImage.dataset.businessAlt || homeAlt;
+          const avifSource =
+            cardPicture instanceof HTMLPictureElement
+              ? cardPicture.querySelector('source[type="image/avif"]')
+              : null;
+          const webpSource =
+            cardPicture instanceof HTMLPictureElement
+              ? cardPicture.querySelector('source[type="image/webp"]')
+              : null;
+          const homeAvifSrcset =
+            cardPicture instanceof HTMLElement
+              ? cardPicture.dataset.homeAvifSrcset || ""
+              : "";
+          const businessAvifSrcset =
+            cardPicture instanceof HTMLElement
+              ? cardPicture.dataset.businessAvifSrcset || homeAvifSrcset
+              : homeAvifSrcset;
+          const homeWebpSrcset =
+            cardPicture instanceof HTMLElement
+              ? cardPicture.dataset.homeWebpSrcset || homeSrcset
+              : homeSrcset;
+          const businessWebpSrcset =
+            cardPicture instanceof HTMLElement
+              ? cardPicture.dataset.businessWebpSrcset || homeWebpSrcset
+              : homeWebpSrcset;
 
           cardImage.src = business ? businessSrc : homeSrc;
           cardImage.alt = business ? businessAlt : homeAlt;
 
           if (business ? businessSrcset : homeSrcset) {
-            cardImage.setAttribute('srcset', business ? businessSrcset : homeSrcset);
+            cardImage.setAttribute(
+              "srcset",
+              business ? businessSrcset : homeSrcset,
+            );
           } else {
-            cardImage.removeAttribute('srcset');
+            cardImage.removeAttribute("srcset");
+          }
+
+          if (avifSource instanceof HTMLSourceElement) {
+            const nextAvifSrcset = business
+              ? businessAvifSrcset
+              : homeAvifSrcset;
+            if (nextAvifSrcset) {
+              avifSource.setAttribute("srcset", nextAvifSrcset);
+            } else {
+              avifSource.removeAttribute("srcset");
+            }
+          }
+
+          if (webpSource instanceof HTMLSourceElement) {
+            const nextWebpSrcset = business
+              ? businessWebpSrcset
+              : homeWebpSrcset;
+            if (nextWebpSrcset) {
+              webpSource.setAttribute("srcset", nextWebpSrcset);
+            } else {
+              webpSource.removeAttribute("srcset");
+            }
           }
         }
 
         if (cardTitle instanceof HTMLElement) {
-          const titleHome = cardTitle.getAttribute('data-title-home') || '';
-          const titleBusiness = cardTitle.getAttribute('data-title-business') || titleHome;
+          const titleHome = cardTitle.getAttribute("data-title-home") || "";
+          const titleBusiness =
+            cardTitle.getAttribute("data-title-business") || titleHome;
           cardTitle.textContent = business ? titleBusiness : titleHome;
         }
 
         if (cardWeight instanceof HTMLElement) {
-          const weightHome = cardWeight.getAttribute('data-weight-home') || '';
-          const weightBusiness = cardWeight.getAttribute('data-weight-business') || weightHome;
+          const weightHome = cardWeight.getAttribute("data-weight-home") || "";
+          const weightBusiness =
+            cardWeight.getAttribute("data-weight-business") || weightHome;
           cardWeight.textContent = business ? weightBusiness : weightHome;
         }
 
         links.forEach((link) => {
           if (!(link instanceof HTMLAnchorElement)) return;
-          const homeHref = link.getAttribute('data-home-href') || '#';
-          const businessHref = link.getAttribute('data-business-href') || homeHref;
+          const homeHref = link.getAttribute("data-home-href") || "#";
+          const businessHref =
+            link.getAttribute("data-business-href") || homeHref;
           link.href = business ? businessHref : homeHref;
         });
       });
@@ -100,11 +194,13 @@
 
     buttons.forEach((button) => {
       if (!(button instanceof HTMLButtonElement)) return;
-      button.addEventListener('click', () => {
-        audience = button.dataset.value || 'home';
+      button.addEventListener("click", () => {
+        audience = button.dataset.value || "home";
         try {
-          localStorage.setItem('catalogAudienceMode', audience);
-        } catch {}
+          localStorage.setItem("catalogAudienceMode", audience);
+        } catch {
+          // Ignore storage write failures to keep the toggle functional.
+        }
         render();
       });
     });

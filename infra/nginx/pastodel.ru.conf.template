@@ -1,0 +1,105 @@
+# Template of current production nginx layout for pastodel.ru.
+# Replace placeholders before applying on server:
+# - __SSL_CERT_PATH__
+# - __SSL_KEY_PATH__
+# - __WEB_ROOT__
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name pastodel.ru www.pastodel.ru;
+
+    return 301 https://pastodel.ru$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name www.pastodel.ru;
+
+    ssl_certificate __SSL_CERT_PATH__;
+    ssl_certificate_key __SSL_KEY_PATH__;
+
+    return 301 https://pastodel.ru$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name pastodel.ru;
+
+    ssl_certificate __SSL_CERT_PATH__;
+    ssl_certificate_key __SSL_KEY_PATH__;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_tickets off;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+    ssl_buffer_size 4k;
+
+    root __WEB_ROOT__;
+    index index.html;
+
+    access_log /var/log/nginx/pastodel.access.log;
+    error_log /var/log/nginx/pastodel.error.log warn;
+
+    gzip on;
+    gzip_comp_level 5;
+    gzip_min_length 1024;
+    gzip_proxied any;
+    gzip_vary on;
+    gzip_types
+        text/plain
+        text/css
+        text/javascript
+        application/javascript
+        application/json
+        application/xml
+        application/rss+xml
+        image/svg+xml;
+
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    # Keep 404 handling explicit. If custom 404 file is not deployed, remove this mapping.
+    error_page 404 /404.html;
+
+    location / {
+        add_header Cache-Control "public, max-age=600, stale-while-revalidate=86400" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+        try_files $uri $uri/ $uri.html =404;
+    }
+
+    location = /404.html {
+        internal;
+    }
+
+    location = /favicon.svg {
+        access_log off;
+        log_not_found off;
+        try_files $uri =404;
+    }
+
+    location = /robots.txt {
+        access_log off;
+        log_not_found off;
+        try_files $uri =404;
+    }
+
+    location ^~ /_astro/ {
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        try_files $uri =404;
+    }
+
+    location ~* \.(css|js|mjs|json|svg|ico|jpg|jpeg|png|gif|webp|woff|woff2)$ {
+        add_header Cache-Control "public, max-age=2592000";
+        try_files $uri =404;
+    }
+}

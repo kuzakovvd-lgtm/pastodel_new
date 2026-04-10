@@ -1,17 +1,33 @@
 <script>
-  const getDigits = (value) => String(value || '').replace(/\D/g, '');
+  const publicFormsEndpoint = (
+    import.meta.env.PUBLIC_PASTODEL_FORMS_ENDPOINT ?? ""
+  ).trim();
+  const publicAllowFormStub =
+    import.meta.env.DEV || import.meta.env.PUBLIC_ALLOW_FORM_STUB === "1";
+  const publicFormsTimeoutMsRaw = Number(
+    import.meta.env.PUBLIC_PASTODEL_FORMS_TIMEOUT_MS ?? 10000,
+  );
+  const publicFormsTimeoutMs =
+    Number.isFinite(publicFormsTimeoutMsRaw) && publicFormsTimeoutMsRaw >= 1000
+      ? Math.min(publicFormsTimeoutMsRaw, 30000)
+      : 10000;
+  const getDigits = (value) => String(value || "").replace(/\D/g, "");
 
   const normalizePhoneValue = (rawValue) => {
     const digits = getDigits(rawValue);
-    const local = digits.startsWith('7') ? digits.slice(1) : digits.startsWith('8') ? digits.slice(1) : digits;
+    const local = digits.startsWith("7")
+      ? digits.slice(1)
+      : digits.startsWith("8")
+        ? digits.slice(1)
+        : digits;
     const safe = local.slice(0, 10);
     const p1 = safe.slice(0, 3);
     const p2 = safe.slice(3, 6);
     const p3 = safe.slice(6, 8);
     const p4 = safe.slice(8, 10);
-    let out = '+7';
+    let out = "+7";
     if (p1) out += ` (${p1}`;
-    if (p1.length === 3) out += ')';
+    if (p1.length === 3) out += ")";
     if (p2) out += ` ${p2}`;
     if (p3) out += `-${p3}`;
     if (p4) out += `-${p4}`;
@@ -22,7 +38,7 @@
     if (!raw) return undefined;
     try {
       const parsed = JSON.parse(raw);
-      return parsed && typeof parsed === 'object' ? parsed : undefined;
+      return parsed && typeof parsed === "object" ? parsed : undefined;
     } catch {
       return undefined;
     }
@@ -30,8 +46,15 @@
 
   const prefillFromQuery = () => {
     const url = new URL(window.location.href);
-    document.querySelectorAll('[data-prefill-field]').forEach((field) => {
-      if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement)) return;
+    document.querySelectorAll("[data-prefill-field]").forEach((field) => {
+      if (
+        !(
+          field instanceof HTMLInputElement ||
+          field instanceof HTMLSelectElement ||
+          field instanceof HTMLTextAreaElement
+        )
+      )
+        return;
       const queryParam = field.dataset.queryParam;
       if (!queryParam) return;
       const raw = url.searchParams.get(queryParam);
@@ -39,21 +62,30 @@
       const queryMap = parseQueryMap(field.dataset.queryMap);
       const value = queryMap && queryMap[raw] ? queryMap[raw] : raw;
       field.value = value;
-      field.dispatchEvent(new Event('change', { bubbles: true }));
+      field.dispatchEvent(new Event("change", { bubbles: true }));
     });
   };
 
   const initPrefillButtons = () => {
-    document.querySelectorAll('[data-prefill-target]').forEach((trigger) => {
+    document.querySelectorAll("[data-prefill-target]").forEach((trigger) => {
       if (!(trigger instanceof HTMLElement)) return;
-      trigger.addEventListener('click', () => {
+      trigger.addEventListener("click", () => {
         const target = trigger.dataset.prefillTarget;
         const value = trigger.dataset.prefillValue;
         if (!target || !value) return;
-        const field = document.querySelector(`[data-prefill-field="${target}"]`);
-        if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement)) return;
+        const field = document.querySelector(
+          `[data-prefill-field="${target}"]`,
+        );
+        if (
+          !(
+            field instanceof HTMLInputElement ||
+            field instanceof HTMLSelectElement ||
+            field instanceof HTMLTextAreaElement
+          )
+        )
+          return;
         field.value = value;
-        field.dispatchEvent(new Event('change', { bubbles: true }));
+        field.dispatchEvent(new Event("change", { bubbles: true }));
       });
     });
   };
@@ -65,23 +97,23 @@
   };
 
   const clearFormErrors = (form) => {
-    form.querySelectorAll('[data-error-for]').forEach((node) => {
-      if (node instanceof HTMLElement) node.textContent = '';
+    form.querySelectorAll("[data-error-for]").forEach((node) => {
+      if (node instanceof HTMLElement) node.textContent = "";
     });
-    const requestError = form.querySelector('[data-form-request-error]');
+    const requestError = form.querySelector("[data-form-request-error]");
     if (requestError instanceof HTMLElement) {
       requestError.hidden = true;
-      requestError.textContent = '';
+      requestError.textContent = "";
     }
   };
 
   const showSuccess = (form) => {
-    const success = form.querySelector('[data-form-success]');
+    const success = form.querySelector("[data-form-success]");
     if (success instanceof HTMLElement) success.hidden = false;
   };
 
   const showRequestError = (form, message) => {
-    const error = form.querySelector('[data-form-request-error]');
+    const error = form.querySelector("[data-form-request-error]");
     if (!(error instanceof HTMLElement)) return;
     error.hidden = false;
     error.textContent = message;
@@ -89,38 +121,63 @@
 
   const validateForm = (form) => {
     let valid = true;
-    form.querySelectorAll('[data-required-field]').forEach((field) => {
-      if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement)) return;
+    form.querySelectorAll("[data-required-field]").forEach((field) => {
+      if (
+        !(
+          field instanceof HTMLInputElement ||
+          field instanceof HTMLSelectElement ||
+          field instanceof HTMLTextAreaElement
+        )
+      )
+        return;
       const value = field.value.trim();
       if (!value) {
         valid = false;
-        setFieldError(form, field.name, 'Пожалуйста, заполните обязательное поле.');
+        setFieldError(
+          form,
+          field.name,
+          "Пожалуйста, заполните обязательное поле.",
+        );
       }
-      if (field instanceof HTMLInputElement && field.type === 'email' && value) {
+      if (
+        field instanceof HTMLInputElement &&
+        field.type === "email" &&
+        value
+      ) {
         const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
         if (!ok) {
           valid = false;
-          setFieldError(form, field.name, 'Проверьте формат email.');
+          setFieldError(form, field.name, "Проверьте формат email.");
         }
       }
     });
 
-    form.querySelectorAll('[data-phone-field]').forEach((field) => {
+    form.querySelectorAll("[data-phone-field]").forEach((field) => {
       if (!(field instanceof HTMLInputElement)) return;
       const digits = getDigits(field.value);
-      if (field.hasAttribute('data-required-field') && digits.length < 11) {
+      if (field.hasAttribute("data-required-field") && digits.length < 11) {
         valid = false;
-        setFieldError(form, field.name, 'Пожалуйста, укажите телефон в формате +7 (___) ___-__-__.');
+        setFieldError(
+          form,
+          field.name,
+          "Пожалуйста, укажите телефон в формате +7 (___) ___-__-__.",
+        );
       }
     });
 
-    form.querySelectorAll('input[type="checkbox"][required]').forEach((field) => {
-      if (!(field instanceof HTMLInputElement)) return;
-      if (!field.checked) {
-        valid = false;
-        setFieldError(form, field.name, 'Необходимо согласие для отправки формы.');
-      }
-    });
+    form
+      .querySelectorAll('input[type="checkbox"][required]')
+      .forEach((field) => {
+        if (!(field instanceof HTMLInputElement)) return;
+        if (!field.checked) {
+          valid = false;
+          setFieldError(
+            form,
+            field.name,
+            "Необходимо согласие для отправки формы.",
+          );
+        }
+      });
 
     return valid;
   };
@@ -129,165 +186,296 @@
     const data = new FormData(form);
     const payload = {};
     for (const [key, value] of data.entries()) {
-      payload[key] = typeof value === 'string' ? value : '';
+      payload[key] = typeof value === "string" ? value : "";
     }
     return payload;
   };
 
-  // TODO: attach real verified endpoint via window.__PASTODEL_FORMS_ENDPOINT after backend confirmation.
+  const resolveFormsEndpoint = () => {
+    const runtimeEndpoint =
+      typeof window.__PASTODEL_FORMS_ENDPOINT === "string"
+        ? window.__PASTODEL_FORMS_ENDPOINT.trim()
+        : "";
+    if (runtimeEndpoint.startsWith("http")) return runtimeEndpoint;
+    if (publicFormsEndpoint.startsWith("http")) return publicFormsEndpoint;
+    return "";
+  };
+
+  const getFormsUnavailableMessage = () =>
+    "Форма временно недоступна. Напишите нам через страницу контактов, и мы свяжемся с вами вручную.";
+
+  const getSubmissionFailureMessage = (mode) => {
+    switch (mode) {
+      case "timeout":
+        return "Сервис формы не ответил вовремя. Попробуйте ещё раз через несколько минут.";
+      case "network":
+        return "Не удалось связаться с сервисом формы. Проверьте соединение и попробуйте позже.";
+      case "remote_http":
+      case "malformed":
+        return "Сервис формы временно недоступен. Попробуйте позже или свяжитесь с нами через страницу контактов.";
+      default:
+        return "Не удалось отправить форму. Попробуйте позже.";
+    }
+  };
+
+  const parseRemoteAcceptance = async (response) => {
+    if (!response.ok) {
+      return { ok: false, mode: "remote_http", status: response.status };
+    }
+
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.toLowerCase().includes("application/json")) {
+      return { ok: false, mode: "malformed" };
+    }
+
+    let body;
+    try {
+      body = await response.json();
+    } catch {
+      return { ok: false, mode: "malformed" };
+    }
+
+    // Expected contract from backend/provider:
+    // { ok: true, status: "accepted"|"queued", requestId?: string }
+    if (!body || typeof body !== "object") {
+      return { ok: false, mode: "malformed" };
+    }
+
+    const accepted =
+      body.ok === true &&
+      (body.status === "accepted" ||
+        body.status === "queued" ||
+        body.status === undefined);
+
+    if (!accepted) {
+      return { ok: false, mode: "malformed" };
+    }
+
+    return {
+      ok: true,
+      mode: "remote",
+      requestId:
+        typeof body.requestId === "string" ? body.requestId : undefined,
+    };
+  };
+
+  // In production, form submit is allowed only with a real configured endpoint.
+  // Stub success is preserved only for local/dev and explicit non-production diagnostics.
   const submitViaAdapter = async (form) => {
-    const endpoint = window.__PASTODEL_FORMS_ENDPOINT;
+    const endpoint = resolveFormsEndpoint();
     const payload = getFormPayload(form);
 
     if (payload.company_site) {
-      return { ok: true, mode: 'honeypot' };
+      return { ok: true, mode: "honeypot" };
     }
 
-    if (typeof endpoint === 'string' && endpoint.startsWith('http')) {
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ form: form.dataset.formName || 'unknown', payload })
-      });
-      return { ok: res.ok, mode: 'remote' };
+    if (typeof endpoint === "string" && endpoint.startsWith("http")) {
+      const controller = new AbortController();
+      const timeout = window.setTimeout(
+        () => controller.abort(),
+        publicFormsTimeoutMs,
+      );
+
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            form: form.dataset.formName || "unknown",
+            payload,
+          }),
+          signal: controller.signal,
+        });
+        return await parseRemoteAcceptance(res);
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return { ok: false, mode: "timeout" };
+        }
+        return { ok: false, mode: "network" };
+      } finally {
+        window.clearTimeout(timeout);
+      }
     }
 
-    return { ok: true, mode: 'stub' };
+    if (publicAllowFormStub) {
+      return { ok: true, mode: "stub" };
+    }
+
+    return { ok: false, mode: "unconfigured" };
   };
 
   const initPhoneMasks = (form) => {
-    form.querySelectorAll('[data-phone-field]').forEach((field) => {
+    form.querySelectorAll("[data-phone-field]").forEach((field) => {
       if (!(field instanceof HTMLInputElement)) return;
-      field.addEventListener('input', () => {
+      field.addEventListener("input", () => {
         field.value = normalizePhoneValue(field.value);
       });
-      field.addEventListener('blur', () => {
+      field.addEventListener("blur", () => {
         field.value = normalizePhoneValue(field.value);
       });
     });
   };
 
-  const initValidatedForms = () => {
-    document.querySelectorAll('[data-validated-form]').forEach((form) => {
-      if (!(form instanceof HTMLFormElement)) return;
-      const submitButton = form.querySelector('button[type="submit"]');
-      const successNode = form.querySelector('[data-form-success]');
-      if (successNode instanceof HTMLElement) successNode.hidden = true;
-      initPhoneMasks(form);
+  const initValidatedForm = (form) => {
+    if (
+      !(form instanceof HTMLFormElement) ||
+      form.dataset.runtimeReady === "true"
+    )
+      return;
+    form.dataset.runtimeReady = "true";
 
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        clearFormErrors(form);
+    const submitButton = form.querySelector('button[type="submit"]');
+    const successNode = form.querySelector("[data-form-success]");
+    if (successNode instanceof HTMLElement) successNode.hidden = true;
+    initPhoneMasks(form);
 
-        if (!validateForm(form)) return;
+    if (!resolveFormsEndpoint() && !publicAllowFormStub) {
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = true;
+        submitButton.setAttribute("aria-disabled", "true");
+      }
+      showRequestError(form, getFormsUnavailableMessage());
+    }
 
-        if (submitButton instanceof HTMLButtonElement) {
-          submitButton.disabled = true;
-          submitButton.dataset.prevLabel = submitButton.textContent || '';
-          submitButton.textContent = 'Отправка...';
-        }
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearFormErrors(form);
 
-        try {
-          const result = await submitViaAdapter(form);
-          if (!result.ok) {
-            showRequestError(form, 'Не удалось отправить форму. Попробуйте позже.');
+      if (!validateForm(form)) return;
+
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = true;
+        submitButton.dataset.prevLabel = submitButton.textContent || "";
+        submitButton.textContent = "Отправка...";
+      }
+
+      try {
+        const result = await submitViaAdapter(form);
+        if (!result.ok) {
+          if (result.mode === "unconfigured") {
+            showRequestError(form, getFormsUnavailableMessage());
             return;
           }
-          showSuccess(form);
-          form.reset();
-        } catch {
-          showRequestError(form, 'Не удалось отправить форму. Попробуйте позже.');
-        } finally {
-          if (submitButton instanceof HTMLButtonElement) {
-            submitButton.disabled = false;
-            submitButton.textContent = submitButton.dataset.prevLabel || 'Отправить';
-          }
-        }
-      });
-    });
-  };
-
-  const initMarginCalculator = () => {
-    document.querySelectorAll('[data-margin-calculator]').forEach((calculator) => {
-      if (!(calculator instanceof HTMLElement)) return;
-      const menuPrice = calculator.querySelector('[data-menu-price]');
-      const purchasePrice = calculator.querySelector('[data-purchase-price]');
-      const output = calculator.querySelector('[data-margin-output]');
-      if (!(menuPrice instanceof HTMLInputElement) || !(purchasePrice instanceof HTMLInputElement) || !(output instanceof HTMLElement)) return;
-
-      const recalc = () => {
-        const menu = Number(menuPrice.value);
-        const purchase = Number(purchasePrice.value);
-        if (!menu || !purchase || menu <= purchase) {
-          output.textContent = '0%';
+          showRequestError(form, getSubmissionFailureMessage(result.mode));
           return;
         }
-        const margin = Math.round(((menu - purchase) / menu) * 100);
-        output.textContent = `${margin}%`;
-      };
-
-      menuPrice.addEventListener('input', recalc);
-      purchasePrice.addEventListener('input', recalc);
-      recalc();
+        showSuccess(form);
+        form.reset();
+      } catch {
+        showRequestError(form, "Не удалось отправить форму. Попробуйте позже.");
+      } finally {
+        if (submitButton instanceof HTMLButtonElement) {
+          submitButton.disabled = false;
+          submitButton.textContent =
+            submitButton.dataset.prevLabel || "Отправить";
+        }
+      }
     });
   };
 
-  const initGatewayForm = () => {
-    const shell = document.querySelector('[data-gateway-form-shell]');
-    if (!(shell instanceof HTMLElement)) return;
-    const form = shell.querySelector('[data-gateway-form]');
+  const initMarginCalculator = (calculator) => {
+    if (
+      !(calculator instanceof HTMLElement) ||
+      calculator.dataset.runtimeReady === "true"
+    )
+      return;
+    calculator.dataset.runtimeReady = "true";
+
+    const menuPrice = calculator.querySelector("[data-menu-price]");
+    const purchasePrice = calculator.querySelector("[data-purchase-price]");
+    const output = calculator.querySelector("[data-margin-output]");
+    if (
+      !(menuPrice instanceof HTMLInputElement) ||
+      !(purchasePrice instanceof HTMLInputElement) ||
+      !(output instanceof HTMLElement)
+    )
+      return;
+
+    const recalc = () => {
+      const menu = Number(menuPrice.value);
+      const purchase = Number(purchasePrice.value);
+      if (!menu || !purchase || menu <= purchase) {
+        output.textContent = "0%";
+        return;
+      }
+      const margin = Math.round(((menu - purchase) / menu) * 100);
+      output.textContent = `${margin}%`;
+    };
+
+    menuPrice.addEventListener("input", recalc);
+    purchasePrice.addEventListener("input", recalc);
+    recalc();
+  };
+
+  const initGatewayForm = (shell) => {
+    if (
+      !(shell instanceof HTMLElement) ||
+      shell.dataset.runtimeReady === "true"
+    )
+      return;
+    shell.dataset.runtimeReady = "true";
+    const form = shell.querySelector("[data-gateway-form]");
     if (!(form instanceof HTMLFormElement)) return;
 
-    const scenarioButtons = Array.from(shell.querySelectorAll('[data-scenario-trigger]'));
-    const scenarioPanels = Array.from(shell.querySelectorAll('[data-scenario-panel]'));
-    const heading = shell.querySelector('[data-scenario-heading]');
-    const copy = shell.querySelector('[data-scenario-copy]');
-    const businessTypeField = form.querySelector('[data-business-type-field]');
+    const scenarioButtons = Array.from(
+      shell.querySelectorAll("[data-scenario-trigger]"),
+    );
+    const scenarioPanels = Array.from(
+      shell.querySelectorAll("[data-scenario-panel]"),
+    );
+    const heading = shell.querySelector("[data-scenario-heading]");
+    const copy = shell.querySelector("[data-scenario-copy]");
+    const businessTypeField = form.querySelector("[data-business-type-field]");
 
-    const steps = Array.from(form.querySelectorAll('[data-form-step]'));
-    const indicators = Array.from(shell.querySelectorAll('[data-step-indicator]'));
-    const nextButtons = Array.from(form.querySelectorAll('[data-step-next]'));
-    const backButtons = Array.from(form.querySelectorAll('[data-step-back]'));
-    const requestField = form.querySelector('[data-request-field]');
+    const steps = Array.from(form.querySelectorAll("[data-form-step]"));
+    const indicators = Array.from(
+      shell.querySelectorAll("[data-step-indicator]"),
+    );
+    const nextButtons = Array.from(form.querySelectorAll("[data-step-next]"));
+    const backButtons = Array.from(form.querySelectorAll("[data-step-back]"));
+    const requestField = form.querySelector("[data-request-field]");
 
-    let currentScenario = 'retail';
+    let currentScenario = "retail";
     let currentStep = 1;
 
     const scenarioMeta = {
       retail: {
-        heading: 'Запрос для ритейла',
-        copy: 'Оставьте контакты, и мы вернёмся с ассортиментом и условиями для обсуждения запуска.',
-        businessType: 'Ритейл',
-        request: 'Получить условия'
+        heading: "Запрос для ритейла",
+        copy: "Оставьте контакты, и мы вернёмся с ассортиментом и условиями для обсуждения запуска.",
+        businessType: "Ритейл",
+        request: "Получить условия",
       },
       horeca: {
-        heading: 'Запрос для HoReCa',
-        copy: 'Расскажите о формате заведения, и мы подготовим предложения по позициям и условиям.',
-        businessType: 'HoReCa',
-        request: 'Заказать дегустацию'
+        heading: "Запрос для HoReCa",
+        copy: "Расскажите о формате заведения, и мы подготовим предложения по позициям и условиям.",
+        businessType: "HoReCa",
+        request: "Заказать дегустацию",
       },
       distributor: {
-        heading: 'Запрос дистрибьютора',
-        copy: 'Оставьте регион и детали запроса, чтобы обсудить формат дистрибуции.',
-        businessType: 'Дистрибьютор',
-        request: 'Обсудить сотрудничество'
-      }
+        heading: "Запрос дистрибьютора",
+        copy: "Оставьте регион и детали запроса, чтобы обсудить формат дистрибуции.",
+        businessType: "Дистрибьютор",
+        request: "Обсудить сотрудничество",
+      },
     };
 
     const syncRequired = () => {
-      form.querySelectorAll('[data-required-field]').forEach((field) => {
-        field.removeAttribute('data-required-field');
+      form.querySelectorAll("[data-required-field]").forEach((field) => {
+        field.removeAttribute("data-required-field");
       });
 
-      form.querySelectorAll('[data-step-required]').forEach((field) => {
+      form.querySelectorAll("[data-step-required]").forEach((field) => {
         if (currentStep === 1 || currentStep === 3) {
-          field.setAttribute('data-required-field', '');
+          field.setAttribute("data-required-field", "");
         }
       });
 
-      form.querySelectorAll('[data-scenario-required]').forEach((field) => {
-        if (field.getAttribute('data-scenario-required') === currentScenario && currentStep === 2) {
-          field.setAttribute('data-required-field', '');
+      form.querySelectorAll("[data-scenario-required]").forEach((field) => {
+        if (
+          field.getAttribute("data-scenario-required") === currentScenario &&
+          currentStep === 2
+        ) {
+          field.setAttribute("data-required-field", "");
         }
       });
     };
@@ -296,14 +484,16 @@
       const meta = scenarioMeta[currentScenario] || scenarioMeta.retail;
       if (heading instanceof HTMLElement) heading.textContent = meta.heading;
       if (copy instanceof HTMLElement) copy.textContent = meta.copy;
-      if (businessTypeField instanceof HTMLInputElement) businessTypeField.value = meta.businessType;
-      if (requestField instanceof HTMLSelectElement) requestField.value = meta.request;
+      if (businessTypeField instanceof HTMLInputElement)
+        businessTypeField.value = meta.businessType;
+      if (requestField instanceof HTMLSelectElement)
+        requestField.value = meta.request;
 
       scenarioButtons.forEach((btn) => {
         if (!(btn instanceof HTMLButtonElement)) return;
         const active = btn.dataset.scenario === currentScenario;
-        btn.classList.toggle('is-active', active);
-        btn.setAttribute('aria-pressed', String(active));
+        btn.classList.toggle("is-active", active);
+        btn.setAttribute("aria-pressed", String(active));
       });
 
       scenarioPanels.forEach((panel) => {
@@ -318,28 +508,28 @@
     const syncStep = () => {
       steps.forEach((panel) => {
         if (!(panel instanceof HTMLElement)) return;
-        const step = Number(panel.dataset.formStep || '1');
+        const step = Number(panel.dataset.formStep || "1");
         panel.hidden = step !== currentStep;
       });
       indicators.forEach((chip) => {
         if (!(chip instanceof HTMLElement)) return;
-        const step = Number(chip.dataset.stepIndicator || '1');
-        chip.classList.toggle('is-active', step === currentStep);
+        const step = Number(chip.dataset.stepIndicator || "1");
+        chip.classList.toggle("is-active", step === currentStep);
       });
       syncRequired();
     };
 
     scenarioButtons.forEach((btn) => {
       if (!(btn instanceof HTMLButtonElement)) return;
-      btn.addEventListener('click', () => {
-        currentScenario = btn.dataset.scenario || 'retail';
+      btn.addEventListener("click", () => {
+        currentScenario = btn.dataset.scenario || "retail";
         syncScenario();
       });
     });
 
     nextButtons.forEach((btn) => {
       if (!(btn instanceof HTMLButtonElement)) return;
-      btn.addEventListener('click', () => {
+      btn.addEventListener("click", () => {
         if (currentStep < 3) {
           currentStep += 1;
           syncStep();
@@ -349,7 +539,7 @@
 
     backButtons.forEach((btn) => {
       if (!(btn instanceof HTMLButtonElement)) return;
-      btn.addEventListener('click', () => {
+      btn.addEventListener("click", () => {
         if (currentStep > 1) {
           currentStep -= 1;
           syncStep();
@@ -361,9 +551,35 @@
     syncStep();
   };
 
+  const initWhenVisible = (
+    selector,
+    init,
+    options = { rootMargin: "200px 0px" },
+  ) => {
+    const targets = Array.from(document.querySelectorAll(selector));
+    if (targets.length === 0) return;
+
+    if (!("IntersectionObserver" in window)) {
+      targets.forEach((target) => init(target));
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        init(entry.target);
+        observer.unobserve(entry.target);
+      });
+    }, options);
+
+    targets.forEach((target) => observer.observe(target));
+  };
+
   prefillFromQuery();
   initPrefillButtons();
-  initValidatedForms();
-  initMarginCalculator();
-  initGatewayForm();
+  initWhenVisible("[data-validated-form]", initValidatedForm);
+  initWhenVisible("[data-margin-calculator]", initMarginCalculator);
+  initWhenVisible("[data-gateway-form-shell]", initGatewayForm, {
+    rootMargin: "320px 0px",
+  });
 </script>

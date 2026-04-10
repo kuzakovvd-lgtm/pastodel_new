@@ -1,9 +1,13 @@
 ---
-import type { ProductAudience, ProductRecord } from '@/data/product-types';
-import { getAudienceData, getCategoryLabel, getProducts } from '@/data/product-utils';
-import ProductImage from '@/components/product/ProductImage.astro';
-import PrepTabs from '@/components/product/PrepTabs.astro';
-import ProductCard from '@/components/catalog/ProductCard.astro';
+import type { ProductAudience, ProductRecord } from "@/data/product-types";
+import {
+  getAudienceData,
+  getCategoryLabel,
+  getProducts,
+} from "@/data/product-utils";
+import ProductImage from "@/components/product/ProductImage.astro";
+import PrepTabs from "@/components/product/PrepTabs.astro";
+import ProductCard from "@/components/catalog/ProductCard.astro";
 
 interface Props {
   product: ProductRecord;
@@ -13,23 +17,32 @@ interface Props {
 const { product, audience } = Astro.props;
 const data = getAudienceData(product, audience);
 const categoryLabel = getCategoryLabel(product.category);
-const recommendations = getProducts().filter((item) => item.slug !== product.slug).slice(0, 4);
+const recommendations = getProducts()
+  .filter((item) => item.slug !== product.slug)
+  .slice(0, 4);
 const breadcrumbs = [
-  { href: '/', label: 'Главная' },
-  { href: '/katalog/', label: 'Каталог' },
-  { href: '/katalog/', label: categoryLabel },
-  { href: data.route, label: data.h1 }
+  { href: "/", label: "Главная" },
+  { href: "/katalog/", label: "Каталог" },
+  { href: "/katalog/", label: categoryLabel },
+  { href: data.route, label: data.h1 },
 ];
 ---
+
 <section class="product-page section section--compact">
   <div class="container">
     <nav class="breadcrumbs-nav" aria-label="Хлебные крошки">
       <ol class="breadcrumbs">
-        {breadcrumbs.map((crumb, index) => (
-          <li>
-            {index === breadcrumbs.length - 1 ? <span aria-current="page">{crumb.label}</span> : <a href={crumb.href}>{crumb.label}</a>}
-          </li>
-        ))}
+        {
+          breadcrumbs.map((crumb, index) => (
+            <li>
+              {index === breadcrumbs.length - 1 ? (
+                <span aria-current="page">{crumb.label}</span>
+              ) : (
+                <a href={crumb.href}>{crumb.label}</a>
+              )}
+            </li>
+          ))
+        }
       </ol>
     </nav>
 
@@ -40,6 +53,7 @@ const breadcrumbs = [
           alt={data.h1}
           className="product-image product-image--detail"
           loading="eager"
+          fetchpriority="high"
           sizes="(max-width: 719px) calc(100vw - 52px), (max-width: 959px) calc(50vw - 40px), 42vw"
           widths={[420, 620, 820, 1080]}
           quality={72}
@@ -52,9 +66,7 @@ const breadcrumbs = [
         <p class="product-summary__descriptor">{data.heroDescriptor}</p>
         <p class="product-summary__text">{data.heroSummary}</p>
         <div class="product-meta">
-          {data.stats.map((item) => (
-            <span>{item}</span>
-          ))}
+          {data.stats.map((item) => <span>{item}</span>)}
         </div>
       </article>
     </div>
@@ -67,9 +79,7 @@ const breadcrumbs = [
       <p class="eyebrow">Состав</p>
       <h2>Состав и КБЖУ</h2>
       <div class="ingredient-chips">
-        {data.ingredientChips.map((ingredient) => (
-          <span>{ingredient}</span>
-        ))}
+        {data.ingredientChips.map((ingredient) => <span>{ingredient}</span>)}
       </div>
       <div class="composition-copy">
         <h3>Полный состав</h3>
@@ -79,17 +89,31 @@ const breadcrumbs = [
         <article class="nutrition-panel">
           <h3>На 100 г</h3>
           <div class="nutrition-grid">
-            {Object.entries(data.nutrition100).map(([key, value]) => (
-              <div><span>{key}</span><strong>{value}</strong></div>
-            ))}
+            {
+              Object.entries(data.nutrition100).map(([key, value]) => (
+                <div>
+                  <>
+                    <span>{key}</span>
+                    <strong>{value}</strong>
+                  </>
+                </div>
+              ))
+            }
           </div>
         </article>
         <article class="nutrition-panel">
           <h3>{`На порцию ${data.weightLabel}`}</h3>
           <div class="nutrition-grid">
-            {Object.entries(data.nutritionPortion).map(([key, value]) => (
-              <div><span>{key}</span><strong>{value}</strong></div>
-            ))}
+            {
+              Object.entries(data.nutritionPortion).map(([key, value]) => (
+                <div>
+                  <>
+                    <span>{key}</span>
+                    <strong>{value}</strong>
+                  </>
+                </div>
+              ))
+            }
           </div>
         </article>
       </div>
@@ -101,9 +125,7 @@ const breadcrumbs = [
       <ul class="detail-list">
         <li>{data.weightLabel} в упаковке</li>
         <li>{data.packLabel}</li>
-        {data.facts.map((fact) => (
-          <li>{fact}</li>
-        ))}
+        {data.facts.map((fact) => <li>{fact}</li>)}
       </ul>
     </article>
   </div>
@@ -124,10 +146,15 @@ const breadcrumbs = [
     <article class="surface-card cta-strip">
       <p class="eyebrow">Для бизнеса</p>
       <h2>Нужна коммерческая консультация по позиции?</h2>
-      <p>Оставьте заявку, и команда Pastodel вернётся с условиями и следующими шагами.</p>
+      <p>
+        Оставьте заявку, и команда Pastodel вернётся с условиями и следующими
+        шагами.
+      </p>
       <div class="button-group">
         <a class="button" href={data.cta.href}>{data.cta.label}</a>
-        <a class="button button--secondary" href="/katalog/">Вернуться в каталог</a>
+        <a class="button button--secondary" href="/katalog/"
+          >Вернуться в каталог</a
+        >
       </div>
     </article>
   </div>
@@ -138,9 +165,7 @@ const breadcrumbs = [
     <p class="eyebrow">Ассортимент</p>
     <h2>Попробуйте ещё</h2>
     <div class="catalog-grid">
-      {recommendations.map((item) => (
-        <ProductCard product={item} />
-      ))}
+      {recommendations.map((item) => <ProductCard product={item} />)}
     </div>
   </div>
 </section>
