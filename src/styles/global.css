@@ -349,6 +349,9 @@ h3 { font-size: clamp(1.25rem, 2vw, 1.875rem); }
   gap: 10px;
   align-items: center;
 }
+.catalog-card__actions[hidden] {
+  display: none !important;
+}
 .catalog-card__note {
   margin: 0;
   color: var(--text-secondary);

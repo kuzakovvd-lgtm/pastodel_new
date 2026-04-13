@@ -20,6 +20,9 @@ const categoryLabel = getCategoryLabel(product.category);
 const recommendations = getProducts()
   .filter((item) => item.slug !== product.slug)
   .slice(0, 4);
+const detailFacts = Array.from(
+  new Set([`${data.weightLabel} в упаковке`, data.packLabel, ...data.facts]),
+);
 const breadcrumbs = [
   { href: "/", label: "Главная" },
   { href: "/katalog/", label: "Каталог" },
@@ -123,9 +126,7 @@ const breadcrumbs = [
       <p class="eyebrow">Кратко</p>
       <h2>Что важно знать</h2>
       <ul class="detail-list">
-        <li>{data.weightLabel} в упаковке</li>
-        <li>{data.packLabel}</li>
-        {data.facts.map((fact) => <li>{fact}</li>)}
+        {detailFacts.map((fact) => <li>{fact}</li>)}
       </ul>
     </article>
   </div>
