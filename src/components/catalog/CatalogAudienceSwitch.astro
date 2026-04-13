@@ -89,7 +89,6 @@
         if (!(card instanceof HTMLElement)) return;
         const homeActions = card.querySelector("[data-home-actions]");
         const businessActions = card.querySelector("[data-business-actions]");
-        const cardPicture = card.querySelector("[data-card-picture]");
         const cardImage = card.querySelector("[data-card-image]");
         const cardTitle = card.querySelector("[data-card-title]");
         const cardWeight = card.querySelector("[data-card-weight]");
@@ -104,68 +103,11 @@
           const homeSrc =
             cardImage.dataset.homeImage || cardImage.currentSrc || cardImage.src;
           const businessSrc = cardImage.dataset.businessImage || homeSrc;
-          const homeSrcset = cardImage.dataset.homeImageSet || "";
-          const businessSrcset = cardImage.dataset.businessImageSet || homeSrcset;
           const homeAlt = cardImage.dataset.homeAlt || cardImage.alt;
           const businessAlt = cardImage.dataset.businessAlt || homeAlt;
-          const avifSource =
-            cardPicture instanceof HTMLPictureElement
-              ? cardPicture.querySelector('source[type="image/avif"]')
-              : null;
-          const webpSource =
-            cardPicture instanceof HTMLPictureElement
-              ? cardPicture.querySelector('source[type="image/webp"]')
-              : null;
-          const homeAvifSrcset =
-            cardPicture instanceof HTMLElement
-              ? cardPicture.dataset.homeAvifSet || ""
-              : "";
-          const businessAvifSrcset =
-            cardPicture instanceof HTMLElement
-              ? cardPicture.dataset.businessAvifSet || homeAvifSrcset
-              : homeAvifSrcset;
-          const homeWebpSrcset =
-            cardPicture instanceof HTMLElement
-              ? cardPicture.dataset.homeWebpSrcset || homeSrcset
-              : homeSrcset;
-          const businessWebpSrcset =
-            cardPicture instanceof HTMLElement
-              ? cardPicture.dataset.businessWebpSrcset || homeWebpSrcset
-              : homeWebpSrcset;
 
           cardImage.src = business ? businessSrc : homeSrc;
           cardImage.alt = business ? businessAlt : homeAlt;
-
-          if (business ? businessSrcset : homeSrcset) {
-            cardImage.setAttribute(
-              "srcset",
-              business ? businessSrcset : homeSrcset,
-            );
-          } else {
-            cardImage.removeAttribute("srcset");
-          }
-
-          if (avifSource instanceof HTMLSourceElement) {
-            const nextAvifSrcset = business
-              ? businessAvifSrcset
-              : homeAvifSrcset;
-            if (nextAvifSrcset) {
-              avifSource.setAttribute("srcset", nextAvifSrcset);
-            } else {
-              avifSource.removeAttribute("srcset");
-            }
-          }
-
-          if (webpSource instanceof HTMLSourceElement) {
-            const nextWebpSrcset = business
-              ? businessWebpSrcset
-              : homeWebpSrcset;
-            if (nextWebpSrcset) {
-              webpSource.setAttribute("srcset", nextWebpSrcset);
-            } else {
-              webpSource.removeAttribute("srcset");
-            }
-          }
         }
 
         if (cardTitle instanceof HTMLElement) {

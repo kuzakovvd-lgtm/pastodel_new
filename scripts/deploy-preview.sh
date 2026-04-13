@@ -13,6 +13,8 @@ Environment variables:
   DEPLOY_HOST   (required) target server hostname or IP
   DEPLOY_USER   (default: root)
   DEPLOY_BASE   (default: /var/www/pastodel_new)
+  KEEP_RELEASES (default: 5)
+  PRESERVE_ASTRO_ASSETS (default: 0)
   SSH_PORT      (default: 22)
 
 Behavior:
@@ -60,11 +62,17 @@ DEPLOY_HOST="${DEPLOY_HOST:-}"
 DEPLOY_USER="${DEPLOY_USER:-root}"
 DEPLOY_BASE="${DEPLOY_BASE:-/var/www/pastodel_new}"
 DEPLOY_OWNER_GROUP="${DEPLOY_OWNER_GROUP:-root:root}"
-PRESERVE_ASTRO_ASSETS="${PRESERVE_ASTRO_ASSETS:-1}"
+PRESERVE_ASTRO_ASSETS="${PRESERVE_ASTRO_ASSETS:-0}"
+KEEP_RELEASES="${KEEP_RELEASES:-5}"
 SSH_PORT="${SSH_PORT:-22}"
 
 if [[ -z "$DEPLOY_HOST" ]]; then
   echo "[deploy-preview] DEPLOY_HOST is required" >&2
+  exit 1
+fi
+
+if ! [[ "$KEEP_RELEASES" =~ ^[0-9]+$ ]] || [[ "$KEEP_RELEASES" -lt 1 ]]; then
+  echo "[deploy-preview] KEEP_RELEASES must be a positive integer" >&2
   exit 1
 fi
 
@@ -90,6 +98,7 @@ REMOTE_COMPAT_ASTRO="if [ '${PRESERVE_ASTRO_ASSETS}' = '1' ] && [ -d '${DEPLOY_B
 REMOTE_COMPAT_LEGACY="if [ '${PRESERVE_ASTRO_ASSETS}' = '1' ]; then if [ -d '${DEPLOY_BASE}/current/js' ]; then mkdir -p '${RELEASE_DIR}/js' && rsync -a --ignore-existing '${DEPLOY_BASE}/current/js/' '${RELEASE_DIR}/js/'; fi; if [ -d '${DEPLOY_BASE}/current/fonts' ]; then mkdir -p '${RELEASE_DIR}/fonts' && rsync -a --ignore-existing '${DEPLOY_BASE}/current/fonts/' '${RELEASE_DIR}/fonts/'; fi; fi"
 REMOTE_OWNER="chown -R '${DEPLOY_OWNER_GROUP}' '${RELEASE_DIR}' && chown -h '${DEPLOY_OWNER_GROUP}' '${DEPLOY_BASE}/current'"
 REMOTE_PERMS="find '${DEPLOY_BASE}' -type d -exec chmod 755 {} +; find '${DEPLOY_BASE}' -type f -exec chmod 644 {} +"
+REMOTE_PRUNE_RELEASES="cd '${DEPLOY_BASE}/releases' && ls -1dt -- */ 2>/dev/null | awk 'NR>${KEEP_RELEASES}' | xargs -r rm -rf --"
 
 echo "[deploy-preview] Target host: ${SSH_TARGET}:${SSH_PORT}"
 echo "[deploy-preview] Target release: ${RELEASE_DIR}"
@@ -105,6 +114,7 @@ if [[ "$APPLY" -eq 0 ]]; then
   ${SSH_CMD[*]} "$REMOTE_LINK"
   ${SSH_CMD[*]} "$REMOTE_OWNER"
   ${SSH_CMD[*]} "$REMOTE_PERMS"
+  ${SSH_CMD[*]} "$REMOTE_PRUNE_RELEASES"
 DRYRUN
   exit 0
 fi
@@ -132,5 +142,8 @@ echo "[deploy-preview] Normalizing ownership (${DEPLOY_OWNER_GROUP})..."
 
 echo "[deploy-preview] Normalizing permissions under ${DEPLOY_BASE}..."
 "${SSH_CMD[@]}" "$REMOTE_PERMS"
+
+echo "[deploy-preview] Removing old releases (keeping ${KEEP_RELEASES})..."
+"${SSH_CMD[@]}" "$REMOTE_PRUNE_RELEASES"
 
 echo "[deploy-preview] Done. Preview root is now ${DEPLOY_BASE}/current"
