@@ -6,11 +6,11 @@ const enrichedProducts: ProductRecord[] = products.map((product) => ({
   ...product,
   retail: {
     ...product.retail,
-    imageAsset: getProductAsset(product.retail.image)
+    imageAsset: getProductAsset(product.slug, 'retail')
   },
   horeca: {
     ...product.horeca,
-    imageAsset: getProductAsset(product.horeca.image)
+    imageAsset: getProductAsset(product.slug, 'horeca')
   }
 }));
 

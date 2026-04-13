@@ -1,6 +1,6 @@
-import type { ProductRecord } from './product-types';
+import type { ProductRecordBase } from './product-types';
 
-export const products: ProductRecord[] = [
+export const products: ProductRecordBase[] = [
   {
     slug: "alfredo-kuritsa",
     category: "pasta",
@@ -12,7 +12,6 @@ export const products: ProductRecord[] = [
     retail: {
       title: "Альфредо с курицей",
       route: "/katalog/alfredo-kuritsa/",
-      image: "alfredo-kuritsa.IpX7MWOn_Z1mrgEb.webp",
       weightLabel: "400 г",
       description: "Нежная паста с курицей в сливочном соусе с сырным вкусом. Один из самых понятных и востребованных вкусов.",
       stats: ["КБЖУ 214/10/9/23","7-8 минут","Микроволновка или плита"],
@@ -33,7 +32,6 @@ export const products: ProductRecord[] = [
     horeca: {
       title: "Альфредо с курицей HoReCa",
       route: "/katalog/horeca/alfredo-kuritsa/",
-      image: "alfredo-kuritsa-horeca.B9CdtjsN_Z15w9WL.webp",
       weightLabel: "2,5 кг",
       description: "Нежная паста с курицей в сливочном соусе с сырным вкусом. Один из самых понятных и востребованных вкусов.",
       stats: ["КБЖУ 214/10/9/23","7-8 минут","Микроволновка или плита"],
@@ -63,7 +61,6 @@ export const products: ProductRecord[] = [
     retail: {
       title: "Карбонара",
       route: "/katalog/karbonara/",
-      image: "karbonara.CZeJuoEA_Z13FQlg.webp",
       weightLabel: "400 г",
       description: "Паста в сливочном соусе с беконом — беспроигрышный вариант для тех, кто любит классику.",
       stats: ["КБЖУ 228/9/11/24","7-8 минут","Микроволновка или плита"],
@@ -84,7 +81,6 @@ export const products: ProductRecord[] = [
     horeca: {
       title: "Карбонара HoReCa",
       route: "/katalog/horeca/karbonara/",
-      image: "karbonara-horeca.ZzWAwcHS_Z1Yyu94.webp",
       weightLabel: "2,5 кг",
       description: "Паста в сливочном соусе с беконом — беспроигрышный вариант для тех, кто любит классику.",
       stats: ["КБЖУ 228/9/11/24","7-8 минут","Микроволновка или плита"],
@@ -114,7 +110,6 @@ export const products: ProductRecord[] = [
     retail: {
       title: "Мак энд чиз",
       route: "/katalog/mak-end-chiz/",
-      image: "mak-end-chiz.C6KgzSw__85pKj.webp",
       weightLabel: "400 г",
       description: "Паста в густом сырном соусе. Насыщенный вкус для тех, кто любит блюда поярче и посытнее.",
       stats: ["КБЖУ 225/8/10/25","7-8 минут","Микроволновка или плита"],
@@ -135,7 +130,6 @@ export const products: ProductRecord[] = [
     horeca: {
       title: "Мак энд чиз HoReCa",
       route: "/katalog/horeca/mak-end-chiz/",
-      image: "mak-end-chiz-horeca.Cz0VqWKl_Z2iQLJU.webp",
       weightLabel: "2,5 кг",
       description: "Паста в густом сырном соусе. Насыщенный вкус для тех, кто любит блюда поярче и посытнее.",
       stats: ["КБЖУ 225/8/10/25","7-8 минут","Микроволновка или плита"],
@@ -165,7 +159,6 @@ export const products: ProductRecord[] = [
     retail: {
       title: "Ветчина с грибами в сливочном соусе",
       route: "/katalog/vetchina-griby-slivochny-sous/",
-      image: "vetchina-griby-slivochny-sous.Cqe7htBt_ZdXeCo.webp",
       weightLabel: "400 г",
       description: "Мягкий сливочный вкус, ветчина и грибной аромат. Комфортная домашняя классика на каждый день.",
       stats: ["КБЖУ 214/8/9/24","7-8 минут","Микроволновка или плита"],
@@ -186,7 +179,6 @@ export const products: ProductRecord[] = [
     horeca: {
       title: "Ветчина с грибами в сливочном соусе HoReCa",
       route: "/katalog/horeca/vetchina-griby-slivochny-sous/",
-      image: "vetchina-griby-slivochny-sous-horeca.jWTjw6JA_Z2qxapM.webp",
       weightLabel: "2,5 кг",
       description: "Мягкий сливочный вкус, ветчина и грибной аромат. Комфортная домашняя классика на каждый день.",
       stats: ["КБЖУ 214/8/9/24","7-8 минут","Микроволновка или плита"],
@@ -216,7 +208,6 @@ export const products: ProductRecord[] = [
     retail: {
       title: "Паста с фрикадельками и томатным соусом",
       route: "/katalog/pasta-frikadelki-tomatny-sous/",
-      image: "pasta-frikadelki-tomatny-sous.QWMST8gK_1d3SX3.webp",
       weightLabel: "400 г",
       description: "Сытная паста с мясными фрикадельками и насыщенным томатным соусом. Просто разогреть и подавать.",
       stats: ["КБЖУ 198/9/6/25","7-8 минут","Микроволновка или плита"],
@@ -237,7 +228,6 @@ export const products: ProductRecord[] = [
     horeca: {
       title: "Паста с фрикадельками и томатным соусом HoReCa",
       route: "/katalog/horeca/pasta-frikadelki-tomatny-sous/",
-      image: "pasta-frikadelki-tomatny-sous-horeca.DfoI17oS_Z2s3lmQ.webp",
       weightLabel: "2,5 кг",
       description: "Сытная паста с мясными фрикадельками и насыщенным томатным соусом. Просто разогреть и подавать.",
       stats: ["КБЖУ 198/9/6/25","7-8 минут","Микроволновка или плита"],
@@ -267,7 +257,6 @@ export const products: ProductRecord[] = [
     retail: {
       title: "4 сыра",
       route: "/katalog/chetyre-syra/",
-      image: "chetyre-syra.BcpZl_cL_LcvTj.webp",
       weightLabel: "400 г",
       description: "Паста в насыщенном сырном соусе. Выразительный вкус для тех, кто любит сырные блюда без компромиссов.",
       stats: ["КБЖУ 233/8/11/25","7-8 минут","Микроволновка или плита"],
@@ -288,7 +277,6 @@ export const products: ProductRecord[] = [
     horeca: {
       title: "4 сыра HoReCa",
       route: "/katalog/horeca/chetyre-syra/",
-      image: "chetyre-syra-horeca.mFhdUiiO_23T4o5.webp",
       weightLabel: "2,5 кг",
       description: "Паста в насыщенном сырном соусе. Выразительный вкус для тех, кто любит сырные блюда без компромиссов.",
       stats: ["КБЖУ 233/8/11/25","7-8 минут","Микроволновка или плита"],
@@ -318,7 +306,6 @@ export const products: ProductRecord[] = [
     retail: {
       title: "Курица песто с вялеными томатами",
       route: "/katalog/kuritsa-pesto-vyalenye-tomaty/",
-      image: "kuritsa-pesto-vyalenye-tomaty.HFynwqNL_1nHfcq.webp",
       weightLabel: "400 г",
       description: "Нежная курица, соус песто и яркий акцент вяленых томатов. Более выразительный вкус для тех, кто любит интересные сочетания.",
       stats: ["КБЖУ 206/10/8/23","7-8 минут","Микроволновка или плита"],
@@ -339,7 +326,6 @@ export const products: ProductRecord[] = [
     horeca: {
       title: "Курица песто с вялеными томатами HoReCa",
       route: "/katalog/horeca/kuritsa-pesto-vyalenye-tomaty/",
-      image: "kuritsa-pesto-vyalenye-tomaty-horeca.DtH-vghS_Z1BAYjk.webp",
       weightLabel: "2,5 кг",
       description: "Нежная курица, соус песто и яркий акцент вяленых томатов. Более выразительный вкус для тех, кто любит интересные сочетания.",
       stats: ["КБЖУ 206/10/8/23","7-8 минут","Микроволновка или плита"],
@@ -369,7 +355,6 @@ export const products: ProductRecord[] = [
     retail: {
       title: "Примавера",
       route: "/katalog/primavera/",
-      image: "primavera.CuHxQPa3_DulQJ.webp",
       weightLabel: "400 г",
       description: "Паста с овощами — более лёгкий вариант для ужина, когда не хочется тяжёлых соусов.",
       stats: ["КБЖУ 178/5/5/27","7-8 минут","Микроволновка или плита"],
@@ -390,7 +375,6 @@ export const products: ProductRecord[] = [
     horeca: {
       title: "Примавера HoReCa",
       route: "/katalog/horeca/primavera/",
-      image: "primavera-horeca.DKyr1zTC_1AsOPb.webp",
       weightLabel: "2,5 кг",
       description: "Паста с овощами — более лёгкий вариант для ужина, когда не хочется тяжёлых соусов.",
       stats: ["КБЖУ 178/5/5/27","7-8 минут","Микроволновка или плита"],
@@ -420,7 +404,6 @@ export const products: ProductRecord[] = [
     retail: {
       title: "Ризотто с зелёным горошком и соусом песто",
       route: "/katalog/rizotto-rizi-bizi-pesto-zeleny-goroshek/",
-      image: "rizotto-rizi-bizi-pesto-zeleny-goroshek.CDQ1G72P_Z1JPmti.webp",
       weightLabel: "400 г",
       description: "Нежное ризотто с зелёным горошком и ароматом базилика. Лёгкий и свежий вариант в линейке.",
       stats: ["КБЖУ 184/5/6/28","7-8 минут","Микроволновка или плита"],
@@ -441,7 +424,6 @@ export const products: ProductRecord[] = [
     horeca: {
       title: "Ризотто с зелёным горошком и соусом песто HoReCa",
       route: "/katalog/horeca/rizotto-rizi-bizi-pesto-zeleny-goroshek/",
-      image: "rizotto-rizi-bizi-pesto-zeleny-goroshek-horeca.Bh8-3jMc_tuMtK.webp",
       weightLabel: "2,5 кг",
       description: "Нежное ризотто с зелёным горошком и ароматом базилика. Лёгкий и свежий вариант в линейке.",
       stats: ["КБЖУ 184/5/6/28","7-8 минут","Микроволновка или плита"],
@@ -471,7 +453,6 @@ export const products: ProductRecord[] = [
     retail: {
       title: "Ризотто с грибами",
       route: "/katalog/rizotto-griby-slivochny-sous/",
-      image: "rizotto-griby-slivochny-sous.C-nnG8bC_avxoH.webp",
       weightLabel: "400 г",
       description: "Кремовое ризотто с насыщенным грибным вкусом. Спокойный, тёплый и очень понятный по подаче вариант.",
       stats: ["КБЖУ 191/5/7/27","7-8 минут","Микроволновка или плита"],
@@ -492,7 +473,6 @@ export const products: ProductRecord[] = [
     horeca: {
       title: "Ризотто с грибами HoReCa",
       route: "/katalog/horeca/rizotto-griby-slivochny-sous/",
-      image: "rizotto-griby-slivochny-sous-horeca.Bayg6BSC_Z2gNnaL.webp",
       weightLabel: "2,5 кг",
       description: "Кремовое ризотто с насыщенным грибным вкусом. Спокойный, тёплый и очень понятный по подаче вариант.",
       stats: ["КБЖУ 191/5/7/27","7-8 минут","Микроволновка или плита"],
@@ -522,7 +502,6 @@ export const products: ProductRecord[] = [
     retail: {
       title: "Паэлья с курицей и овощами",
       route: "/katalog/paelya-kuritsa-ovoshchi/",
-      image: "paelya-kuritsa-ovoshchi.Ds5b_jxz_DPJin.webp",
       weightLabel: "400 г",
       description: "Рис, курица и овощи в ярком, насыщенном сочетании. Удобный вариант, когда хочется чего-то не из привычной пасты.",
       stats: ["КБЖУ 187/8/5/27","7-8 минут","Микроволновка или плита"],
@@ -543,7 +522,6 @@ export const products: ProductRecord[] = [
     horeca: {
       title: "Паэлья с курицей и овощами HoReCa",
       route: "/katalog/horeca/paelya-kuritsa-ovoshchi/",
-      image: "paelya-kuritsa-ovoshchi-horeca.DVGQgO4p_Z24UCTn.webp",
       weightLabel: "2,5 кг",
       description: "Рис, курица и овощи в ярком, насыщенном сочетании. Удобный вариант, когда хочется чего-то не из привычной пасты.",
       stats: ["КБЖУ 187/8/5/27","7-8 минут","Микроволновка или плита"],
