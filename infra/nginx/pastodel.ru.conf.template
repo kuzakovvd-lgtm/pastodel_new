@@ -87,6 +87,12 @@ server {
         try_files $uri =404;
     }
 
+    location = /favicon.ico {
+        access_log off;
+        log_not_found off;
+        try_files /favicon.svg =204;
+    }
+
     location = /robots.txt {
         access_log off;
         log_not_found off;

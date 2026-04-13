@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404 | Pastodel" description="Страница не найдена">
+  <main class="not-found">
+    <h1>Страница не найдена</h1>
+    <p>
+      Запрошенный адрес недоступен. Перейдите на <a href="/">главную страницу</a>.
+    </p>
+  </main>
+</BaseLayout>
+
+<style>
+  .not-found {
+    max-width: 720px;
+    margin: 120px auto;
+    padding: 0 20px;
+    text-align: center;
+  }
+
+  .not-found h1 {
+    margin: 0 0 16px;
+    font-size: clamp(30px, 4vw, 44px);
+    line-height: 1.1;
+  }
+
+  .not-found p {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .not-found a {
+    color: inherit;
+  }
+</style>
