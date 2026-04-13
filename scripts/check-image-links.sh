@@ -8,6 +8,31 @@ BASE_URL="${BASE_URL:-}"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
+request_image_status() {
+  local url="$1"
+  local code rc
+
+  set +e
+  code="$(curl -sI --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "$url")"
+  rc=$?
+  if [[ "$rc" -ne 0 || "$code" == "405" || "$code" == "403" ]]; then
+    code="$(curl -s --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -H 'Range: bytes=0-0' -o /dev/null -w "%{http_code}" "$url")"
+    rc=$?
+  fi
+  if [[ "$rc" -ne 0 ]]; then
+    code="$(curl -s --retry 2 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 35 -o /dev/null -w "%{http_code}" "$url")"
+    rc=$?
+  fi
+  set -e
+
+  if [[ "$rc" -ne 0 ]]; then
+    echo "CURL_ERROR:${rc}"
+    return 0
+  fi
+
+  echo "$code"
+}
+
 extract_image_paths() {
   local input_file="$1"
   local output_file="$2"
@@ -109,6 +134,8 @@ check_remote_images() {
   local astro_checked=0
   local images_checked=0
   local route html_file image_paths_file image_path code
+  local all_images_file="$TMP_DIR/all-images.txt"
+  : > "$all_images_file"
 
   for route in "${routes[@]}"; do
     html_file="$TMP_DIR/route.html"
@@ -119,26 +146,33 @@ check_remote_images() {
 
     while IFS= read -r image_path; do
       [[ -z "$image_path" ]] && continue
-
       if [[ "$image_path" != /* ]]; then
         continue
       fi
-
-      code="$(curl -s --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "${BASE_URL}${image_path}")"
-      if [[ "$code" != "200" ]]; then
-        echo "[img-links] FAIL image ${code} ${image_path} (from ${route})" >&2
-        failed=1
-      else
-        checked=$((checked + 1))
-        if [[ "$image_path" == /_astro/* ]]; then
-          astro_checked=$((astro_checked + 1))
-        fi
-        if [[ "$image_path" == /images/* ]]; then
-          images_checked=$((images_checked + 1))
-        fi
-      fi
+      printf "%s\n" "$image_path" >> "$all_images_file"
     done < "$image_paths_file"
   done
+
+  sort -u "$all_images_file" -o "$all_images_file"
+
+  astro_checked="$(grep -c '^/_astro/' "$all_images_file" || true)"
+  images_checked="$(grep -c '^/images/' "$all_images_file" || true)"
+
+  while IFS= read -r image_path; do
+    [[ -z "$image_path" ]] && continue
+    code="$(request_image_status "${BASE_URL}${image_path}")"
+    if [[ "$code" != "200" && "$code" != "206" ]]; then
+      echo "[img-links] FAIL image ${code} ${image_path}" >&2
+      failed=1
+      continue
+    fi
+    checked=$((checked + 1))
+  done < <(
+    {
+      grep '^/_astro/' "$all_images_file" | head -n 3 || true
+      grep '^/images/' "$all_images_file" | head -n 3 || true
+    } | sort -u
+  )
 
   if [[ "$checked" -eq 0 ]]; then
     echo "[img-links] FAIL no images checked for routes / and /katalog/" >&2

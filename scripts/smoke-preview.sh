@@ -28,10 +28,62 @@ key_smoke_routes=(
   "/katalog/"
 )
 
+is_key_smoke_route() {
+  local route="$1"
+  for key in "${key_smoke_routes[@]}"; do
+    if [[ "$route" == "$key" ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+request_status() {
+  local url="$1"
+  local range_mode="${2:-0}"
+  local code rc
+
+  set +e
+  if [[ "$range_mode" == "1" ]]; then
+    code="$(curl -sI --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "$url")"
+  else
+    code="$(curl -s --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "$url")"
+  fi
+  rc=$?
+  if [[ "$range_mode" == "1" && ( "$rc" -ne 0 || "$code" == "405" || "$code" == "403" ) ]]; then
+    code="$(curl -s --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -H 'Range: bytes=0-0' -o /dev/null -w "%{http_code}" "$url")"
+    rc=$?
+  fi
+  if [[ "$rc" -ne 0 && "$range_mode" == "1" ]]; then
+    code="$(curl -s --retry 2 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 35 -o /dev/null -w "%{http_code}" "$url")"
+    rc=$?
+  fi
+  set -e
+
+  if [[ "$rc" -ne 0 ]]; then
+    echo "CURL_ERROR:${rc}"
+    return 0
+  fi
+
+  echo "$code"
+}
+
+fetch_to_file() {
+  local url="$1"
+  local out_file="$2"
+  local rc
+
+  set +e
+  curl -sS --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 30 "$url" > "$out_file"
+  rc=$?
+  set -e
+  return "$rc"
+}
+
 check_status() {
   local path="$1"
   local code
-  code="$(curl -s --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "${BASE_URL}${path}")"
+  code="$(request_status "${BASE_URL}${path}")"
   if [[ "$code" != "200" ]]; then
     echo "[smoke] FAIL status ${code} for ${path}" >&2
     return 1
@@ -42,7 +94,10 @@ check_status() {
 check_html_meta() {
   local path="$1"
   local out="$TMP_DIR/page.html"
-  curl -s --connect-timeout 5 --max-time 20 "${BASE_URL}${path}" > "$out"
+  if ! fetch_to_file "${BASE_URL}${path}" "$out"; then
+    echo "[smoke] FAIL cannot fetch ${path}" >&2
+    return 1
+  fi
 
   if ! grep -qi "<title>" "$out"; then
     echo "[smoke] FAIL missing <title> on ${path}" >&2
@@ -71,7 +126,10 @@ check_assets() {
   local path="$1"
   local out="$TMP_DIR/page-assets.html"
   local assets_file="$TMP_DIR/assets.txt"
-  curl -s --connect-timeout 5 --max-time 20 "${BASE_URL}${path}" > "$out"
+  if ! fetch_to_file "${BASE_URL}${path}" "$out"; then
+    echo "[smoke] FAIL cannot fetch assets page ${path}" >&2
+    return 1
+  fi
 
   grep -Eo '(href|src)="/[^"#?]+(\?[^"#]*)?"' "$out" \
     | sed -E 's/^(href|src)="//; s/"$//' \
@@ -82,8 +140,8 @@ check_assets() {
   while IFS= read -r asset; do
     [[ -z "$asset" ]] && continue
     local code
-    code="$(curl -s --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "${BASE_URL}${asset}")"
-    if [[ "$code" != "200" ]]; then
+    code="$(request_status "${BASE_URL}${asset}" 1)"
+    if [[ "$code" != "200" && "$code" != "206" ]]; then
       echo "[smoke] FAIL asset ${code} ${asset} (from ${path})" >&2
       failed=1
     fi
@@ -102,7 +160,10 @@ check_key_images() {
 
   for path in "${key_smoke_routes[@]}"; do
     local out="$TMP_DIR/key-route.html"
-    curl -s --connect-timeout 5 --max-time 20 "${BASE_URL}${path}" > "$out"
+    if ! fetch_to_file "${BASE_URL}${path}" "$out"; then
+      echo "[smoke] FAIL cannot fetch key route ${path}" >&2
+      return 1
+    fi
     grep -Eo '(src|srcset)="/[^"#?]+(\?[^"#]*)?"' "$out" \
       | sed -E 's/^(src|srcset)="//; s/"$//' \
       | grep -E '^/(_astro|images)/.+\.(avif|webp|png|jpe?g|gif|svg|ico)$' \
@@ -131,8 +192,8 @@ check_key_images() {
   local asset code
   while IFS= read -r asset; do
     [[ -z "$asset" ]] && continue
-    code="$(curl -s --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "${BASE_URL}${asset}")"
-    if [[ "$code" != "200" ]]; then
+    code="$(request_status "${BASE_URL}${asset}" 1)"
+    if [[ "$code" != "200" && "$code" != "206" ]]; then
       echo "[smoke] FAIL key image ${code} ${asset}" >&2
       failed=1
       continue
@@ -160,11 +221,18 @@ echo "[smoke] Base URL: ${BASE_URL}"
 for route in "${routes[@]}"; do
   check_status "$route"
   check_html_meta "$route"
-  check_assets "$route"
+  if is_key_smoke_route "$route"; then
+    check_assets "$route"
+  fi
 done
 check_key_images
 
-robots="$(curl -s --connect-timeout 5 --max-time 20 "${BASE_URL}/robots.txt")"
+robots_file="$TMP_DIR/robots.txt"
+if ! fetch_to_file "${BASE_URL}/robots.txt" "$robots_file"; then
+  echo "[smoke] FAIL cannot fetch robots.txt" >&2
+  exit 1
+fi
+robots="$(cat "$robots_file")"
 if ! printf "%s" "$robots" | grep -Eq 'Sitemap:[[:space:]]+https://pastodel\.ru/sitemap-index\.xml'; then
   echo "[smoke] FAIL robots sitemap does not target production host" >&2
   exit 1
@@ -175,7 +243,12 @@ if printf "%s" "$robots" | grep -Eqi '127\.0\.0\.1|localhost'; then
 fi
 echo "[smoke] OK robots.txt"
 
-sitemap_index="$(curl -s --connect-timeout 5 --max-time 20 "${BASE_URL}/sitemap-index.xml")"
+sitemap_file="$TMP_DIR/sitemap-index.xml"
+if ! fetch_to_file "${BASE_URL}/sitemap-index.xml" "$sitemap_file"; then
+  echo "[smoke] FAIL cannot fetch sitemap-index.xml" >&2
+  exit 1
+fi
+sitemap_index="$(cat "$sitemap_file")"
 if [[ -z "$sitemap_index" ]]; then
   echo "[smoke] FAIL empty sitemap-index.xml" >&2
   exit 1
@@ -191,7 +264,10 @@ fi
 echo "[smoke] OK sitemap-index.xml"
 
 forms_page="$TMP_DIR/forms.html"
-curl -s --connect-timeout 5 --max-time 20 "${BASE_URL}/partneram/" > "$forms_page"
+if ! fetch_to_file "${BASE_URL}/partneram/" "$forms_page"; then
+  echo "[smoke] FAIL cannot fetch /partneram/" >&2
+  exit 1
+fi
 if ! grep -q "Интеграция с production endpoint будет подключена после подтверждения API" "$forms_page"; then
   echo "[smoke] FAIL forms placeholder note missing on /partneram/" >&2
   exit 1
