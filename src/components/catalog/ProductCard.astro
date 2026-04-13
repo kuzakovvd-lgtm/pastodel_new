@@ -5,20 +5,21 @@ import ProductMeta from "@/components/product/ProductMeta.astro";
 
 interface Props {
   product: ProductRecord;
+  priority?: boolean;
 }
 
-const { product } = Astro.props;
+const { product, priority = false } = Astro.props;
 
 const cardSizes =
-  "(max-width: 719px) calc(100vw - 72px), (max-width: 959px) calc(50vw - 54px), (max-width: 1279px) calc((100vw - 160px) / 3), 290px";
-const cardWidths = [240, 320, 400, 520];
+  "(max-width: 719px) calc(100vw - 84px), (max-width: 959px) calc(50vw - 62px), (max-width: 1279px) calc((100vw - 184px) / 3), 248px";
+const cardWidths = [180, 240, 320, 400];
 
 const homeWebp = await getImage({
   src: product.retail.imageAsset,
   alt: product.retail.title,
   widths: cardWidths,
   sizes: cardSizes,
-  quality: 68,
+  quality: 54,
   format: "webp",
   loading: "lazy",
 });
@@ -28,8 +29,28 @@ const horecaWebp = await getImage({
   alt: product.horeca.title,
   widths: cardWidths,
   sizes: cardSizes,
-  quality: 68,
+  quality: 54,
   format: "webp",
+  loading: "lazy",
+});
+
+const homeAvif = await getImage({
+  src: product.retail.imageAsset,
+  alt: product.retail.title,
+  widths: cardWidths,
+  sizes: cardSizes,
+  quality: 46,
+  format: "avif",
+  loading: "lazy",
+});
+
+const horecaAvif = await getImage({
+  src: product.horeca.imageAsset,
+  alt: product.horeca.title,
+  widths: cardWidths,
+  sizes: cardSizes,
+  quality: 46,
+  format: "avif",
   loading: "lazy",
 });
 
@@ -37,6 +58,10 @@ const homeWebpSrcSet =
   homeWebp.srcSet.values.length > 0 ? homeWebp.srcSet.attribute : undefined;
 const horecaWebpSrcSet =
   horecaWebp.srcSet.values.length > 0 ? horecaWebp.srcSet.attribute : undefined;
+const homeAvifSrcSet =
+  homeAvif.srcSet.values.length > 0 ? homeAvif.srcSet.attribute : undefined;
+const horecaAvifSrcSet =
+  horecaAvif.srcSet.values.length > 0 ? horecaAvif.srcSet.attribute : undefined;
 ---
 
 <article
@@ -61,23 +86,26 @@ const horecaWebpSrcSet =
       <Picture
         src={product.retail.imageAsset}
         alt={product.retail.title}
-        formats={["webp"]}
+        formats={["avif", "webp"]}
         fallbackFormat="webp"
         widths={cardWidths}
         sizes={cardSizes}
-        quality={68}
-        loading="lazy"
+        quality={54}
+        loading={priority ? "eager" : "lazy"}
+        fetchpriority={priority ? "high" : "auto"}
         pictureAttributes={{
           "data-card-picture": "",
+          "data-home-avif-set": homeAvifSrcSet,
+          "data-business-avif-set": horecaAvifSrcSet,
           "data-home-webp-srcset": homeWebpSrcSet,
           "data-business-webp-srcset": horecaWebpSrcSet,
         }}
         data-card-image
-        data-home-src={homeWebp.src}
-        data-home-srcset={homeWebpSrcSet}
+        data-home-image={homeWebp.src}
+        data-home-image-set={homeWebpSrcSet}
         data-home-alt={product.retail.title}
-        data-business-src={horecaWebp.src}
-        data-business-srcset={horecaWebpSrcSet}
+        data-business-image={horecaWebp.src}
+        data-business-image-set={horecaWebpSrcSet}
         data-business-alt={product.horeca.title}
       />
     </div>

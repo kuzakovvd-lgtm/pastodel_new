@@ -102,16 +102,28 @@
 
         if (cardImage instanceof HTMLImageElement) {
           const homeSrc =
-            cardImage.dataset.homeSrc || cardImage.currentSrc || cardImage.src;
-          const businessSrc = cardImage.dataset.businessSrc || homeSrc;
-          const homeSrcset = cardImage.dataset.homeSrcset || "";
-          const businessSrcset = cardImage.dataset.businessSrcset || homeSrcset;
+            cardImage.dataset.homeImage || cardImage.currentSrc || cardImage.src;
+          const businessSrc = cardImage.dataset.businessImage || homeSrc;
+          const homeSrcset = cardImage.dataset.homeImageSet || "";
+          const businessSrcset = cardImage.dataset.businessImageSet || homeSrcset;
           const homeAlt = cardImage.dataset.homeAlt || cardImage.alt;
           const businessAlt = cardImage.dataset.businessAlt || homeAlt;
+          const avifSource =
+            cardPicture instanceof HTMLPictureElement
+              ? cardPicture.querySelector('source[type="image/avif"]')
+              : null;
           const webpSource =
             cardPicture instanceof HTMLPictureElement
               ? cardPicture.querySelector('source[type="image/webp"]')
               : null;
+          const homeAvifSrcset =
+            cardPicture instanceof HTMLElement
+              ? cardPicture.dataset.homeAvifSet || ""
+              : "";
+          const businessAvifSrcset =
+            cardPicture instanceof HTMLElement
+              ? cardPicture.dataset.businessAvifSet || homeAvifSrcset
+              : homeAvifSrcset;
           const homeWebpSrcset =
             cardPicture instanceof HTMLElement
               ? cardPicture.dataset.homeWebpSrcset || homeSrcset
@@ -131,6 +143,17 @@
             );
           } else {
             cardImage.removeAttribute("srcset");
+          }
+
+          if (avifSource instanceof HTMLSourceElement) {
+            const nextAvifSrcset = business
+              ? businessAvifSrcset
+              : homeAvifSrcset;
+            if (nextAvifSrcset) {
+              avifSource.setAttribute("srcset", nextAvifSrcset);
+            } else {
+              avifSource.removeAttribute("srcset");
+            }
           }
 
           if (webpSource instanceof HTMLSourceElement) {
