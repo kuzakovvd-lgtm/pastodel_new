@@ -12,7 +12,7 @@ Usage:
 Behavior:
   1) run pre-deploy snapshot (default)
   2) deploy new release via deploy-preview.sh --apply
-  3) validate production via smoke checks
+  3) validate production via deploy validation checks
   4) print rollback instructions on failure
 
 Notes:
@@ -83,7 +83,7 @@ echo "[deploy-safe] Verifying release metadata on remote"
 ssh -p "$SSH_PORT" -o BatchMode=yes "$SSH_TARGET" "test -f '${DEPLOY_BASE}/current/release-meta.json'"
 
 echo "[deploy-safe] Running production validation"
-if ! ssh -p "$SSH_PORT" -o BatchMode=yes "$SSH_TARGET" "BASE_URL='https://pastodel.ru' bash -s" < scripts/smoke-preview.sh; then
+if ! BASE_URL='https://pastodel.ru' HTTP_BASE_URL='http://pastodel.ru' scripts/validate-deploy.sh; then
   echo "[deploy-safe] Validation failed after deploy." >&2
   echo "[deploy-safe] Rollback recommendation:" >&2
   if [[ -n "$PREV_TARGET" ]]; then

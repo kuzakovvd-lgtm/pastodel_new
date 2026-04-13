@@ -23,11 +23,15 @@ routes=(
   "/politika-konfidentsialnosti/"
   "/soglasie-na-obrabotku-dannyh/"
 )
+key_smoke_routes=(
+  "/"
+  "/katalog/"
+)
 
 check_status() {
   local path="$1"
   local code
-  code="$(curl -s -o /dev/null -w "%{http_code}" "${BASE_URL}${path}")"
+  code="$(curl -s --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "${BASE_URL}${path}")"
   if [[ "$code" != "200" ]]; then
     echo "[smoke] FAIL status ${code} for ${path}" >&2
     return 1
@@ -38,7 +42,7 @@ check_status() {
 check_html_meta() {
   local path="$1"
   local out="$TMP_DIR/page.html"
-  curl -s "${BASE_URL}${path}" > "$out"
+  curl -s --connect-timeout 5 --max-time 20 "${BASE_URL}${path}" > "$out"
 
   if ! grep -qi "<title>" "$out"; then
     echo "[smoke] FAIL missing <title> on ${path}" >&2
@@ -67,7 +71,7 @@ check_assets() {
   local path="$1"
   local out="$TMP_DIR/page-assets.html"
   local assets_file="$TMP_DIR/assets.txt"
-  curl -s "${BASE_URL}${path}" > "$out"
+  curl -s --connect-timeout 5 --max-time 20 "${BASE_URL}${path}" > "$out"
 
   grep -Eo '(href|src)="/[^"#?]+(\?[^"#]*)?"' "$out" \
     | sed -E 's/^(href|src)="//; s/"$//' \
@@ -78,7 +82,7 @@ check_assets() {
   while IFS= read -r asset; do
     [[ -z "$asset" ]] && continue
     local code
-    code="$(curl -s -o /dev/null -w "%{http_code}" "${BASE_URL}${asset}")"
+    code="$(curl -s --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "${BASE_URL}${asset}")"
     if [[ "$code" != "200" ]]; then
       echo "[smoke] FAIL asset ${code} ${asset} (from ${path})" >&2
       failed=1
@@ -92,14 +96,75 @@ check_assets() {
   echo "[smoke] OK assets ${path}"
 }
 
+check_key_images() {
+  local assets_file="$TMP_DIR/key-images.txt"
+  : > "$assets_file"
+
+  for path in "${key_smoke_routes[@]}"; do
+    local out="$TMP_DIR/key-route.html"
+    curl -s --connect-timeout 5 --max-time 20 "${BASE_URL}${path}" > "$out"
+    grep -Eo '(src|srcset)="/[^"#?]+(\?[^"#]*)?"' "$out" \
+      | sed -E 's/^(src|srcset)="//; s/"$//' \
+      | grep -E '^/(_astro|images)/.+\.(avif|webp|png|jpe?g|gif|svg|ico)$' \
+      | sed -E 's/[?#].*$//' \
+      | sort -u >> "$assets_file" || true
+  done
+
+  sort -u "$assets_file" -o "$assets_file"
+
+  local astro_count
+  local images_count
+  astro_count="$(grep -c '^/_astro/' "$assets_file" || true)"
+  images_count="$(grep -c '^/images/' "$assets_file" || true)"
+
+  if [[ "$astro_count" -eq 0 ]]; then
+    echo "[smoke] FAIL no key images from /_astro/* on routes / and /katalog/" >&2
+    return 1
+  fi
+  if [[ "$images_count" -eq 0 ]]; then
+    echo "[smoke] FAIL no key images from /images/* on routes / and /katalog/" >&2
+    return 1
+  fi
+
+  local checked=0
+  local failed=0
+  local asset code
+  while IFS= read -r asset; do
+    [[ -z "$asset" ]] && continue
+    code="$(curl -s --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "${BASE_URL}${asset}")"
+    if [[ "$code" != "200" ]]; then
+      echo "[smoke] FAIL key image ${code} ${asset}" >&2
+      failed=1
+      continue
+    fi
+    checked=$((checked + 1))
+  done < <(
+    {
+      grep '^/_astro/' "$assets_file" | head -n 3 || true
+      grep '^/images/' "$assets_file" | head -n 3 || true
+    } | sort -u
+  )
+
+  if [[ "$checked" -eq 0 ]]; then
+    echo "[smoke] FAIL no key images selected for checks" >&2
+    return 1
+  fi
+  if [[ "$failed" -ne 0 ]]; then
+    return 1
+  fi
+
+  echo "[smoke] OK key images on /, /katalog/, /_astro/*, /images/*"
+}
+
 echo "[smoke] Base URL: ${BASE_URL}"
 for route in "${routes[@]}"; do
   check_status "$route"
   check_html_meta "$route"
   check_assets "$route"
 done
+check_key_images
 
-robots="$(curl -s "${BASE_URL}/robots.txt")"
+robots="$(curl -s --connect-timeout 5 --max-time 20 "${BASE_URL}/robots.txt")"
 if ! printf "%s" "$robots" | grep -Eq 'Sitemap:[[:space:]]+https://pastodel\.ru/sitemap-index\.xml'; then
   echo "[smoke] FAIL robots sitemap does not target production host" >&2
   exit 1
@@ -110,7 +175,7 @@ if printf "%s" "$robots" | grep -Eqi '127\.0\.0\.1|localhost'; then
 fi
 echo "[smoke] OK robots.txt"
 
-sitemap_index="$(curl -s "${BASE_URL}/sitemap-index.xml")"
+sitemap_index="$(curl -s --connect-timeout 5 --max-time 20 "${BASE_URL}/sitemap-index.xml")"
 if [[ -z "$sitemap_index" ]]; then
   echo "[smoke] FAIL empty sitemap-index.xml" >&2
   exit 1
@@ -126,7 +191,7 @@ fi
 echo "[smoke] OK sitemap-index.xml"
 
 forms_page="$TMP_DIR/forms.html"
-curl -s "${BASE_URL}/partneram/" > "$forms_page"
+curl -s --connect-timeout 5 --max-time 20 "${BASE_URL}/partneram/" > "$forms_page"
 if ! grep -q "Интеграция с production endpoint будет подключена после подтверждения API" "$forms_page"; then
   echo "[smoke] FAIL forms placeholder note missing on /partneram/" >&2
   exit 1

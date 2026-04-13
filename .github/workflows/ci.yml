@@ -42,8 +42,8 @@ jobs:
           echo "Preview server failed to start in time" >&2
           exit 1
 
-      - name: Smoke checks
-        run: BASE_URL=http://127.0.0.1:8081 scripts/smoke-preview.sh
+      - name: Validate deploy gates (smoke + image links + route checks)
+        run: BASE_URL=http://127.0.0.1:8081 scripts/validate-deploy.sh
 
       - name: Stop preview server
         if: always()

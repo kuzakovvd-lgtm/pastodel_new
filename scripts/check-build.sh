@@ -43,6 +43,9 @@ if ! grep -q '"gitSha"' dist/release-meta.json || ! grep -q '"buildTimeUtc"' dis
   exit 1
 fi
 
+echo "[check-build] Checking broken image links in dist..."
+scripts/check-image-links.sh
+
 echo "[check-build] Route directories:"
 find dist -maxdepth 1 -type d | sed 's#^dist##' | sort
 
