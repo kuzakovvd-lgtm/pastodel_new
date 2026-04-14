@@ -45,17 +45,17 @@ request_status() {
 
   set +e
   if [[ "$range_mode" == "1" ]]; then
-    code="$(curl -sI --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "$url")"
+    code="$(curl --http1.1 -sI --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "$url")"
   else
-    code="$(curl -s --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "$url")"
+    code="$(curl --http1.1 -s --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "$url")"
   fi
   rc=$?
   if [[ "$range_mode" == "1" && ( "$rc" -ne 0 || "$code" == "405" || "$code" == "403" ) ]]; then
-    code="$(curl -s --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -H 'Range: bytes=0-0' -o /dev/null -w "%{http_code}" "$url")"
+    code="$(curl --http1.1 -s --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -H 'Range: bytes=0-0' -o /dev/null -w "%{http_code}" "$url")"
     rc=$?
   fi
   if [[ "$rc" -ne 0 && "$range_mode" == "1" ]]; then
-    code="$(curl -s --retry 2 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 35 -o /dev/null -w "%{http_code}" "$url")"
+    code="$(curl --http1.1 -s --retry 2 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 35 -o /dev/null -w "%{http_code}" "$url")"
     rc=$?
   fi
   set -e
@@ -74,7 +74,7 @@ fetch_to_file() {
   local rc
 
   set +e
-  curl -sS --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 30 "$url" > "$out_file"
+  curl --http1.1 -sS --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 30 "$url" > "$out_file"
   rc=$?
   set -e
   return "$rc"
@@ -182,11 +182,6 @@ check_key_images() {
     echo "[smoke] FAIL no key images from /_astro/* on routes / and /katalog/" >&2
     return 1
   fi
-  if [[ "$images_count" -eq 0 ]]; then
-    echo "[smoke] FAIL no key images from /images/* on routes / and /katalog/" >&2
-    return 1
-  fi
-
   local checked=0
   local failed=0
   local asset code
@@ -214,7 +209,11 @@ check_key_images() {
     return 1
   fi
 
-  echo "[smoke] OK key images on /, /katalog/, /_astro/*, /images/*"
+  if [[ "$images_count" -eq 0 ]]; then
+    echo "[smoke] WARN no key images from /images/* on routes / and /katalog/ (only /_astro assets in use)"
+  fi
+
+  echo "[smoke] OK key images on /, /katalog/ (/images=${images_count}, /_astro=${astro_count})"
 }
 
 echo "[smoke] Base URL: ${BASE_URL}"
