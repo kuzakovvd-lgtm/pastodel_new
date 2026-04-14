@@ -14,7 +14,7 @@ Environment variables:
   DEPLOY_USER   (default: root)
   DEPLOY_BASE   (default: /var/www/pastodel_new)
   KEEP_RELEASES (default: 5)
-  PRESERVE_ASTRO_ASSETS (default: 0)
+  PRESERVE_ASTRO_ASSETS (default: 1)
   SSH_PORT      (default: 22)
 
 Behavior:
@@ -62,7 +62,7 @@ DEPLOY_HOST="${DEPLOY_HOST:-}"
 DEPLOY_USER="${DEPLOY_USER:-root}"
 DEPLOY_BASE="${DEPLOY_BASE:-/var/www/pastodel_new}"
 DEPLOY_OWNER_GROUP="${DEPLOY_OWNER_GROUP:-root:root}"
-PRESERVE_ASTRO_ASSETS="${PRESERVE_ASTRO_ASSETS:-0}"
+PRESERVE_ASTRO_ASSETS="${PRESERVE_ASTRO_ASSETS:-1}"
 KEEP_RELEASES="${KEEP_RELEASES:-5}"
 SSH_PORT="${SSH_PORT:-22}"
 

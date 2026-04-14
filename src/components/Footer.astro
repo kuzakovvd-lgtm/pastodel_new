@@ -1,19 +1,15 @@
 ---
 import { mainNav } from '@/data/navigation';
-import { Image } from 'astro:assets';
-import logoFooter from '@/assets/branding/logo-pastodel-clean.webp';
 ---
 <footer class="site-footer">
   <div class="container site-footer__grid">
     <div class="site-footer__brand">
       <a class="brand-mark brand-mark--footer" href="/" aria-label="Pastodel — на главную">
-        <Image
-          src={logoFooter}
+        <img
+          src="/images/logo-pastodel-clean.jpg"
           alt="Pastodel"
-          widths={[180, 260, 340]}
-          sizes="(max-width: 719px) min(100vw - 32px, 260px), 260px"
-          format="webp"
-          quality={68}
+          width="260"
+          height="111"
           class="brand-mark__image"
           loading="lazy"
         />

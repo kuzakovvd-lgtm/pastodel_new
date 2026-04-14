@@ -1,20 +1,16 @@
 ---
 import { mainNav } from '@/data/navigation';
-import { Image } from 'astro:assets';
-import logoHeader from '@/assets/branding/logo-pastodel-header.webp';
 
 const pathname = Astro.url.pathname;
 ---
 <header class="site-header" data-site-header>
   <div class="container site-header__inner">
     <a class="brand-mark brand-mark--header" href="/" aria-label="Pastodel — на главную">
-      <Image
-        src={logoHeader}
+      <img
+        src="/images/logo-pastodel-header.jpg"
         alt="Pastodel"
-        widths={[180, 240, 320, 420]}
-        sizes="(max-width: 719px) 190px, (max-width: 1279px) 22vw, 250px"
-        format="webp"
-        quality={68}
+        width="250"
+        height="106"
         loading="eager"
         fetchpriority="high"
         class="brand-mark__image"
