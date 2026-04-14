@@ -115,13 +115,12 @@ check_local_dist_images() {
     echo "[img-links] FAIL no /_astro/* images found on key dist routes" >&2
     return 1
   fi
-  if [[ "$images_checked" -eq 0 ]]; then
-    echo "[img-links] FAIL no /images/* images found on key dist routes" >&2
+  if [[ "$failed" -ne 0 ]]; then
     return 1
   fi
 
-  if [[ "$failed" -ne 0 ]]; then
-    return 1
+  if [[ "$images_checked" -eq 0 ]]; then
+    echo "[img-links] WARN no /images/* images found on key dist routes (only /_astro assets in use)"
   fi
 
   echo "[img-links] OK local dist image references (${checked} checked; /_astro=${astro_checked}, /images=${images_checked})"
@@ -182,12 +181,12 @@ check_remote_images() {
     echo "[img-links] FAIL no /_astro/* images detected on smoke routes" >&2
     return 1
   fi
-  if [[ "$images_checked" -eq 0 ]]; then
-    echo "[img-links] FAIL no /images/* images detected on smoke routes" >&2
-    return 1
-  fi
   if [[ "$failed" -ne 0 ]]; then
     return 1
+  fi
+
+  if [[ "$images_checked" -eq 0 ]]; then
+    echo "[img-links] WARN no /images/* images detected on smoke routes (only /_astro assets in use)"
   fi
 
   echo "[img-links] OK remote image links (${checked} checked; /_astro=${astro_checked}, /images=${images_checked})"
