@@ -103,10 +103,16 @@
           const homeSrc =
             cardImage.dataset.homeImage || cardImage.currentSrc || cardImage.src;
           const businessSrc = cardImage.dataset.businessImage || homeSrc;
+          const homeSrcset = cardImage.dataset.homeSrcset || cardImage.srcset;
+          const businessSrcset = cardImage.dataset.businessSrcset || homeSrcset;
+          const homeSizes = cardImage.dataset.homeSizes || cardImage.sizes;
+          const businessSizes = cardImage.dataset.businessSizes || homeSizes;
           const homeAlt = cardImage.dataset.homeAlt || cardImage.alt;
           const businessAlt = cardImage.dataset.businessAlt || homeAlt;
 
           cardImage.src = business ? businessSrc : homeSrc;
+          cardImage.srcset = business ? businessSrcset : homeSrcset;
+          cardImage.sizes = business ? businessSizes : homeSizes;
           cardImage.alt = business ? businessAlt : homeAlt;
         }
 

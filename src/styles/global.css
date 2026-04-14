@@ -641,11 +641,11 @@ h3 { font-size: clamp(1.25rem, 2vw, 1.875rem); }
 }
 .pd-form-note {
   margin: 10px 0 0;
-  color: var(--text-secondary);
+  color: #594f48;
   font-size: 0.88rem;
 }
 .pd-form-note--muted {
-  color: #867a70;
+  color: #6a5f56;
 }
 .form-honeypot {
   position: absolute;

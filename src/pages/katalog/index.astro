@@ -43,6 +43,7 @@ const products = getProducts();
 
   <section class="section section--tight-top">
     <div class="container">
+      <h2 class="sr-only">Список блюд Pastodel</h2>
       <div class="catalog-grid" id="catalog-grid" data-catalog-grid>
         {products.map((product, index) => (
           <ProductCard product={product} priority={index < 3} />
