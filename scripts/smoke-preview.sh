@@ -45,17 +45,17 @@ request_status() {
 
   set +e
   if [[ "$range_mode" == "1" ]]; then
-    code="$(curl --http1.1 -sI --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "$url")"
+    code="$(curl --http1.1 --compressed -sI --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "$url")"
   else
-    code="$(curl --http1.1 -s --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "$url")"
+    code="$(curl --http1.1 --compressed -s --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "$url")"
   fi
   rc=$?
   if [[ "$range_mode" == "1" && ( "$rc" -ne 0 || "$code" == "405" || "$code" == "403" ) ]]; then
-    code="$(curl --http1.1 -s --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -H 'Range: bytes=0-0' -o /dev/null -w "%{http_code}" "$url")"
+    code="$(curl --http1.1 --compressed -s --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -H 'Range: bytes=0-0' -o /dev/null -w "%{http_code}" "$url")"
     rc=$?
   fi
   if [[ "$rc" -ne 0 && "$range_mode" == "1" ]]; then
-    code="$(curl --http1.1 -s --retry 2 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 35 -o /dev/null -w "%{http_code}" "$url")"
+    code="$(curl --http1.1 --compressed -s --retry 2 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 35 -o /dev/null -w "%{http_code}" "$url")"
     rc=$?
   fi
   set -e
@@ -74,7 +74,7 @@ fetch_to_file() {
   local rc
 
   set +e
-  curl --http1.1 -sS --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 30 "$url" > "$out_file"
+  curl --http1.1 --compressed -sS --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 30 "$url" > "$out_file"
   rc=$?
   set -e
   return "$rc"

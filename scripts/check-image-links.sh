@@ -13,14 +13,14 @@ request_image_status() {
   local code rc
 
   set +e
-  code="$(curl -sI --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "$url")"
+  code="$(curl --compressed -sI --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "$url")"
   rc=$?
   if [[ "$rc" -ne 0 || "$code" == "405" || "$code" == "403" ]]; then
-    code="$(curl -s --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -H 'Range: bytes=0-0' -o /dev/null -w "%{http_code}" "$url")"
+    code="$(curl --compressed -s --retry 3 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 20 -H 'Range: bytes=0-0' -o /dev/null -w "%{http_code}" "$url")"
     rc=$?
   fi
   if [[ "$rc" -ne 0 ]]; then
-    code="$(curl -s --retry 2 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 35 -o /dev/null -w "%{http_code}" "$url")"
+    code="$(curl --compressed -s --retry 2 --retry-delay 1 --retry-all-errors --connect-timeout 5 --max-time 35 -o /dev/null -w "%{http_code}" "$url")"
     rc=$?
   fi
   set -e
@@ -138,7 +138,7 @@ check_remote_images() {
 
   for route in "${routes[@]}"; do
     html_file="$TMP_DIR/route.html"
-    curl -sS --connect-timeout 5 --max-time 20 "${BASE_URL}${route}" > "$html_file"
+    curl --compressed -sS --connect-timeout 5 --max-time 20 "${BASE_URL}${route}" > "$html_file"
 
     image_paths_file="$TMP_DIR/image-paths.txt"
     extract_image_paths "$html_file" "$image_paths_file"
