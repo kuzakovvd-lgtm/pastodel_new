@@ -104,6 +104,10 @@ Prevention for next cutovers:
 
 ## Phase 2 additions
 
+### Cloudflare CDN cutover
+
+Use `docs/cloudflare-cdn-runbook.md` for the CDN cutover plan, DNS records, cache rule, verification commands, and rollback path.
+
 ### Real forms endpoint contract
 
 - Frontend variable: `PUBLIC_PASTODEL_FORMS_ENDPOINT` (required in production).
