@@ -7,7 +7,7 @@
     "dev": "astro dev",
     "build": "scripts/build.sh",
     "preview": "astro preview",
-    "lint": "eslint .",
+    "lint": "eslint astro.config.mjs eslint.config.mjs \"scripts/**/*.mjs\"",
     "format": "prettier --write .",
     "check:build": "scripts/check-build.sh",
     "check:smoke:preview": "BASE_URL=http://127.0.0.1:8081 scripts/smoke-preview.sh",

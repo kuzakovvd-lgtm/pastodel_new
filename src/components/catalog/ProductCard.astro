@@ -1,4 +1,5 @@
 ---
+import { getImage } from "astro:assets";
 import type { ProductRecord } from "@/data/product-types";
 import ProductMeta from "@/components/product/ProductMeta.astro";
 
@@ -11,10 +12,18 @@ const { product, priority = false } = Astro.props;
 
 const CARD_SIZES =
   "(max-width: 719px) calc(100vw - 68px), (max-width: 959px) calc(50vw - 56px), (max-width: 1279px) calc(33vw - 44px), 300px";
-const homeImage = `/images/products/${product.slug}.jpg`;
-const businessImage = `/images/products/${product.slug}-horeca.jpg`;
-const homeImageSrcSet = `${homeImage} 1x`;
-const businessImageSrcSet = `${businessImage} 1x`;
+const CARD_WIDTHS = [220, 300, 420, 520];
+const imageOptions = {
+  format: "webp",
+  widths: CARD_WIDTHS,
+  sizes: CARD_SIZES,
+  quality: 72,
+} as const;
+
+const [homeImage, businessImage] = await Promise.all([
+  getImage({ src: product.retail.imageAsset, ...imageOptions }),
+  getImage({ src: product.horeca.imageAsset, ...imageOptions }),
+]);
 ---
 
 <article
@@ -37,22 +46,22 @@ const businessImageSrcSet = `${businessImage} 1x`;
   >
     <div class="product-image product-image--card">
       <img
-        src={homeImage}
-        srcset={homeImageSrcSet}
+        src={homeImage.src}
+        srcset={homeImage.srcSet.attribute}
         sizes={CARD_SIZES}
         alt={product.retail.title}
-        width={260}
-        height={260}
+        width={homeImage.attributes.width}
+        height={homeImage.attributes.height}
         loading={priority ? "eager" : "lazy"}
         fetchpriority={priority ? "high" : "auto"}
         decoding="async"
         data-card-image
-        data-home-image={homeImage}
-        data-home-srcset={homeImageSrcSet}
+        data-home-image={homeImage.src}
+        data-home-srcset={homeImage.srcSet.attribute}
         data-home-sizes={CARD_SIZES}
         data-home-alt={product.retail.title}
-        data-business-image={businessImage}
-        data-business-srcset={businessImageSrcSet}
+        data-business-image={businessImage.src}
+        data-business-srcset={businessImage.srcSet.attribute}
         data-business-sizes={CARD_SIZES}
         data-business-alt={product.horeca.title}
       />

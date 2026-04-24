@@ -118,7 +118,9 @@ function run() {
             seen.add(cssAsset);
             queue.push(cssAsset);
           }
-        } catch {}
+        } catch {
+          // Ignore unreadable generated assets while keeping route weight reporting best-effort.
+        }
       }
     }
 

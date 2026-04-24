@@ -16,8 +16,7 @@ fi
 trap 'rm -rf "$LOCK_DIR"' EXIT
 
 echo "[build] Running astro build..."
-astro build
+ASTRO_TELEMETRY_DISABLED=1 astro build
 echo "[build] Writing release metadata..."
 scripts/write-release-meta.sh
 echo "[build] Done."
-

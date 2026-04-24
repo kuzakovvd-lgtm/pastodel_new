@@ -25,7 +25,7 @@ routes=(
 )
 
 for route in "${routes[@]}"; do
-  code="$(curl -ks --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "${BASE_URL}${route}")"
+  code="$(curl -ks --compressed --connect-timeout 5 --max-time 20 -o /dev/null -w "%{http_code}" "${BASE_URL}${route}")"
   if [[ "$code" != "200" ]]; then
     echo "[validate-deploy] FAIL ${route} returned ${code}" >&2
     exit 1
@@ -44,7 +44,7 @@ fi
 
 meta_tmp="$(mktemp)"
 trap 'rm -f "$meta_tmp"' EXIT
-curl -ks --connect-timeout 5 --max-time 20 "${BASE_URL}/release-meta.json" > "$meta_tmp"
+curl -ks --compressed --connect-timeout 5 --max-time 20 "${BASE_URL}/release-meta.json" > "$meta_tmp"
 if ! grep -q '"gitSha"' "$meta_tmp" || ! grep -q '"buildTimeUtc"' "$meta_tmp"; then
   echo "[validate-deploy] FAIL release-meta.json missing required fields" >&2
   exit 1
