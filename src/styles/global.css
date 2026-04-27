@@ -550,7 +550,7 @@ h3 { font-size: clamp(1.25rem, 2vw, 1.875rem); }
   border-radius: 28px;
   background: linear-gradient(180deg, #fffdf9f2, #efe5d8de);
 }
-.page-intro__media :global(img) {
+.page-intro__media img {
   width: 100%;
   height: 100%;
   object-fit: contain;

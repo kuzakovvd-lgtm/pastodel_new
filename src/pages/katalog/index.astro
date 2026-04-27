@@ -1,8 +1,10 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
 import { getProducts } from '@/data/product-utils';
 import ProductCard from '@/components/catalog/ProductCard.astro';
 import CatalogAudienceSwitch from '@/components/catalog/CatalogAudienceSwitch.astro';
+import catalogHero from '@/assets/products/catalog-hero.webp';
 
 const products = getProducts();
 ---
@@ -13,14 +15,15 @@ const products = getProducts();
   <section class="catalog-hero section section--compact">
     <div class="container catalog-hero__inner">
       <figure class="catalog-hero__media">
-        <img
-          src="/images/catalog-hero.jpg"
+        <Image
+          src={catalogHero}
           alt="Иллюстрация ассортимента Pastodel"
           loading="eager"
           fetchpriority="high"
-          sizes="(max-width: 719px) calc(100vw - 52px), (max-width: 1279px) 48vw, 620px"
-          width="620"
-          height="620"
+          widths={[240, 360, 480]}
+          sizes="(max-width: 719px) calc(100vw - 32px), 240px"
+          quality={72}
+          format="webp"
         />
       </figure>
       <div class="catalog-hero__content page-intro__inner">
