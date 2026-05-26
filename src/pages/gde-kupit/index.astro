@@ -5,33 +5,69 @@ import SectionHead from '@/components/common/SectionHead.astro';
 import buyIntro from '@/assets/page-intro/gde-kupit.ZwO_ySWU_1Fdvpr.webp';
 ---
 <BaseLayout
-  title="Где купить Pastodel — доставка и точки продаж"
-  description="Информация о доступности Pastodel в онлайне и офлайне."
+  title="Где купить Pastodel — точки продаж и доставка"
+  description="Актуальная информация о точках продаж и онлайн-площадках Pastodel. Пока список обновляется, можно посмотреть ассортимент или связаться с нами."
 >
   <PageIntro
     eyebrow="Где купить"
     title="Где купить Pastodel"
-    description="Мы расширяем присутствие Pastodel в рознице и онлайн. Как только появятся подтверждённые точки продаж, раздел будет обновлён."
+    description="Мы обновляем список точек продаж и онлайн-площадок. Как только появятся подтверждённые места покупки, мы добавим их на эту страницу."
     image={buyIntro}
     imageAlt="Иллюстрация Pastodel для страницы где купить"
     breadcrumbs={[{ href: '/', label: 'Главная' }, { label: 'Где купить' }]}
+    actions={[
+      { href: '/katalog/', label: 'Смотреть ассортимент' },
+      { href: '/kontakty/', label: 'Написать нам', secondary: true }
+    ]}
   />
 
   <section class="section section--tight-top">
+    <div class="container">
+      <article class="surface-card info-card">
+        <SectionHead compact eyebrow="Статус" title="Статус продаж" lead="Актуальные точки продаж пока не опубликованы. Мы не добавляем магазины и площадки без подтверждения, чтобы информация на сайте оставалась точной." />
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
     <div class="container split-grid">
       <article class="surface-card info-card">
-        <SectionHead compact eyebrow="Онлайн" title="Онлайн-доставка" lead="Как только появятся подтверждённые площадки заказа, они будут опубликованы здесь." />
+        <SectionHead compact eyebrow="Онлайн" title="Онлайн" lead="Когда появятся подтверждённые онлайн-площадки заказа, мы разместим их здесь." />
+        <div class="button-group"><a class="button button--secondary" href="/kontakty/">Задать вопрос</a></div>
       </article>
       <article class="surface-card info-card">
-        <SectionHead compact eyebrow="Магазины" title="Оффлайн" lead="Список офлайн-точек продаж появится после подтверждения и публикации." />
+        <SectionHead compact eyebrow="Офлайн" title="Магазины" lead="Список офлайн-точек продаж появится после подтверждения." />
       </article>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
+      <SectionHead eyebrow="Следующий шаг" title="Что можно сделать сейчас" />
+      <div class="simple-grid simple-grid--three">
+        <article class="surface-card info-card">
+          <h3>Посмотреть ассортимент</h3>
+          <p>Изучите вкусы, состав, КБЖУ и способ приготовления.</p>
+          <div class="button-group"><a class="button button--secondary" href="/katalog/">Смотреть ассортимент</a></div>
+        </article>
+        <article class="surface-card info-card">
+          <h3>Связаться с Pastodel</h3>
+          <p>Напишите нам, если хотите уточнить доступность продукции.</p>
+          <div class="button-group"><a class="button button--secondary" href="/kontakty/">Написать нам</a></div>
+        </article>
+        <article class="surface-card info-card">
+          <h3>Предложить партнёрство</h3>
+          <p>Если вы представляете магазин, сеть, HoReCa или регионального партнёра, оставьте заявку.</p>
+          <div class="button-group"><a class="button button--secondary" href="/partneram/">Оставить заявку</a></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
       <article class="surface-card info-card">
-        <SectionHead compact eyebrow="Для партнёров" title="Вашего региона ещё нет в списке?" lead="Если вы хотите обсудить запуск Pastodel в своём регионе, оставьте заявку на странице «Партнёрам»." />
+        <SectionHead compact eyebrow="Для партнёров" title="Хотите запустить Pastodel в своём регионе?" lead="Если вы представляете розницу, HoReCa или дистрибуцию, оставьте заявку в разделе для партнёров." />
         <div class="button-group"><a class="button" href="/partneram/">Перейти в раздел для партнёров</a></div>
       </article>
     </div>
