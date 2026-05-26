@@ -267,14 +267,18 @@ if ! fetch_to_file "${BASE_URL}/partneram/" "$forms_page"; then
   echo "[smoke] FAIL cannot fetch /partneram/" >&2
   exit 1
 fi
-if ! grep -q "Интеграция с production endpoint будет подключена после подтверждения API" "$forms_page"; then
-  echo "[smoke] FAIL forms placeholder note missing on /partneram/" >&2
+if grep -q "Интеграция с production endpoint будет подключена после подтверждения API" "$forms_page"; then
+  echo "[smoke] FAIL technical endpoint note is visible on /partneram/" >&2
+  exit 1
+fi
+if ! grep -q "После отправки заявки мы свяжемся с вами по указанным контактам." "$forms_page"; then
+  echo "[smoke] FAIL user-facing form note missing on /partneram/" >&2
   exit 1
 fi
 if ! grep -Eq 'FormRuntime\.astro_astro_type_script_index_0_lang\.' "$forms_page"; then
   echo "[smoke] FAIL FormRuntime client script missing on /partneram/" >&2
   exit 1
 fi
-echo "[smoke] OK forms placeholder-safe runtime"
+echo "[smoke] OK forms user-facing runtime"
 
 echo "[smoke] All checks passed"
