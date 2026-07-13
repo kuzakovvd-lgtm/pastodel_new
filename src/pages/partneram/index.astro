@@ -63,8 +63,33 @@ const products = getProducts().slice(0, 3);
   </section>
 
   <section class="section">
+    <div class="container">
+      <SectionHead eyebrow="После заявки" title="Что происходит после заявки" />
+      <div class="simple-grid simple-grid--three">
+        <article class="surface-card info-card"><h3>Уточняем задачу</h3><p>Связываемся с вами по указанным контактам, чтобы уточнить формат сотрудничества и цель обращения.</p></article>
+        <article class="surface-card info-card"><h3>Обсуждаем ассортимент</h3><p>Рассматриваем подходящие позиции PASTODEL и возможный формат первого запуска.</p></article>
+        <article class="surface-card info-card"><h3>Передаём доступную информацию</h3><p>По запросу направляем презентацию линейки и информацию об ассортименте для дальнейшего обсуждения.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <article class="surface-card info-card">
+        <SectionHead compact eyebrow="Для согласования" title="Материалы для первого обсуждения" lead="По запросу предоставим доступные материалы о продукции PASTODEL:" />
+        <ul class="detail-list">
+          <li>презентацию линейки;</li>
+          <li>информацию об ассортименте;</li>
+          <li>информацию о форматах продукции;</li>
+          <li>контакты для согласования дальнейших шагов.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
     <div class="container pd-form-shell" id="partner-form">
-      <form class="surface-card form-card" data-validated-form data-form-name="partneram-b2b" data-success-message="Спасибо. Заявка отправлена. Мы свяжемся с вами в течение одного рабочего дня." novalidate>
+      <form class="surface-card form-card" data-validated-form data-form-name="partneram-b2b" data-success-message="Спасибо. Заявка отправлена. Мы свяжемся с вами по указанным контактам." novalidate>
         <SectionHead eyebrow="Форма заявки" title="Запросить условия сотрудничества" lead="Оставьте контакты, и мы вернёмся с предложением по запуску." />
         <div class="form-grid">
           <div class="field"><label for="partner-company">Название сети</label><input id="partner-company" name="company" type="text" placeholder="Название сети" data-required-field /><p class="pd-form-error" data-error-for="company"></p></div>
@@ -86,12 +111,19 @@ const products = getProducts().slice(0, 3);
         <p class="pd-form-error" data-error-for="privacy"></p>
         <div class="form-honeypot" aria-hidden="true"><label for="partner-company-site">Не заполняйте это поле</label><input id="partner-company-site" name="company_site" type="text" tabindex="-1" autocomplete="off" /></div>
         <div class="button-group"><button class="button" type="submit">Получить коммерческое предложение</button></div>
-        <p class="pd-form-note">Ответим в течение 1 рабочего дня.</p>
-        <p class="pd-form-note pd-form-note--muted">После отправки заявки мы свяжемся с вами по указанным контактам.</p>
+        <p class="pd-form-note">После отправки заявки мы свяжемся с вами по указанным контактам.</p>
         <p class="pd-form-error" data-form-request-error hidden></p>
-        <p class="pd-form-success" data-form-success hidden>Спасибо. Заявка отправлена. Мы свяжемся с вами в течение одного рабочего дня.</p>
+        <p class="pd-form-success" data-form-success hidden>Спасибо. Заявка отправлена. Мы свяжемся с вами по указанным контактам.</p>
       </form>
     </div>
   </section>
   <FormRuntime />
 </BaseLayout>
+
+<style>
+  @media (max-width: 1023px) {
+    #partner-form {
+      scroll-margin-top: 118px;
+    }
+  }
+</style>
