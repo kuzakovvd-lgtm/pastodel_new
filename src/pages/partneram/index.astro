@@ -2,62 +2,81 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageIntro from '@/components/common/PageIntro.astro';
 import SectionHead from '@/components/common/SectionHead.astro';
-import ProductCard from '@/components/catalog/ProductCard.astro';
 import FormRuntime from '@/components/forms/FormRuntime.astro';
 import partnerIntro from '@/assets/page-intro/partneram.DMd1JByY_1rJtxO.webp';
-import { getProducts } from '@/data/product-utils';
+import { Image } from 'astro:assets';
+import { getProductCardView } from '@/data/product-card-view';
+import { getCategoryLabel, getProductBySlug } from '@/data/product-utils';
 
-const products = getProducts().slice(0, 3);
+const exampleSlugs = ['alfredo-kuritsa', 'karbonara', 'mak-end-chiz'] as const;
+const productExamples = exampleSlugs.map((slug) => {
+  const product = getProductBySlug(slug);
+  if (!product) throw new Error(`Missing retail product example: ${slug}`);
+
+  return {
+    category: getCategoryLabel(product.category),
+    view: getProductCardView(product, 'consumer')
+  };
+});
 ---
 <BaseLayout
   title="Решения для сетевого ритейла Pastodel — ассортимент и условия запуска"
   description="Запуск Pastodel в ритейле: ассортимент, стартовые условия, калькулятор маржи и форма для коммерческого обсуждения."
 >
   <PageIntro
-    eyebrow="Ритейл"
-    title="Решения для сетевого ритейла"
-    description="Понятный продуктовый ассортимент и удобный формат обсуждения запуска в торговой сети."
+    eyebrow="Сетевой ритейл"
+    title="Готовые ужины из морозилки для вашей полки"
+    description="Линейка пасты, ризотто и паэльи в формате 400 г. Обсудим ассортимент и формат сотрудничества под задачу вашей сети."
     image={partnerIntro}
     imageAlt="Иллюстрация Pastodel для страницы партнёров"
     breadcrumbs={[{ href: '/', label: 'Главная' }, { label: 'Партнёрам' }]}
     actions={[
-      { href: '#partner-form', label: 'Оставить заявку' },
-      { href: '/katalog/', label: 'Смотреть ассортимент', secondary: true }
+      { href: '#partner-form', label: 'Обсудить ассортимент' },
+      { href: '/katalog/', label: 'Смотреть каталог', secondary: true }
     ]}
   />
 
   <section class="section section--tight-top">
     <div class="container">
-      <SectionHead eyebrow="Почему сейчас" title="Почему категория заморозки снова в фокусе" />
+      <SectionHead eyebrow="Первый разговор" title="Что можно обсудить" />
       <div class="simple-grid simple-grid--three">
-        <article class="surface-card info-card"><h3>Готовая еда стала привычкой</h3><p>Покупатель всё чаще выбирает сценарии быстрого ужина без потери вкуса.</p></article>
-        <article class="surface-card info-card"><h3>Долгий срок хранения снижает риск</h3><p>Замороженный формат помогает управлять остатками и снижать списания.</p></article>
-        <article class="surface-card info-card"><h3>Качество важно не меньше срока</h3><p>Решение должно быть не только удобным, но и предсказуемым по вкусу.</p></article>
+        <article class="surface-card info-card"><h3>Ассортимент</h3><p>Паста, ризотто и паэлья в едином формате 400 г.</p></article>
+        <article class="surface-card info-card"><h3>Формат сотрудничества</h3><p>Обсудим задачу сети, интересующие позиции и возможный формат первого запуска.</p></article>
+        <article class="surface-card info-card"><h3>Следующие шаги</h3><p>Свяжемся по указанным контактам и уточним, какая информация нужна для дальнейшего обсуждения.</p></article>
       </div>
     </div>
   </section>
 
   <section class="section">
-    <div class="container split-grid">
-      <article class="surface-card info-card">
-        <SectionHead compact eyebrow="Полка" title="Что важно для полки" lead="Ниже риск списаний, удобный вход в категорию и стабильный продукт для повторных покупок." />
-      </article>
-      <article class="surface-card info-card" data-margin-calculator>
-        <SectionHead compact eyebrow="Расчёт" title="Калькулятор маржи" lead="Быстрый ориентир для первичного обсуждения экономики." />
-        <div class="form-grid">
-          <div class="field"><label for="menu-price">Цена продажи</label><input id="menu-price" type="number" min="0" step="1" placeholder="Например, 320" data-menu-price /></div>
-          <div class="field"><label for="purchase-price">Закупочная стоимость</label><input id="purchase-price" type="number" min="0" step="1" placeholder="Например, 180" data-purchase-price /></div>
-        </div>
-        <p class="metric"><span>Маржа</span> <strong data-margin-output>0%</strong></p>
-      </article>
-    </div>
-  </section>
-
-  <section class="section">
     <div class="container">
-      <SectionHead eyebrow="Ассортимент" title="Что можно обсудить на старте" lead="Паста, ризотто и паэлья в едином формате 400 г." />
-      <div class="catalog-grid">
-        {products.map((product) => <ProductCard product={product} audience="retailBuyer" />)}
+      <SectionHead eyebrow="Ассортимент" title="Примеры позиций" lead="На сайте представлен актуальный ассортимент PASTODEL. Ниже — несколько позиций линейки." />
+      <div class="retail-product-grid">
+        {productExamples.map(({ category, view }) => (
+          <article class="surface-card retail-product-card">
+            <div class="retail-product-card__image">
+              <Image
+                src={view.image}
+                alt={view.imageAlt}
+                widths={[220, 320, 480]}
+                sizes="(max-width: 719px) calc(100vw - 68px), (max-width: 959px) calc(50vw - 56px), 360px"
+                quality={72}
+                format="webp"
+                loading="lazy"
+              />
+            </div>
+            <div class="retail-product-card__body">
+              <div class="retail-product-card__meta">
+                <span class="pill">{category}</span>
+                <span class="retail-product-card__weight">{view.weightLabel}</span>
+              </div>
+              <h3>{view.title}</h3>
+              <a class="button button--secondary" href={view.mediaHref} aria-label={`Смотреть позицию: ${view.title}`}>Смотреть позицию</a>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div class="button-group retail-section-actions">
+        <a class="button" href="/katalog/">Смотреть весь ассортимент</a>
       </div>
     </div>
   </section>
@@ -90,7 +109,7 @@ const products = getProducts().slice(0, 3);
   <section class="section">
     <div class="container pd-form-shell" id="partner-form">
       <form class="surface-card form-card" data-validated-form data-form-name="partneram-b2b" data-success-message="Спасибо. Заявка отправлена. Мы свяжемся с вами по указанным контактам." novalidate>
-        <SectionHead eyebrow="Форма заявки" title="Запросить условия сотрудничества" lead="Оставьте контакты, и мы вернёмся с предложением по запуску." />
+        <SectionHead eyebrow="Форма заявки" title="Обсудить ассортимент и сотрудничество" lead="Оставьте контакты и кратко укажите задачу. Мы свяжемся с вами по указанным контактам." />
         <div class="form-grid">
           <div class="field"><label for="partner-company">Название сети</label><input id="partner-company" name="company" type="text" placeholder="Название сети" data-required-field /><p class="pd-form-error" data-error-for="company"></p></div>
           <div class="field"><label for="partner-stores">Количество ТТ</label><input id="partner-stores" name="store_count" type="text" placeholder="Например, 25" data-required-field /><p class="pd-form-error" data-error-for="store_count"></p></div>
@@ -110,7 +129,7 @@ const products = getProducts().slice(0, 3);
         <label class="pd-checkbox"><input type="checkbox" name="privacy" required /><span>Я согласен с <a href="/politika-konfidentsialnosti/">политикой конфиденциальности</a> и обработкой персональных данных.</span></label>
         <p class="pd-form-error" data-error-for="privacy"></p>
         <div class="form-honeypot" aria-hidden="true"><label for="partner-company-site">Не заполняйте это поле</label><input id="partner-company-site" name="company_site" type="text" tabindex="-1" autocomplete="off" /></div>
-        <div class="button-group"><button class="button" type="submit">Получить коммерческое предложение</button></div>
+        <div class="button-group"><button class="button" type="submit">Отправить заявку</button></div>
         <p class="pd-form-note">После отправки заявки мы свяжемся с вами по указанным контактам.</p>
         <p class="pd-form-error" data-form-request-error hidden></p>
         <p class="pd-form-success" data-form-success hidden>Спасибо. Заявка отправлена. Мы свяжемся с вами по указанным контактам.</p>
@@ -121,6 +140,80 @@ const products = getProducts().slice(0, 3);
 </BaseLayout>
 
 <style>
+  .retail-product-grid {
+    display: grid;
+    gap: 18px;
+  }
+
+  .retail-product-card {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+  }
+
+  .retail-product-card__image {
+    aspect-ratio: 1;
+    padding: 18px;
+    background: linear-gradient(180deg, #fffdf9f5, #efe4d7d4);
+  }
+
+  .retail-product-card__image :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .retail-product-card__body {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 14px;
+    padding: 20px;
+  }
+
+  .retail-product-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .retail-product-card__weight {
+    color: var(--brand-accent);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .retail-product-card h3 {
+    margin: 0;
+    font-size: 1.65rem;
+  }
+
+  .retail-product-card .button {
+    align-self: end;
+    justify-self: start;
+  }
+
+  .retail-section-actions {
+    margin-top: 20px;
+  }
+
+  #partner-form {
+    scroll-margin-top: 148px;
+  }
+
+  @media (min-width: 720px) {
+    .retail-product-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 719px) {
+    .retail-product-card .button {
+      width: 100%;
+    }
+  }
+
   @media (max-width: 1023px) {
     #partner-form {
       scroll-margin-top: 118px;
