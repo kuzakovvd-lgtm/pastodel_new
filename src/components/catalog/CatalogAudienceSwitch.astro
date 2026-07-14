@@ -1,3 +1,33 @@
+<script is:inline>
+  (() => {
+    const isAudience = (value) => value === "consumer" || value === "horeca";
+    const urlAudience = new URL(window.location.href).searchParams.get(
+      "audience",
+    );
+    let storedAudience = null;
+
+    try {
+      storedAudience = localStorage.getItem("catalogAudienceMode");
+    } catch {
+      // The catalog remains in consumer mode when storage is unavailable.
+    }
+
+    const audience = isAudience(urlAudience)
+      ? urlAudience
+      : isAudience(storedAudience)
+        ? storedAudience
+        : "consumer";
+
+    document.documentElement.dataset.catalogAudience = audience;
+    if (audience === "horeca") {
+      document.documentElement.dataset.catalogAudiencePending = "true";
+      window.setTimeout(() => {
+        delete document.documentElement.dataset.catalogAudiencePending;
+      }, 600);
+    }
+  })();
+</script>
+
 <div class="catalog-filter-bar" aria-label="Фильтры каталога">
   <div class="container">
     <div class="catalog-filter-shell surface-card">
@@ -6,10 +36,10 @@
           class="catalog-toggle__button is-active"
           type="button"
           role="tab"
-          id="tab-home"
-          aria-controls="panel-home"
+          id="tab-consumer"
+          aria-controls="panel-consumer"
           data-audience-button
-          data-value="home"
+          data-value="consumer"
           aria-selected="true"
           tabindex="0"
         >
@@ -19,10 +49,10 @@
           class="catalog-toggle__button"
           type="button"
           role="tab"
-          id="tab-business"
-          aria-controls="panel-business"
+          id="tab-horeca"
+          aria-controls="panel-horeca"
           data-audience-button
-          data-value="business"
+          data-value="horeca"
           aria-selected="false"
           tabindex="-1"
         >
@@ -32,20 +62,20 @@
       <div class="catalog-filter-meta">
         <div
           class="catalog-mode-note"
-          id="panel-home"
+          id="panel-consumer"
           role="tabpanel"
-          aria-labelledby="tab-home"
-          data-audience-panel="home"
+          aria-labelledby="tab-consumer"
+          data-audience-panel="consumer"
         >
           Все 11 блюд в формате 400 г: выбирайте вкус на сегодня и открывайте
           карточку блюда.
         </div>
         <div
           class="catalog-mode-note"
-          id="panel-business"
+          id="panel-horeca"
           role="tabpanel"
-          aria-labelledby="tab-business"
-          data-audience-panel="business"
+          aria-labelledby="tab-horeca"
+          data-audience-panel="horeca"
           hidden
         >
           Для HoReCa сейчас доступны все 11 позиций каталога в отдельном
@@ -56,103 +86,158 @@
   </div>
 </div>
 
+<style is:global>
+  html[data-catalog-audience-pending="true"] [data-catalog-grid] {
+    visibility: hidden;
+  }
+</style>
+
 <script>
+  type CatalogAudience = "consumer" | "horeca";
+
+  const STORAGE_KEY = "catalogAudienceMode";
+  const root = document.documentElement;
   const buttons = Array.from(
     document.querySelectorAll("[data-audience-button]"),
+  ).filter((button): button is HTMLButtonElement =>
+    button instanceof HTMLButtonElement,
   );
-  const panels = Array.from(document.querySelectorAll("[data-audience-panel]"));
-  const cards = Array.from(document.querySelectorAll("[data-catalog-card]"));
+  const panels = Array.from(
+    document.querySelectorAll("[data-audience-panel]"),
+  ).filter((panel): panel is HTMLElement => panel instanceof HTMLElement);
+  const cards = Array.from(
+    document.querySelectorAll("[data-catalog-card]"),
+  ).filter((card): card is HTMLElement => card instanceof HTMLElement);
 
-  if (buttons.length > 1) {
-    let audience = "home";
+  const isAudience = (value: string | null): value is CatalogAudience =>
+    value === "consumer" || value === "horeca";
+
+  const getUrlAudience = (): CatalogAudience | null => {
+    const value = new URL(window.location.href).searchParams.get("audience");
+    return isAudience(value) ? value : null;
+  };
+
+  const getStoredAudience = (): CatalogAudience | null => {
     try {
-      audience = localStorage.getItem("catalogAudienceMode") || "home";
+      const value = localStorage.getItem(STORAGE_KEY);
+      return isAudience(value) ? value : null;
     } catch {
-      // Ignore storage access failures in private mode or restricted contexts.
+      return null;
+    }
+  };
+
+  const resolveAudience = (): CatalogAudience =>
+    getUrlAudience() ?? getStoredAudience() ?? "consumer";
+
+  const getAudienceAttribute = (
+    element: Element,
+    audience: CatalogAudience,
+    name: string,
+  ): string => element.getAttribute(`data-${audience}-${name}`) ?? "";
+
+  const renderCard = (card: HTMLElement, audience: CatalogAudience) => {
+    card.dataset.catalogAudience = audience;
+
+    const image = card.querySelector("[data-card-image]");
+    if (image instanceof HTMLImageElement) {
+      image.srcset = getAudienceAttribute(image, audience, "srcset");
+      image.sizes = getAudienceAttribute(image, audience, "sizes");
+      image.src = getAudienceAttribute(image, audience, "src");
+      image.alt = getAudienceAttribute(image, audience, "alt");
     }
 
-    const render = () => {
-      buttons.forEach((button) => {
-        if (!(button instanceof HTMLButtonElement)) return;
-        const active = button.dataset.value === audience;
-        button.classList.toggle("is-active", active);
-        button.setAttribute("aria-selected", String(active));
-        button.setAttribute("tabindex", active ? "0" : "-1");
-      });
+    const textElements = card.querySelectorAll(
+      "[data-card-badge], [data-card-weight], [data-card-title-link], [data-card-description]",
+    );
+    textElements.forEach((element) => {
+      element.textContent = getAudienceAttribute(element, audience, "text");
+    });
 
-      panels.forEach((panel) => {
-        if (!(panel instanceof HTMLElement)) return;
-        panel.hidden = panel.dataset.audiencePanel !== audience;
-      });
+    const links = card.querySelectorAll(
+      "[data-card-media-link], [data-card-title-link]",
+    );
+    links.forEach((link) => {
+      if (!(link instanceof HTMLAnchorElement)) return;
+      link.setAttribute("href", getAudienceAttribute(link, audience, "href"));
+    });
 
-      cards.forEach((card) => {
-        if (!(card instanceof HTMLElement)) return;
-        const homeActions = card.querySelector("[data-home-actions]");
-        const businessActions = card.querySelector("[data-business-actions]");
-        const cardImage = card.querySelector("[data-card-image]");
-        const cardTitle = card.querySelector("[data-card-title]");
-        const cardWeight = card.querySelector("[data-card-weight]");
-        const links = card.querySelectorAll("[data-card-link]");
-        const business = audience === "business";
+    card.querySelectorAll("[data-audience-content]").forEach((element) => {
+      if (!(element instanceof HTMLElement)) return;
+      element.hidden = element.dataset.audienceContent !== audience;
+    });
+  };
 
-        if (homeActions instanceof HTMLElement) homeActions.hidden = business;
-        if (businessActions instanceof HTMLElement)
-          businessActions.hidden = !business;
-
-        if (cardImage instanceof HTMLImageElement) {
-          const homeSrc =
-            cardImage.dataset.homeImage || cardImage.currentSrc || cardImage.src;
-          const businessSrc = cardImage.dataset.businessImage || homeSrc;
-          const homeSrcset = cardImage.dataset.homeSrcset || cardImage.srcset;
-          const businessSrcset = cardImage.dataset.businessSrcset || homeSrcset;
-          const homeSizes = cardImage.dataset.homeSizes || cardImage.sizes;
-          const businessSizes = cardImage.dataset.businessSizes || homeSizes;
-          const homeAlt = cardImage.dataset.homeAlt || cardImage.alt;
-          const businessAlt = cardImage.dataset.businessAlt || homeAlt;
-
-          cardImage.src = business ? businessSrc : homeSrc;
-          cardImage.srcset = business ? businessSrcset : homeSrcset;
-          cardImage.sizes = business ? businessSizes : homeSizes;
-          cardImage.alt = business ? businessAlt : homeAlt;
-        }
-
-        if (cardTitle instanceof HTMLElement) {
-          const titleHome = cardTitle.getAttribute("data-title-home") || "";
-          const titleBusiness =
-            cardTitle.getAttribute("data-title-business") || titleHome;
-          cardTitle.textContent = business ? titleBusiness : titleHome;
-        }
-
-        if (cardWeight instanceof HTMLElement) {
-          const weightHome = cardWeight.getAttribute("data-weight-home") || "";
-          const weightBusiness =
-            cardWeight.getAttribute("data-weight-business") || weightHome;
-          cardWeight.textContent = business ? weightBusiness : weightHome;
-        }
-
-        links.forEach((link) => {
-          if (!(link instanceof HTMLAnchorElement)) return;
-          const homeHref = link.getAttribute("data-home-href") || "#";
-          const businessHref =
-            link.getAttribute("data-business-href") || homeHref;
-          link.href = business ? businessHref : homeHref;
-        });
-      });
-    };
-
+  const render = (audience: CatalogAudience) => {
     buttons.forEach((button) => {
-      if (!(button instanceof HTMLButtonElement)) return;
+      const active = button.dataset.value === audience;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", String(active));
+      button.setAttribute("tabindex", active ? "0" : "-1");
+    });
+
+    panels.forEach((panel) => {
+      panel.hidden = panel.dataset.audiencePanel !== audience;
+    });
+
+    cards.forEach((card) => renderCard(card, audience));
+    root.dataset.catalogAudience = audience;
+    root.dataset.catalogAudienceReady = "true";
+    delete root.dataset.catalogAudiencePending;
+  };
+
+  const persistAudience = (audience: CatalogAudience) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, audience);
+    } catch {
+      // Storage is optional; the current page session still remains functional.
+    }
+  };
+
+  const updateUrl = (audience: CatalogAudience) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("audience", audience);
+    history.replaceState(history.state, "", url);
+  };
+
+  const selectAudience = (
+    audience: CatalogAudience,
+    options: { updateUrl: boolean },
+  ) => {
+    render(audience);
+    persistAudience(audience);
+    if (options.updateUrl) updateUrl(audience);
+  };
+
+  if (buttons.length === 2 && cards.length > 0) {
+    selectAudience(resolveAudience(), { updateUrl: false });
+
+    buttons.forEach((button, index) => {
       button.addEventListener("click", () => {
-        audience = button.dataset.value || "home";
-        try {
-          localStorage.setItem("catalogAudienceMode", audience);
-        } catch {
-          // Ignore storage write failures to keep the toggle functional.
-        }
-        render();
+        const audience = button.dataset.value ?? null;
+        if (!isAudience(audience)) return;
+        selectAudience(audience, { updateUrl: true });
+      });
+
+      button.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+        event.preventDefault();
+
+        const direction = event.key === "ArrowRight" ? 1 : -1;
+        const nextIndex = (index + direction + buttons.length) % buttons.length;
+        const nextButton = buttons[nextIndex];
+        const nextAudience = nextButton?.dataset.value ?? null;
+        if (!nextButton || !isAudience(nextAudience)) return;
+
+        nextButton.focus();
+        selectAudience(nextAudience, { updateUrl: true });
       });
     });
 
-    render();
+    window.addEventListener("popstate", () => {
+      selectAudience(resolveAudience(), { updateUrl: false });
+    });
+  } else {
+    root.dataset.catalogAudienceReady = "true";
+    delete root.dataset.catalogAudiencePending;
   }
 </script>

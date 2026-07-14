@@ -69,3 +69,23 @@ const products = getProducts();
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  #catalog-grid {
+    grid-auto-rows: 1fr;
+  }
+
+  #catalog-grid :global(.catalog-card) {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+  }
+
+  #catalog-grid :global(.catalog-card__body) {
+    flex: 1;
+  }
+
+  #catalog-grid :global(.catalog-card__actions) {
+    margin-top: auto;
+  }
+</style>
