@@ -38,6 +38,13 @@ const primaryImage = await getImage({ src: view.image, ...imageOptions });
 const horecaImage = catalogSwitchMode
   ? await getImage({ src: horecaView.image, ...imageOptions })
   : undefined;
+const catalogHorecaDescription =
+  catalogSwitchMode && horecaView.description !== consumerView.description
+    ? horecaView.description
+    : "";
+const catalogHorecaStats = catalogSwitchMode
+  ? horecaView.stats.filter((stat) => !consumerView.stats.includes(stat))
+  : [];
 
 const actionClass = (action: ProductCardAction): string => {
   if (action.style === "primary") return "button button--secondary";
@@ -141,7 +148,7 @@ const actionClass = (action: ProductCardAction): string => {
         ? consumerView.description
         : undefined}
       data-horeca-text={catalogSwitchMode
-        ? horecaView.description
+        ? catalogHorecaDescription
         : undefined}
     >
       {view.description}
@@ -153,9 +160,13 @@ const actionClass = (action: ProductCardAction): string => {
           <div data-audience-content="consumer">
             <ProductMeta stats={consumerView.stats} />
           </div>
-          <div data-audience-content="horeca" hidden>
-            <ProductMeta stats={horecaView.stats} />
-          </div>
+          {
+            catalogHorecaStats.length > 0 && (
+              <div data-audience-content="horeca" hidden>
+                <ProductMeta stats={catalogHorecaStats} />
+              </div>
+            )
+          }
         </>
       ) : (
         <ProductMeta stats={view.stats} />

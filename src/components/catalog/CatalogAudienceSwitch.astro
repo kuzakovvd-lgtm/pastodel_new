@@ -151,6 +151,10 @@
     );
     textElements.forEach((element) => {
       element.textContent = getAudienceAttribute(element, audience, "text");
+
+      if (element.hasAttribute("data-card-description")) {
+        (element as HTMLElement).hidden = element.textContent.trim() === "";
+      }
     });
 
     const links = card.querySelectorAll(
