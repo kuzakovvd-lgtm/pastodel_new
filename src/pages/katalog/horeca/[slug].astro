@@ -1,7 +1,8 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import ProductDetailPage from '@/components/product/ProductDetailPage.astro';
-import { getProductBySlug, getProducts } from '@/data/product-utils';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ProductDetailPage from "@/components/product/ProductDetailPage.astro";
+import { getProductSeo } from "@/data/product-seo";
+import { getProductBySlug, getProducts } from "@/data/product-utils";
 
 export function getStaticPaths() {
   return getProducts().map((product) => ({ params: { slug: product.slug } }));
@@ -11,9 +12,16 @@ const { slug } = Astro.params;
 const product = slug ? getProductBySlug(slug) : undefined;
 
 if (!product) {
-  return Astro.redirect('/404/');
+  return Astro.redirect("/404/");
 }
+
+const seo = getProductSeo(product, "horeca");
 ---
-<BaseLayout title={product.horeca.seoTitle} description={product.horeca.seoDescription} canonical={`https://pastodel.ru/katalog/horeca/${product.slug}/`}>
+
+<BaseLayout
+  title={seo.title}
+  description={seo.description}
+  canonical={new URL(seo.canonicalRoute, "https://pastodel.ru").toString()}
+>
   <ProductDetailPage product={product} audience="horeca" />
 </BaseLayout>
