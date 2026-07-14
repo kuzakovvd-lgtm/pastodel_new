@@ -67,13 +67,56 @@ const homeProducts = homeProductSlugs.map((slug) => {
     </div>
   </section>
 
-  <section class="home-section" id="home-hits">
-    <div class="container cta-strip home-b2b-hero">
-      <p class="eyebrow">B2B</p>
-      <h2>Вы представитель сети или дистрибуции?</h2>
-      <div class="button-group">
-        <a class="button" href="/partneram/">Для партнёров</a>
-        <a class="button button--secondary" href="/horeca/">Для HoReCa</a>
+  <section class="home-section home-audience-section" aria-labelledby="home-audience-title">
+    <div class="container">
+      <p class="eyebrow">Для дома и бизнеса</p>
+      <h2 id="home-audience-title">Выберите свой сценарий</h2>
+      <p class="section-lead">
+        Перейдите в раздел, который соответствует вашей задаче.
+      </p>
+      <div class="simple-grid simple-grid--three audience-route-grid">
+        <article class="surface-card audience-route-card">
+          <div class="audience-route-card__head">
+            <span class="audience-route-card__number" aria-hidden="true">01</span>
+            <p class="audience-route-card__label">Покупателю</p>
+          </div>
+          <h3>Выбрать блюдо для дома</h3>
+          <p class="audience-route-card__text">
+            Посмотрите пасту, ризотто и паэлью, состав, КБЖУ и способы
+            приготовления.
+          </p>
+          <a class="button button--secondary audience-route-card__cta" href="/katalog/">
+            Смотреть ассортимент
+          </a>
+        </article>
+        <article class="surface-card audience-route-card">
+          <div class="audience-route-card__head">
+            <span class="audience-route-card__number" aria-hidden="true">02</span>
+            <p class="audience-route-card__label">Сетевому ритейлу</p>
+          </div>
+          <h3>Обсудить ассортимент для сети</h3>
+          <p class="audience-route-card__text">
+            Посмотрите линейку 400 г и оставьте заявку для обсуждения формата
+            сотрудничества.
+          </p>
+          <a class="button button--secondary audience-route-card__cta" href="/partneram/">
+            Для сетевого ритейла
+          </a>
+        </article>
+        <article class="surface-card audience-route-card">
+          <div class="audience-route-card__head">
+            <span class="audience-route-card__number" aria-hidden="true">03</span>
+            <p class="audience-route-card__label">HoReCa</p>
+          </div>
+          <h3>Обсудить продукт для кухни</h3>
+          <p class="audience-route-card__text">
+            Перейдите к профессиональному разделу и оставьте запрос на
+            дегустацию или условия.
+          </p>
+          <a class="button button--secondary audience-route-card__cta" href="/horeca/">
+            Для HoReCa
+          </a>
+        </article>
       </div>
     </div>
   </section>
@@ -149,50 +192,19 @@ const homeProducts = homeProductSlugs.map((slug) => {
   </section>
 
   <section class="home-section">
-    <div class="container">
-      <p class="eyebrow">B2B</p>
-      <h2>Решения для бизнеса</h2>
-      <div class="split-grid">
-        <article class="surface-card info-card">
-          <h3>Ритейл</h3>
-          <p>
-            Готовые решения для полки: стабильный ассортимент и понятный вход в
-            категорию.
-          </p>
-          <div class="button-group">
-            <a class="button button--secondary" href="/partneram/"
-              >Для бизнеса</a
-            >
-          </div>
-        </article>
-        <article class="surface-card info-card">
-          <h3>HoReCa</h3>
-          <p>
-            Продукт для кухни с прогнозируемым результатом и понятной экономикой
-            порции.
-          </p>
-          <div class="button-group">
-            <a class="button button--secondary" href="/horeca/">Для HoReCa</a>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="home-section">
     <div class="container pd-form-shell" id="home-b2b-form">
       <form
         class="surface-card form-card"
         data-validated-form
         data-form-name="home-b2b"
-        data-success-message="Спасибо. Заявка отправлена. Мы свяжемся с вами в течение одного рабочего дня."
+        data-success-message="Спасибо. Заявка отправлена. Мы свяжемся с вами по указанным контактам."
         novalidate
       >
         <p class="eyebrow">Форма заявки</p>
         <h2>Стать партнёром</h2>
         <p class="section-lead">
-          Оставьте контакты, и мы вернёмся с ассортиментом и условиями для
-          вашего бизнеса.
+          Оставьте контакты и кратко укажите задачу. Мы свяжемся с вами по
+          указанным контактам.
         </p>
         <div class="form-grid">
           <div class="field">
@@ -251,18 +263,14 @@ const homeProducts = homeProductSlugs.map((slug) => {
           />
         </div>
         <div class="button-group">
-          <button class="button" type="submit">Стать партнёром</button>
+          <button class="button" type="submit">Отправить заявку</button>
         </div>
         <p class="pd-form-note">
-          Свяжемся с вами в течение одного рабочего дня.
-        </p>
-        <p class="pd-form-note pd-form-note--muted">
           После отправки заявки мы свяжемся с вами по указанным контактам.
         </p>
         <p class="pd-form-error" data-form-request-error hidden></p>
         <p class="pd-form-success" data-form-success hidden>
-          Спасибо. Заявка отправлена. Мы свяжемся с вами в течение одного
-          рабочего дня.
+          Спасибо. Заявка отправлена. Мы свяжемся с вами по указанным контактам.
         </p>
       </form>
     </div>
@@ -271,6 +279,48 @@ const homeProducts = homeProductSlugs.map((slug) => {
 </BaseLayout>
 
 <style>
+  .audience-route-grid {
+    margin-top: 24px;
+  }
+
+  .audience-route-card {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 14px;
+    padding: 22px;
+  }
+
+  .audience-route-card__head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .audience-route-card__number {
+    color: var(--brand-accent);
+    font-weight: 600;
+  }
+
+  .audience-route-card__label {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .audience-route-card__text {
+    margin: 0;
+    color: var(--text-secondary);
+  }
+
+  .audience-route-card__cta {
+    align-self: end;
+    justify-self: start;
+  }
+
   #home-product-grid {
     grid-auto-rows: 1fr;
   }
@@ -287,5 +337,11 @@ const homeProducts = homeProductSlugs.map((slug) => {
 
   #home-product-grid :global(.catalog-card__actions) {
     margin-top: auto;
+  }
+
+  @media (max-width: 959px) {
+    .audience-route-card__cta {
+      width: 100%;
+    }
   }
 </style>
