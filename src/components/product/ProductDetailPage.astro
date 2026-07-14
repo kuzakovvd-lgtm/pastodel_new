@@ -128,7 +128,7 @@ const ctaContent = horeca
           </div>
         </article>
         <article class="nutrition-panel">
-          <h3>{`На порцию ${data.weightLabel}`}</h3>
+          <h3>{`${horeca ? "На упаковку" : "На порцию"} ${data.weightLabel}`}</h3>
           <div class="nutrition-grid">
             {
               Object.entries(data.nutritionPortion).map(([key, value]) => (
