@@ -1,40 +1,27 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import FormRuntime from "@/components/forms/FormRuntime.astro";
-import { Image, Picture } from "astro:assets";
+import ProductCard from "@/components/catalog/ProductCard.astro";
+import { Image } from "astro:assets";
 import heroPlate from "@/assets/home/hero-plate.webp";
-import { getProductAsset } from "@/data/product-assets";
+import { getProducts } from "@/data/product-utils";
+import type { ProductSlug } from "@/data/product-types";
 
-const homeCards = [
-  {
-    href: "/katalog/pasta-frikadelki-tomatny-sous/",
-    title: "Паста с фрикадельками и томатным соусом",
-    text: "Сочные мясные шарики, яркий томат, паста аль денте. Ужин, который никому не надоедает.",
-    image: getProductAsset("pasta-frikadelki-tomatny-sous", "retail"),
-    meta: "400 г • От 7 минут • КБЖУ 198/9/6/25",
-  },
-  {
-    href: "/katalog/karbonara/",
-    title: "Карбонара",
-    text: "Сливочный соус на основе сыра, кусочки бекона, паста. Классика, которая работает всегда.",
-    image: getProductAsset("karbonara", "retail"),
-    meta: "400 г • От 7 минут • КБЖУ 228/9/11/24",
-  },
-  {
-    href: "/katalog/rizotto-griby-slivochny-sous/",
-    title: "Ризотто с грибами",
-    text: "Рис в сливочном соусе с ароматом белых грибов. Ресторанное блюдо без ресторанного времени.",
-    image: getProductAsset("rizotto-griby-slivochny-sous", "retail"),
-    meta: "400 г • От 7 минут • КБЖУ 191/5/7/27",
-  },
-  {
-    href: "/katalog/paelya-kuritsa-ovoshchi/",
-    title: "Паэлья с курицей и овощами",
-    text: "Рис, курица, болгарский перец. Самый яркий вкус в линейке.",
-    image: getProductAsset("paelya-kuritsa-ovoshchi", "retail"),
-    meta: "400 г • От 7 минут • КБЖУ 187/8/5/27",
-  },
-];
+const homeProductSlugs = [
+  "pasta-frikadelki-tomatny-sous",
+  "karbonara",
+  "rizotto-griby-slivochny-sous",
+  "paelya-kuritsa-ovoshchi",
+] as const satisfies readonly ProductSlug[];
+
+const productsBySlug = new Map(
+  getProducts().map((product) => [product.slug, product] as const),
+);
+const homeProducts = homeProductSlugs.map((slug) => {
+  const product = productsBySlug.get(slug);
+  if (!product) throw new Error(`Missing homepage product: ${slug}`);
+  return product;
+});
 ---
 
 <BaseLayout
@@ -127,38 +114,10 @@ const homeCards = [
       <p class="eyebrow">Хиты</p>
       <h2>Выберите вкус сегодняшнего ужина</h2>
       <p class="section-lead">11 блюд. Паста, ризотто, паэлья. От 7 минут.</p>
-      <div class="product-grid">
+      <div class="product-grid" id="home-product-grid">
         {
-          homeCards.map((card) => (
-            <article class="product-card">
-              <a href={card.href} class="product-card__image">
-                {card.image && (
-                  <Picture
-                    src={card.image}
-                    alt={card.title}
-                    formats={["webp"]}
-                    fallbackFormat="webp"
-                    widths={[320, 460, 640]}
-                    sizes="(max-width: 719px) calc(100vw - 72px), (max-width: 1279px) calc((100vw - 116px) / 2), 308px"
-                    quality={66}
-                    loading="lazy"
-                  />
-                )}
-              </a>
-              <div class="product-card__body">
-                <p class="product-card__meta">{card.meta}</p>
-                <h3>
-                  <a href={card.href}>{card.title}</a>
-                </h3>
-                <p>{card.text}</p>
-                <div class="product-card__actions">
-                  <a class="button button--secondary" href={card.href}>
-                    Смотреть блюдо
-                  </a>
-                  <a href="/gde-kupit/">Где купить</a>
-                </div>
-              </div>
-            </article>
+          homeProducts.map((product) => (
+            <ProductCard product={product} audience="consumer" />
           ))
         }
       </div>
@@ -310,3 +269,23 @@ const homeCards = [
   </section>
   <FormRuntime />
 </BaseLayout>
+
+<style>
+  #home-product-grid {
+    grid-auto-rows: 1fr;
+  }
+
+  #home-product-grid :global(.catalog-card) {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+  }
+
+  #home-product-grid :global(.catalog-card__body) {
+    flex: 1;
+  }
+
+  #home-product-grid :global(.catalog-card__actions) {
+    margin-top: auto;
+  }
+</style>
