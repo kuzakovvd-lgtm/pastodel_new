@@ -6,6 +6,7 @@ import {
   type ProductCardAction,
   type ProductCardAudience,
 } from "@/data/product-card-view";
+import { getCategoryLabel } from "@/data/product-utils";
 import ProductMeta from "@/components/product/ProductMeta.astro";
 
 interface Props {
@@ -42,12 +43,21 @@ const catalogHorecaDescription =
   catalogSwitchMode && horecaView.description !== consumerView.description
     ? horecaView.description
     : "";
-const catalogHorecaStats = catalogSwitchMode
-  ? horecaView.stats.filter((stat) => !consumerView.stats.includes(stat))
+const catalogConsumerDescription = product.retail.heroSummary;
+const catalogConsumerBadge = getCategoryLabel(product.category);
+const catalogConsumerActions: ProductCardAction[] = catalogSwitchMode
+  ? consumerView.actions.filter((action) => action.label === "Подробнее")
+  : [];
+const catalogHorecaActions: ProductCardAction[] = catalogSwitchMode
+  ? horecaView.actions
+      .filter((action) => action.label === "Карточка HoReCa")
+      .map((action) => ({ ...action, style: "primary" }))
   : [];
 
 const actionClass = (action: ProductCardAction): string => {
-  if (action.style === "primary") return "button button--secondary";
+  if (action.style === "primary") {
+    return catalogSwitchMode ? "button" : "button button--secondary";
+  }
   if (action.style === "secondary") return "button button--ghost";
   return "button button--text";
 };
@@ -107,10 +117,10 @@ const actionClass = (action: ProductCardAction): string => {
         class="pill"
         data-card-badge={catalogSwitchMode ? "" : undefined}
         data-consumer-text={catalogSwitchMode
-          ? consumerView.badge
+          ? catalogConsumerBadge
           : undefined}
-        data-horeca-text={catalogSwitchMode ? horecaView.badge : undefined}
-        >{view.badge}</span
+        data-horeca-text={catalogSwitchMode ? "HoReCa" : undefined}
+        >{catalogSwitchMode ? catalogConsumerBadge : view.badge}</span
       >
       <span
         class="catalog-card__weight"
@@ -145,33 +155,16 @@ const actionClass = (action: ProductCardAction): string => {
       class="catalog-card__desc"
       data-card-description={catalogSwitchMode ? "" : undefined}
       data-consumer-text={catalogSwitchMode
-        ? consumerView.description
+        ? catalogConsumerDescription
         : undefined}
       data-horeca-text={catalogSwitchMode
         ? catalogHorecaDescription
         : undefined}
     >
-      {view.description}
+      {catalogSwitchMode ? catalogConsumerDescription : view.description}
     </p>
 
-    {
-      catalogSwitchMode ? (
-        <>
-          <div data-audience-content="consumer">
-            <ProductMeta stats={consumerView.stats} />
-          </div>
-          {
-            catalogHorecaStats.length > 0 && (
-              <div data-audience-content="horeca" hidden>
-                <ProductMeta stats={catalogHorecaStats} />
-              </div>
-            )
-          }
-        </>
-      ) : (
-        <ProductMeta stats={view.stats} />
-      )
-    }
+    {!catalogSwitchMode && <ProductMeta stats={view.stats} />}
 
     {
       catalogSwitchMode ? (
@@ -180,8 +173,12 @@ const actionClass = (action: ProductCardAction): string => {
             class="catalog-card__actions"
             data-audience-content="consumer"
           >
-            {consumerView.actions.map((action) => (
-              <a class={actionClass(action)} href={action.href}>
+            {catalogConsumerActions.map((action) => (
+              <a
+                class={actionClass(action)}
+                href={action.href}
+                aria-label={`${action.label}: ${consumerView.title}`}
+              >
                 {action.label}
               </a>
             ))}
@@ -192,8 +189,12 @@ const actionClass = (action: ProductCardAction): string => {
             data-audience-content="horeca"
             hidden
           >
-            {horecaView.actions.map((action) => (
-              <a class={actionClass(action)} href={action.href}>
+            {catalogHorecaActions.map((action) => (
+              <a
+                class={actionClass(action)}
+                href={action.href}
+                aria-label={`${action.label}: ${horecaView.title}`}
+              >
                 {action.label}
               </a>
             ))}

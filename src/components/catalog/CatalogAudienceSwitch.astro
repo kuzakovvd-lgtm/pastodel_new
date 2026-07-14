@@ -1,3 +1,15 @@
+---
+interface Props {
+  consumerLabel?: string;
+  horecaLabel?: string;
+}
+
+const {
+  consumerLabel = "Для дома (400 г)",
+  horecaLabel = "Для HoReCa",
+} = Astro.props;
+---
+
 <script is:inline>
   (() => {
     const isAudience = (value) => value === "consumer" || value === "horeca";
@@ -43,7 +55,7 @@
           aria-selected="true"
           tabindex="0"
         >
-          Для дома (400 г)
+          {consumerLabel}
         </button>
         <button
           class="catalog-toggle__button"
@@ -56,7 +68,7 @@
           aria-selected="false"
           tabindex="-1"
         >
-          Для HoReCa
+          {horecaLabel}
         </button>
       </div>
       <div class="catalog-filter-meta">

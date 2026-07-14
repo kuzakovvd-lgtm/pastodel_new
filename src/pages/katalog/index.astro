@@ -1,44 +1,59 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { Image } from 'astro:assets';
-import { getProducts } from '@/data/product-utils';
+import { getCategoryLabel, getProducts } from '@/data/product-utils';
 import ProductCard from '@/components/catalog/ProductCard.astro';
 import CatalogAudienceSwitch from '@/components/catalog/CatalogAudienceSwitch.astro';
-import catalogHero from '@/assets/products/catalog-hero.webp';
 
 const products = getProducts();
+const categoryOrder = ['pasta', 'risotto', 'paella'] as const;
+const categoryOptions = [
+  { value: 'all', label: 'Все', count: products.length },
+  ...categoryOrder
+    .filter((category) => products.some((product) => product.category === category))
+    .map((category) => ({
+      value: category,
+      label: getCategoryLabel(category),
+      count: products.filter((product) => product.category === category).length
+    }))
+];
 ---
 <BaseLayout
-  title="Каталог Pastodel — паста, ризотто и паэлья за 7 минут"
-  description="Каталог блюд Pastodel: готовая паста, ризотто и паэлья. Выберите блюдо на сегодня, сравните вкусы, состав, КБЖУ и способ приготовления."
+  title="Каталог PASTODEL — паста, ризотто и паэлья"
+  description="Каталог PASTODEL: паста, ризотто и паэлья для дома и HoReCa. Выберите формат и откройте карточку продукта, чтобы узнать подробности."
 >
-  <section class="catalog-hero section section--compact">
-    <div class="container catalog-hero__inner">
-      <figure class="catalog-hero__media">
-        <Image
-          src={catalogHero}
-          alt="Иллюстрация ассортимента Pastodel"
-          loading="eager"
-          fetchpriority="high"
-          widths={[240, 360, 480]}
-          sizes="(max-width: 719px) calc(100vw - 32px), 240px"
-          quality={72}
-          format="webp"
-        />
-      </figure>
-      <div class="catalog-hero__content page-intro__inner">
-        <p class="eyebrow">Каталог</p>
-        <h1>Наш Ассортимент</h1>
-        <p>11 готовых блюд — паста, ризотто, паэлья. Разогрейте за 7 минут. Откройте любое блюдо, чтобы увидеть состав и способ приготовления.</p>
-        <div class="button-group">
-          <a class="button" href="#catalog-grid">Смотреть блюда</a>
-          <a class="button button--secondary" href="/gde-kupit/">Где купить</a>
-        </div>
-      </div>
+  <section class="catalog-intro section section--compact">
+    <div class="container catalog-intro__inner">
+      <p class="eyebrow">Каталог</p>
+      <h1>Ассортимент PASTODEL</h1>
+      <p class="catalog-intro__description">Паста, ризотто и паэлья PASTODEL. Выберите формат и откройте карточку продукта, чтобы посмотреть подробную информацию.</p>
     </div>
   </section>
 
-  <CatalogAudienceSwitch />
+  <CatalogAudienceSwitch
+    consumerLabel="Для дома"
+    horecaLabel="HoReCa"
+  />
+
+  <div class="catalog-category-bar">
+    <div class="container">
+      <div class="catalog-category-filter" role="group" aria-label="Категории блюд">
+        {categoryOptions.map((category, index) => (
+          <button
+            class:list={['catalog-category-button', { 'is-active': index === 0 }]}
+            type="button"
+            data-category-button
+            data-category={category.value}
+            aria-pressed={index === 0 ? 'true' : 'false'}
+          >
+            <span>{category.label}</span>
+            <span aria-hidden="true">·</span>
+            <span>{category.count}</span>
+          </button>
+        ))}
+      </div>
+      <p class="sr-only" aria-live="polite" data-category-status>Показано товаров: {products.length}</p>
+    </div>
+  </div>
 
   <section class="section section--tight-top">
     <div class="container">
@@ -51,41 +66,440 @@ const products = getProducts();
     </div>
   </section>
 
-  <section class="section">
-    <div class="container catalog-support-grid">
-      <article class="surface-card catalog-support-card">
-        <p class="eyebrow">Нужен другой вкус?</p>
-        <h2>Не нашли, что искали?</h2>
-        <p>Если вам нужен другой вкус или вы подбираете решение для бизнеса, оставьте запрос на странице «Партнёрам». Мы посмотрим, какой формат подойдёт лучше.</p>
-        <div class="button-group"><a class="button" href="/partneram/">Партнёрам</a></div>
-      </article>
-      <article class="surface-card catalog-b2b-card">
+  <section class="section catalog-consumer-cta">
+    <div class="container">
+      <div class="catalog-cta-strip">
+        <div>
+          <p class="eyebrow">Покупателю</p>
+          <h2>Ищете PASTODEL в своём городе?</h2>
+          <p>Перейдите в раздел «Где купить», чтобы посмотреть актуальный статус продаж.</p>
+        </div>
+        <a class="button" href="/gde-kupit/">Где купить</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section catalog-professional-section">
+    <div class="container">
+      <div class="catalog-professional-strip">
+        <div>
         <p class="eyebrow">Для бизнеса</p>
-        <h2>Вы байер или представитель сети?</h2>
-        <p>В разделе «Для партнёров» — условия ввода, логика полки и форма запроса. Пилот от 2 SKU.</p>
-        <div class="button-group"><a class="button button--secondary" href="/partneram/">Для партнёров</a></div>
-        <p class="catalog-b2b-card__footnote">Отдельных B2B-фасовок и PDF-техкарт в каталоге сейчас не показываем.</p>
-      </article>
+          <h2>Ищете продукцию для сети или профессиональной кухни?</h2>
+          <p>Перейдите в раздел, который соответствует вашей задаче.</p>
+        </div>
+        <div class="button-group">
+          <a class="button" href="/partneram/">Сетевому ритейлу</a>
+          <a class="button button--secondary" href="/horeca/">HoReCa</a>
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
+  .catalog-intro {
+    padding-top: 48px;
+    padding-bottom: 32px;
+  }
+
+  .catalog-intro__inner {
+    max-width: 880px;
+  }
+
+  .catalog-intro h1 {
+    max-width: 780px;
+    font-size: clamp(3.5rem, 5vw, 4rem);
+    letter-spacing: -0.015em;
+  }
+
+  .catalog-intro__description {
+    max-width: 720px;
+    margin: 16px 0 0;
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+  }
+
+  :global(.catalog-filter-bar) {
+    padding-bottom: 12px;
+  }
+
+  :global(.catalog-filter-shell) {
+    position: relative;
+    max-width: 640px;
+    padding: 6px;
+    border-radius: 16px;
+  }
+
+  :global(.catalog-toggle) {
+    gap: 4px;
+  }
+
+  :global(.catalog-toggle__button) {
+    min-height: 48px;
+    border-color: transparent;
+    border-radius: 12px;
+    background: transparent;
+  }
+
+  :global(.catalog-toggle__button.is-active) {
+    border-color: var(--brand-accent);
+    background: #f1e4d7;
+  }
+
+  :global(.catalog-filter-meta) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .catalog-category-bar {
+    padding: 0 0 24px;
+  }
+
+  .catalog-category-filter {
+    display: flex;
+    max-width: 100%;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 2px 2px 6px;
+    scrollbar-width: thin;
+  }
+
+  .catalog-category-button {
+    display: inline-flex;
+    min-height: 44px;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 5px;
+    padding: 0 16px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--main-surface);
+    color: var(--text-primary);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .catalog-category-button.is-active {
+    border-color: var(--brand-accent);
+    background: var(--brand-accent);
+    color: #fff;
+  }
+
   #catalog-grid {
+    grid-template-columns: 1fr;
     grid-auto-rows: 1fr;
+    gap: 24px;
   }
 
   #catalog-grid :global(.catalog-card) {
     display: flex;
     height: 100%;
     flex-direction: column;
+    border-radius: 20px;
+    box-shadow: 0 12px 32px rgba(36, 28, 24, 0.055);
+  }
+
+  #catalog-grid :global(.catalog-card[data-catalog-audience='horeca']) {
+    border-color: rgba(160, 82, 48, 0.42);
+    box-shadow:
+      inset 0 3px 0 rgba(160, 82, 48, 0.7),
+      0 12px 32px rgba(36, 28, 24, 0.055);
+  }
+
+  #catalog-grid :global(.catalog-card[data-catalog-audience='horeca'] .pill) {
+    border: 1px solid var(--brand-accent);
+    background: transparent;
+    color: var(--brand-accent);
+  }
+
+  #catalog-grid :global(.catalog-card[hidden]) {
+    display: none;
+  }
+
+  #catalog-grid :global(.catalog-card__media) {
+    padding: 16px;
+  }
+
+  #catalog-grid :global(.product-image--card) {
+    display: grid;
+    height: 300px;
+    place-items: center;
+    border-radius: 24px;
+  }
+
+  #catalog-grid :global(.catalog-card__media img) {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 
   #catalog-grid :global(.catalog-card__body) {
     flex: 1;
+    gap: 12px;
+    padding: 24px;
+  }
+
+  #catalog-grid :global(.catalog-card__body h3) {
+    font-size: clamp(1.625rem, 2.2vw, 1.875rem);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+  }
+
+  #catalog-grid :global(.catalog-card__desc) {
+    display: -webkit-box;
+    min-height: 3.1em;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   #catalog-grid :global(.catalog-card__actions) {
     margin-top: auto;
   }
+
+  #catalog-grid :global(.catalog-card__actions .button) {
+    min-height: 48px;
+    border-radius: 12px;
+  }
+
+  #catalog-grid :global(.catalog-card__actions .button--text) {
+    min-height: 44px;
+    padding: 0 8px;
+  }
+
+  .catalog-cta-strip,
+  .catalog-professional-strip {
+    display: grid;
+    gap: 24px;
+    align-items: center;
+    padding: 32px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--header-bg, #f7f1e8);
+  }
+
+  .catalog-cta-strip h2,
+  .catalog-professional-strip h2 {
+    max-width: 760px;
+    font-size: clamp(2.5rem, 4vw, 3rem);
+    letter-spacing: -0.015em;
+  }
+
+  .catalog-cta-strip p:not(.eyebrow),
+  .catalog-professional-strip p:not(.eyebrow) {
+    max-width: 680px;
+    margin: 12px 0 0;
+    color: var(--text-secondary);
+  }
+
+  .catalog-cta-strip > .button {
+    justify-self: start;
+  }
+
+  :global(html[data-catalog-audience='horeca']) .catalog-consumer-cta {
+    display: none;
+  }
+
+  @media (min-width: 720px) {
+    #catalog-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 960px) {
+    .catalog-cta-strip,
+    .catalog-professional-strip {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    #catalog-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 719px) {
+    .catalog-intro {
+      padding-top: 24px;
+      padding-bottom: 24px;
+    }
+
+    .catalog-intro h1 {
+      font-size: clamp(2.375rem, 10vw, 2.625rem);
+    }
+
+    .catalog-intro__description {
+      margin-top: 12px;
+      font-size: 1rem;
+    }
+
+    :global(.catalog-filter-shell) {
+      max-width: none;
+    }
+
+    :global(.catalog-toggle) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    :global(.catalog-toggle__button) {
+      padding: 0 10px;
+      font-size: 0.875rem;
+    }
+
+    .catalog-category-bar {
+      padding-bottom: 16px;
+    }
+
+    .catalog-category-filter {
+      margin-right: -16px;
+      padding-right: 16px;
+    }
+
+    #catalog-grid {
+      gap: 12px;
+    }
+
+    #catalog-grid :global(.catalog-card) {
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr);
+      align-items: stretch;
+    }
+
+    #catalog-grid :global(.catalog-card__media) {
+      display: grid;
+      min-width: 0;
+      padding: 4px;
+      place-items: center;
+    }
+
+    #catalog-grid :global(.product-image--card) {
+      width: 100%;
+      height: 100%;
+      min-height: 212px;
+      border-radius: 16px;
+    }
+
+    #catalog-grid :global(.catalog-card__body) {
+      min-width: 0;
+      gap: 8px;
+      padding: 14px;
+    }
+
+    #catalog-grid :global(.catalog-card__meta) {
+      gap: 6px;
+    }
+
+    #catalog-grid :global(.pill) {
+      min-height: 24px;
+      padding: 0 8px;
+      font-size: 0.75rem;
+    }
+
+    #catalog-grid :global(.catalog-card__weight) {
+      font-size: 0.8125rem;
+    }
+
+    #catalog-grid :global(.catalog-card__body h3) {
+      font-size: 1.375rem;
+      overflow-wrap: anywhere;
+    }
+
+    #catalog-grid :global(.catalog-card__desc) {
+      display: none;
+    }
+
+    #catalog-grid :global(.catalog-card__actions) {
+      gap: 4px;
+    }
+
+    #catalog-grid :global(.catalog-card__actions .button) {
+      width: 100%;
+      padding: 0 12px;
+    }
+
+    .catalog-cta-strip,
+    .catalog-professional-strip {
+      gap: 20px;
+      padding: 24px 20px;
+    }
+
+    .catalog-cta-strip h2,
+    .catalog-professional-strip h2 {
+      font-size: clamp(1.875rem, 8vw, 2.125rem);
+    }
+
+    .catalog-cta-strip > .button,
+    .catalog-professional-strip .button {
+      width: 100%;
+    }
+
+    .catalog-professional-strip .button-group {
+      display: grid;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .catalog-category-filter {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      overflow: visible;
+      margin-right: 0;
+      padding: 2px 0 0;
+    }
+
+    .catalog-category-button {
+      width: 100%;
+      min-width: 0;
+      justify-content: center;
+      padding: 0 8px;
+    }
+  }
 </style>
+
+<script>
+  type CatalogCategory = 'all' | 'pasta' | 'risotto' | 'paella';
+
+  const categoryButtons = Array.from(
+    document.querySelectorAll('[data-category-button]')
+  ).filter((button): button is HTMLButtonElement => button instanceof HTMLButtonElement);
+  const categoryCards = Array.from(
+    document.querySelectorAll('[data-catalog-card]')
+  ).filter((card): card is HTMLElement => card instanceof HTMLElement);
+  const categoryStatus = document.querySelector('[data-category-status]');
+
+  const isCatalogCategory = (value: string | undefined): value is CatalogCategory =>
+    value === 'all' || value === 'pasta' || value === 'risotto' || value === 'paella';
+
+  const selectCategory = (category: CatalogCategory) => {
+    categoryButtons.forEach((button) => {
+      const active = button.dataset.category === category;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+
+    let visibleCount = 0;
+    categoryCards.forEach((card) => {
+      const visible = category === 'all' || card.dataset.category === category;
+      card.hidden = !visible;
+      if (visible) visibleCount += 1;
+    });
+
+    if (categoryStatus) {
+      categoryStatus.textContent = `Показано товаров: ${visibleCount}`;
+    }
+  };
+
+  categoryButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const category = button.dataset.category;
+      if (isCatalogCategory(category)) selectCategory(category);
+    });
+  });
+</script>
