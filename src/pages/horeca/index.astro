@@ -7,7 +7,11 @@ import FormRuntime from '@/components/forms/FormRuntime.astro';
 import horecaIntro from '@/assets/page-intro/horeca.lIIIU-Nb_ZMLqwt.webp';
 import { getProducts } from '@/data/product-utils';
 
-const products = getProducts().slice(1, 4);
+const allProducts = getProducts();
+const products = allProducts.slice(1, 4);
+const horecaProductLabels = Object.fromEntries(
+  allProducts.map((product) => [product.slug, product.horeca.title])
+);
 ---
 <BaseLayout
   title="Решения для HoReCa Pastodel — продукт для кофеен, отелей и кейтеринга"
@@ -57,11 +61,11 @@ const products = getProducts().slice(1, 4);
   <section class="section">
     <div class="container">
       <SectionHead eyebrow="Позиции" title="Что можно обсудить на дегустации" lead="Несколько блюд из текущего ассортимента для первого обсуждения." />
-      <div class="catalog-grid">{products.map((product) => <ProductCard product={product} />)}</div>
+      <div class="catalog-grid">{products.map((product) => <ProductCard product={product} audience="horeca" />)}</div>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" id="horeca-request">
     <div class="container pd-form-shell" id="horeca-form">
       <form class="surface-card form-card" data-validated-form data-form-name="horeca-request" data-success-message="Спасибо. Заявка отправлена. Мы свяжемся с вами после обработки обращения." novalidate>
         <SectionHead eyebrow="Форма" title="Заказать дегустацию" lead="Оставьте запрос, и мы вернёмся с удобным форматом коммуникации." />
@@ -102,4 +106,15 @@ const products = getProducts().slice(1, 4);
     </div>
   </section>
   <FormRuntime />
+  <script define:vars={{ horecaProductLabels }}>
+    const requestedProduct = new URL(window.location.href).searchParams.get('product');
+    const productInterest = document.querySelector('#horeca-product-interest');
+    const knownProduct = requestedProduct
+      && Object.prototype.hasOwnProperty.call(horecaProductLabels, requestedProduct);
+
+    if (knownProduct && productInterest instanceof HTMLTextAreaElement && !productInterest.value) {
+      productInterest.value = horecaProductLabels[requestedProduct];
+      productInterest.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  </script>
 </BaseLayout>

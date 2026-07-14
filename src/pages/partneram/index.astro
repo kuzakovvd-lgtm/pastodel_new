@@ -57,7 +57,7 @@ const products = getProducts().slice(0, 3);
     <div class="container">
       <SectionHead eyebrow="Ассортимент" title="Что можно обсудить на старте" lead="Паста, ризотто и паэлья в едином формате 400 г." />
       <div class="catalog-grid">
-        {products.map((product) => <ProductCard product={product} />)}
+        {products.map((product) => <ProductCard product={product} audience="retailBuyer" />)}
       </div>
     </div>
   </section>

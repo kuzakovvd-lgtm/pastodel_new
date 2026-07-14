@@ -1,14 +1,23 @@
 ---
 import { getImage } from "astro:assets";
 import type { ProductRecord } from "@/data/product-types";
+import {
+  getHorecaTastingHref,
+  getProductCardView,
+  type ProductCardAction,
+  type ProductCardAudience,
+} from "@/data/product-card-view";
 import ProductMeta from "@/components/product/ProductMeta.astro";
 
 interface Props {
   product: ProductRecord;
   priority?: boolean;
+  audience?: ProductCardAudience;
 }
 
-const { product, priority = false } = Astro.props;
+const { product, priority = false, audience } = Astro.props;
+const catalogSwitchMode = audience === undefined;
+const view = getProductCardView(product, audience ?? "consumer");
 
 const CARD_SIZES =
   "(max-width: 719px) calc(100vw - 68px), (max-width: 959px) calc(50vw - 56px), (max-width: 1279px) calc(33vw - 44px), 300px";
@@ -20,16 +29,22 @@ const imageOptions = {
   quality: 72,
 } as const;
 
-const [homeImage, businessImage] = await Promise.all([
-  getImage({ src: product.retail.imageAsset, ...imageOptions }),
-  getImage({ src: product.horeca.imageAsset, ...imageOptions }),
-]);
+const homeImage = await getImage({ src: view.image, ...imageOptions });
+const businessImage = catalogSwitchMode
+  ? await getImage({ src: product.horeca.imageAsset, ...imageOptions })
+  : undefined;
+
+const actionClass = (action: ProductCardAction): string => {
+  if (action.style === "primary") return "button button--secondary";
+  if (action.style === "secondary") return "button button--ghost";
+  return "button button--text";
+};
 ---
 
 <article
   class="catalog-card"
-  data-catalog-card
-  data-horeca-card="true"
+  data-catalog-card={catalogSwitchMode ? "" : undefined}
+  data-horeca-card={catalogSwitchMode ? "true" : undefined}
   data-category={product.category}
   data-line={product.line}
   data-ingredients={product.ingredientsTag}
@@ -37,95 +52,117 @@ const [homeImage, businessImage] = await Promise.all([
 >
   <a
     class="catalog-card__media"
-    href={product.retail.route}
+    href={view.mediaHref}
     aria-hidden="true"
     tabindex="-1"
-    data-card-link
-    data-home-href={product.retail.route}
-    data-business-href={product.horeca.route}
+    data-card-link={catalogSwitchMode ? "" : undefined}
+    data-home-href={catalogSwitchMode ? product.retail.route : undefined}
+    data-business-href={catalogSwitchMode ? product.horeca.route : undefined}
   >
     <div class="product-image product-image--card">
       <img
         src={homeImage.src}
         srcset={homeImage.srcSet.attribute}
         sizes={CARD_SIZES}
-        alt={product.retail.title}
+        alt={view.imageAlt}
         width={homeImage.attributes.width}
         height={homeImage.attributes.height}
         loading={priority ? "eager" : "lazy"}
         fetchpriority={priority ? "high" : "auto"}
         decoding="async"
-        data-card-image
-        data-home-image={homeImage.src}
-        data-home-srcset={homeImage.srcSet.attribute}
-        data-home-sizes={CARD_SIZES}
-        data-home-alt={product.retail.title}
-        data-business-image={businessImage.src}
-        data-business-srcset={businessImage.srcSet.attribute}
-        data-business-sizes={CARD_SIZES}
-        data-business-alt={product.horeca.title}
+        data-card-image={catalogSwitchMode ? "" : undefined}
+        data-home-image={catalogSwitchMode ? homeImage.src : undefined}
+        data-home-srcset={catalogSwitchMode
+          ? homeImage.srcSet.attribute
+          : undefined}
+        data-home-sizes={catalogSwitchMode ? CARD_SIZES : undefined}
+        data-home-alt={catalogSwitchMode ? product.retail.title : undefined}
+        data-business-image={businessImage?.src}
+        data-business-srcset={businessImage?.srcSet.attribute}
+        data-business-sizes={catalogSwitchMode ? CARD_SIZES : undefined}
+        data-business-alt={catalogSwitchMode ? product.horeca.title : undefined}
       />
     </div>
   </a>
 
   <div class="catalog-card__body">
     <div class="catalog-card__meta">
-      <span class="pill"
-        >{
-          product.line === "casa"
-            ? "Классика на каждый день"
-            : product.line === "chef"
-              ? "Сытные блюда"
-              : "Лёгкие вкусы"
-        }</span
-      >
+      <span class="pill">{view.badge}</span>
       <span
         class="catalog-card__weight"
-        data-card-weight
-        data-weight-home={product.retail.weightLabel}
-        data-weight-business={product.horeca.weightLabel}
-        >{product.retail.weightLabel}</span
+        data-card-weight={catalogSwitchMode ? "" : undefined}
+        data-weight-home={catalogSwitchMode
+          ? product.retail.weightLabel
+          : undefined}
+        data-weight-business={catalogSwitchMode
+          ? product.horeca.weightLabel
+          : undefined}>{view.weightLabel}</span
       >
     </div>
 
     <h3>
       <a
-        href={product.retail.route}
-        data-card-title
-        data-card-link
-        data-home-href={product.retail.route}
-        data-business-href={product.horeca.route}
-        data-title-home={product.retail.title}
-        data-title-business={product.horeca.title}
+        href={view.mediaHref}
+        data-card-title={catalogSwitchMode ? "" : undefined}
+        data-card-link={catalogSwitchMode ? "" : undefined}
+        data-home-href={catalogSwitchMode ? product.retail.route : undefined}
+        data-business-href={catalogSwitchMode
+          ? product.horeca.route
+          : undefined}
+        data-title-home={catalogSwitchMode ? product.retail.title : undefined}
+        data-title-business={catalogSwitchMode
+          ? product.horeca.title
+          : undefined}
       >
-        {product.retail.title}
+        {view.title}
       </a>
     </h3>
 
-    <p class="catalog-card__desc">{product.retail.description}</p>
+    <p class="catalog-card__desc">{view.description}</p>
 
-    <ProductMeta stats={product.retail.stats} />
+    <ProductMeta stats={view.stats} />
 
-    <div class="catalog-card__actions" data-home-actions>
-      <a class="button button--text" href="/gde-kupit/">Где купить</a>
-    </div>
+    {
+      catalogSwitchMode ? (
+        <>
+          <div class="catalog-card__actions" data-home-actions>
+            <a class="button button--text" href="/gde-kupit/">
+              Где купить
+            </a>
+          </div>
 
-    <div
-      class="catalog-card__actions catalog-card__actions--business"
-      data-business-actions
-      hidden
-    >
-      <a
-        class="button button--secondary"
-        href={product.horeca.route}
-        data-card-link
-        data-home-href={product.retail.route}
-        data-business-href={product.horeca.route}>Карточка HoReCa</a
-      >
-      <a class="button button--ghost" href={product.horeca.cta.href}
-        >Запросить условия</a
-      >
-      <p class="catalog-card__note">{product.audienceSupportNote}</p>
-    </div>
+          <div
+            class="catalog-card__actions catalog-card__actions--business"
+            data-business-actions
+            hidden
+          >
+            <a
+              class="button button--secondary"
+              href={product.horeca.route}
+              data-card-link
+              data-home-href={product.retail.route}
+              data-business-href={product.horeca.route}
+            >
+              Карточка HoReCa
+            </a>
+            <a
+              class="button button--ghost"
+              href={getHorecaTastingHref(product)}
+            >
+              Выбрать для дегустации
+            </a>
+            <p class="catalog-card__note">{product.audienceSupportNote}</p>
+          </div>
+        </>
+      ) : (
+        <div class="catalog-card__actions">
+          {view.actions.map((action) => (
+            <a class={actionClass(action)} href={action.href}>
+              {action.label}
+            </a>
+          ))}
+        </div>
+      )
+    }
   </div>
 </article>

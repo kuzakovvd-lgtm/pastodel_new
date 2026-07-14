@@ -46,7 +46,7 @@ const products = [
   <section class="section">
     <div class="container">
       <SectionHead eyebrow="Ассортимент" title="Что можно посмотреть уже сейчас" />
-      <div class="catalog-grid">{products.map((product) => <ProductCard product={product} />)}</div>
+      <div class="catalog-grid">{products.map((product) => <ProductCard product={product} audience="consumer" />)}</div>
     </div>
   </section>
 

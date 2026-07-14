@@ -8,6 +8,10 @@ import {
 import ProductImage from "@/components/product/ProductImage.astro";
 import PrepTabs from "@/components/product/PrepTabs.astro";
 import ProductCard from "@/components/catalog/ProductCard.astro";
+import {
+  getHorecaTastingHref,
+  type ProductCardAudience,
+} from "@/data/product-card-view";
 
 interface Props {
   product: ProductRecord;
@@ -29,6 +33,25 @@ const breadcrumbs = [
   { href: "/katalog/", label: categoryLabel },
   { href: data.route, label: data.h1 },
 ];
+const horeca = audience === "horeca";
+const recommendationAudience: ProductCardAudience = horeca
+  ? "horeca"
+  : "consumer";
+const ctaContent = horeca
+  ? {
+      eyebrow: "Для HoReCa",
+      title: "Хотите обсудить позицию для профессиональной кухни?",
+      text: "Выберите позицию для дегустации и оставьте заявку на странице HoReCa.",
+      label: "Выбрать для дегустации",
+      href: getHorecaTastingHref(product),
+    }
+  : {
+      eyebrow: "Покупка",
+      title: "Хотите узнать, где купить?",
+      text: "Актуальную информацию о точках продаж публикуем на отдельной странице.",
+      label: data.cta.label,
+      href: data.cta.href,
+    };
 ---
 
 <section class="product-page section section--compact">
@@ -145,14 +168,11 @@ const breadcrumbs = [
 <section class="section section--compact">
   <div class="container">
     <article class="surface-card cta-strip">
-      <p class="eyebrow">Для бизнеса</p>
-      <h2>Нужна коммерческая консультация по позиции?</h2>
-      <p>
-        Оставьте заявку, и команда Pastodel вернётся с условиями и следующими
-        шагами.
-      </p>
+      <p class="eyebrow">{ctaContent.eyebrow}</p>
+      <h2>{ctaContent.title}</h2>
+      <p>{ctaContent.text}</p>
       <div class="button-group">
-        <a class="button" href={data.cta.href}>{data.cta.label}</a>
+        <a class="button" href={ctaContent.href}>{ctaContent.label}</a>
         <a class="button button--secondary" href="/katalog/"
           >Вернуться в каталог</a
         >
@@ -166,7 +186,11 @@ const breadcrumbs = [
     <p class="eyebrow">Ассортимент</p>
     <h2>Попробуйте ещё</h2>
     <div class="catalog-grid">
-      {recommendations.map((item) => <ProductCard product={item} />)}
+      {
+        recommendations.map((item) => (
+          <ProductCard product={item} audience={recommendationAudience} />
+        ))
+      }
     </div>
   </div>
 </section>
