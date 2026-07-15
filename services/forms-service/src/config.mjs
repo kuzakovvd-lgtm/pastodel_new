@@ -32,11 +32,16 @@ const parseInteger = (env, name, fallback, { min, max }) => {
   return value;
 };
 
-const parseBoolean = (env, name, fallback) => {
+const parseBoolean = (
+  env,
+  name,
+  fallback,
+  invalidCode = `invalid_${name.toLowerCase()}`,
+) => {
   const raw = String(env[name] ?? fallback).trim().toLowerCase();
   if (raw === "true") return true;
   if (raw === "false") return false;
-  throw new ConfigError(`invalid_${name.toLowerCase()}`);
+  throw new ConfigError(invalidCode);
 };
 
 const validateMailbox = (value, code) => {
@@ -131,6 +136,7 @@ export const loadConfig = (env = process.env) => {
       env,
       "PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING",
       "false",
+      "mock_not_allowed_in_staging",
     );
     if (!allowMockInStaging) {
       throw new ConfigError("mock_not_allowed_in_staging");

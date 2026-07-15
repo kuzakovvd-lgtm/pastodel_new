@@ -118,7 +118,7 @@ const policyCases = [
       PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
       PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "yes",
     },
-    code: "invalid_pastodel_forms_allow_mock_in_staging",
+    code: "mock_not_allowed_in_staging",
   },
   {
     name: "staging mock rejects numeric flag text",
@@ -127,7 +127,16 @@ const policyCases = [
       PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
       PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "1",
     },
-    code: "invalid_pastodel_forms_allow_mock_in_staging",
+    code: "mock_not_allowed_in_staging",
+  },
+  {
+    name: "staging mock rejects an empty flag",
+    overrides: {
+      NODE_ENV: "staging",
+      PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
+      PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "",
+    },
+    code: "mock_not_allowed_in_staging",
   },
   {
     name: "staging SMTP accepts complete configuration without the flag",

@@ -62,6 +62,11 @@ for (const [name, overrides, code] of [
     "mock_not_allowed_in_staging",
   ],
   [
+    "staging mock startup rejects invalid flag text",
+    { PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "yes" },
+    "mock_not_allowed_in_staging",
+  ],
+  [
     "production mock startup rejects the staging override",
     { NODE_ENV: "production", PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "true" },
     "mock_forbidden_in_production",
