@@ -58,23 +58,34 @@ const pathname = Astro.url.pathname;
 
   if (header instanceof HTMLElement && toggle instanceof HTMLButtonElement && nav instanceof HTMLElement) {
     let isOpen = false;
+    const toggleLabel = toggle.querySelector('.sr-only');
+    const desktopMedia = window.matchMedia('(min-width: 1024px)');
 
     const setOpen = (open: boolean) => {
       isOpen = open;
+      const label = open ? 'Закрыть меню' : 'Открыть меню';
       nav.dataset.open = open ? 'true' : 'false';
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      toggle.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+      toggle.setAttribute('aria-label', label);
+      if (toggleLabel instanceof HTMLElement) toggleLabel.textContent = label;
       document.body.classList.toggle('body--locked', open);
     };
 
     toggle.addEventListener('click', () => setOpen(!isOpen));
 
     nav.addEventListener('click', (event) => {
-      if (event.target instanceof HTMLAnchorElement) setOpen(false);
+      const link = event.target instanceof Element ? event.target.closest('a') : null;
+      if (link && nav.contains(link)) setOpen(false);
     });
 
-    window.addEventListener('resize', () => {
-      if (window.innerWidth >= 1024 && isOpen) setOpen(false);
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !isOpen) return;
+      setOpen(false);
+      toggle.focus();
+    });
+
+    desktopMedia.addEventListener('change', (event) => {
+      if (event.matches && isOpen) setOpen(false);
     });
 
     const syncCompact = () => {
