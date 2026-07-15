@@ -1,0 +1,22 @@
+{
+  "name": "@pastodel/forms-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "start": "node src/server.mjs",
+    "smtp:verify": "node src/smtp-verify.mjs",
+    "test": "node --test --test-reporter=spec test/*.test.mjs",
+    "check": "for file in src/*.mjs src/delivery/*.mjs test/*.mjs; do node --check \"$file\" || exit 1; done && npm test"
+  },
+  "dependencies": {
+    "nodemailer": "9.0.3"
+  }
+}
