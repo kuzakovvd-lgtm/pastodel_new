@@ -206,6 +206,14 @@ const homeProducts = homeProductSlugs.map((slug) => {
           Оставьте контакты и кратко укажите задачу. Мы свяжемся с вами по
           указанным контактам.
         </p>
+        <p
+          id="home-b2b-form-errors"
+          class="pd-form-error pd-form-error--summary"
+          data-form-error-summary
+          role="alert"
+          aria-atomic="true"
+          hidden
+        ></p>
         <div class="form-grid">
           <div class="field">
             <label for="home-name">Имя</label><input
@@ -246,14 +254,14 @@ const homeProducts = homeProductSlugs.map((slug) => {
           </div>
         </div>
         <label class="pd-checkbox"
-          ><input type="checkbox" name="privacy" required /><span
+          ><input id="home-privacy" type="checkbox" name="privacy" required /><span
             >Я согласен с <a href="/politika-konfidentsialnosti/"
               >политикой конфиденциальности</a
             > и обработкой персональных данных.</span
           ></label
         >
         <p class="pd-form-error" data-error-for="privacy"></p>
-        <div class="form-honeypot" aria-hidden="true">
+        <div class="form-honeypot" aria-hidden="true" inert>
           <label for="home-company-site">Не заполняйте это поле</label><input
             id="home-company-site"
             name="company_site"
@@ -268,8 +276,8 @@ const homeProducts = homeProductSlugs.map((slug) => {
         <p class="pd-form-note">
           После отправки заявки мы свяжемся с вами по указанным контактам.
         </p>
-        <p class="pd-form-error" data-form-request-error hidden></p>
-        <p class="pd-form-success" data-form-success hidden>
+        <p class="pd-form-error" data-form-request-error role="alert" aria-atomic="true" hidden></p>
+        <p class="pd-form-success" data-form-success role="status" aria-live="polite" aria-atomic="true" hidden>
           Спасибо. Заявка отправлена. Мы свяжемся с вами по указанным контактам.
         </p>
       </form>

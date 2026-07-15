@@ -46,6 +46,7 @@ import partnerIntro from '@/assets/page-intro/partneram.DMd1JByY_1rJtxO.webp';
 
         <div class="pd-form-shell" id="partner-gateway-form">
           <form class="surface-card form-card gateway-form" data-validated-form data-gateway-form data-form-name="partner-gateway" data-success-message="Спасибо! Мы свяжемся с вами в ближайшее рабочее время." novalidate>
+            <p id="partner-gateway-form-errors" class="pd-form-error pd-form-error--summary" data-form-error-summary role="alert" aria-atomic="true" hidden></p>
             <input type="hidden" name="business_type" value="Ритейл" data-business-type-field />
 
             <div class="gateway-form__panel" data-form-step="1">
@@ -93,14 +94,14 @@ import partnerIntro from '@/assets/page-intro/partneram.DMd1JByY_1rJtxO.webp';
               <div class="form-grid">
                 <div class="field field--full"><label for="gateway-request-type">Цель обращения</label><select id="gateway-request-type" name="request_type" data-request-field data-step-required><option value="Получить условия">Получить условия</option><option value="Заказать дегустацию">Заказать дегустацию</option><option value="Обсудить сотрудничество">Обсудить сотрудничество</option></select><p class="pd-form-error" data-error-for="request_type"></p></div>
               </div>
-              <label class="pd-checkbox"><input type="checkbox" name="privacy" required /><span>Я согласен с <a href="/politika-konfidentsialnosti/">политикой конфиденциальности</a> и обработкой персональных данных.</span></label>
+              <label class="pd-checkbox"><input id="gateway-privacy" type="checkbox" name="privacy" required /><span>Я согласен с <a href="/politika-konfidentsialnosti/">политикой конфиденциальности</a> и обработкой персональных данных.</span></label>
               <p class="pd-form-error" data-error-for="privacy"></p>
-              <div class="form-honeypot" aria-hidden="true"><label for="gateway-company-site">Не заполняйте это поле</label><input id="gateway-company-site" name="company_site" type="text" tabindex="-1" autocomplete="off" /></div>
+              <div class="form-honeypot" aria-hidden="true" inert><label for="gateway-company-site">Не заполняйте это поле</label><input id="gateway-company-site" name="company_site" type="text" tabindex="-1" autocomplete="off" /></div>
               <div class="button-group gateway-form__actions"><button class="button button--ghost" type="button" data-step-back>Назад</button><button class="button" type="submit">Отправить заявку</button></div>
               <p class="pd-form-note">Спасибо! Мы свяжемся с вами в ближайшее рабочее время.</p>
               <p class="pd-form-note pd-form-note--muted">После отправки заявки мы свяжемся с вами по указанным контактам.</p>
-              <p class="pd-form-error" data-form-request-error hidden></p>
-              <p class="pd-form-success" data-form-success hidden>Спасибо! Мы свяжемся с вами в ближайшее рабочее время.</p>
+              <p class="pd-form-error" data-form-request-error role="alert" aria-atomic="true" hidden></p>
+              <p class="pd-form-success" data-form-success role="status" aria-live="polite" aria-atomic="true" hidden>Спасибо! Мы свяжемся с вами в ближайшее рабочее время.</p>
             </div>
           </form>
         </div>

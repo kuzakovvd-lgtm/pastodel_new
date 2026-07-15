@@ -90,26 +90,95 @@
     });
   };
 
-  const setFieldError = (form, fieldName, message) => {
+  const isFormField = (field) =>
+    field instanceof HTMLInputElement ||
+    field instanceof HTMLSelectElement ||
+    field instanceof HTMLTextAreaElement;
+
+  const getFormKey = (form) =>
+    (form.dataset.formName || form.id || "form").replace(
+      /[^a-zA-Z0-9_-]+/g,
+      "-",
+    );
+
+  const getFormField = (form, fieldName) =>
+    Array.from(form.elements).find(
+      (field) => isFormField(field) && field.name === fieldName,
+    );
+
+  const getFieldErrorNode = (form, fieldName) => {
     const errorNode = form.querySelector(`[data-error-for="${fieldName}"]`);
-    if (!(errorNode instanceof HTMLElement)) return;
+    return errorNode instanceof HTMLElement ? errorNode : undefined;
+  };
+
+  const getFieldErrorId = (form, field) =>
+    `${getFormKey(form)}-${field.id || field.name}-error`;
+
+  const setDescribedBy = (field, errorId, includeError) => {
+    const ids = new Set(
+      (field.getAttribute("aria-describedby") || "")
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (includeError) ids.add(errorId);
+    else ids.delete(errorId);
+    if (ids.size > 0) field.setAttribute("aria-describedby", [...ids].join(" "));
+    else field.removeAttribute("aria-describedby");
+  };
+
+  const setFieldError = (form, field, message) => {
+    const errorNode = getFieldErrorNode(form, field.name);
+    if (!errorNode) return;
+    const errorId = errorNode.id || getFieldErrorId(form, field);
+    errorNode.id = errorId;
     errorNode.textContent = message;
+    errorNode.hidden = false;
+    field.setAttribute("aria-invalid", "true");
+    setDescribedBy(field, errorId, true);
+    field.closest(".field, .pd-checkbox")?.classList.add("has-error");
   };
 
-  const clearFormErrors = (form) => {
-    form.querySelectorAll("[data-error-for]").forEach((node) => {
-      if (node instanceof HTMLElement) node.textContent = "";
-    });
-    const requestError = form.querySelector("[data-form-request-error]");
-    if (requestError instanceof HTMLElement) {
-      requestError.hidden = true;
-      requestError.textContent = "";
-    }
+  const clearFieldError = (form, field) => {
+    const errorNode = getFieldErrorNode(form, field.name);
+    if (!errorNode) return;
+    const errorId = errorNode.id || getFieldErrorId(form, field);
+    errorNode.id = errorId;
+    errorNode.textContent = "";
+    errorNode.hidden = true;
+    field.removeAttribute("aria-invalid");
+    setDescribedBy(field, errorId, false);
+    field.closest(".field, .pd-checkbox")?.classList.remove("has-error");
   };
 
-  const showSuccess = (form) => {
-    const success = form.querySelector("[data-form-success]");
-    if (success instanceof HTMLElement) success.hidden = false;
+  const hideValidationSummary = (form) => {
+    const summary = form.querySelector("[data-form-error-summary]");
+    if (!(summary instanceof HTMLElement)) return;
+    summary.hidden = true;
+    summary.textContent = "";
+  };
+
+  const showValidationSummary = (form, count) => {
+    const summary = form.querySelector("[data-form-error-summary]");
+    if (!(summary instanceof HTMLElement)) return;
+    summary.textContent =
+      count === 1
+        ? "Проверьте выделенное поле."
+        : `Проверьте поля формы: обнаружено ошибок — ${count}.`;
+    summary.hidden = false;
+  };
+
+  const hideStatus = (form) => {
+    const status = form.querySelector("[data-form-success]");
+    if (!(status instanceof HTMLElement)) return;
+    status.hidden = true;
+    status.textContent = "";
+  };
+
+  const showStatus = (form, message) => {
+    const status = form.querySelector("[data-form-success]");
+    if (!(status instanceof HTMLElement)) return;
+    status.textContent = message;
+    status.hidden = false;
   };
 
   const showRequestError = (form, message) => {
@@ -119,67 +188,189 @@
     error.textContent = message;
   };
 
-  const validateForm = (form) => {
-    let valid = true;
-    form.querySelectorAll("[data-required-field]").forEach((field) => {
-      if (
-        !(
-          field instanceof HTMLInputElement ||
-          field instanceof HTMLSelectElement ||
-          field instanceof HTMLTextAreaElement
-        )
-      )
-        return;
-      const value = field.value.trim();
-      if (!value) {
-        valid = false;
-        setFieldError(
-          form,
-          field.name,
-          "Пожалуйста, заполните обязательное поле.",
-        );
-      }
-      if (
-        field instanceof HTMLInputElement &&
-        field.type === "email" &&
-        value
-      ) {
-        const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-        if (!ok) {
-          valid = false;
-          setFieldError(form, field.name, "Проверьте формат email.");
-        }
-      }
+  const requiredMessages = {
+    name: "Укажите имя.",
+    company: "Укажите название компании.",
+    store_count: "Укажите количество торговых точек.",
+    city: "Укажите город.",
+    email: "Укажите email.",
+    phone: "Укажите номер телефона.",
+    venue_type: "Выберите тип заведения.",
+    topic: "Выберите тему обращения.",
+    message: "Кратко опишите задачу.",
+    retail_company: "Укажите название сети.",
+    retail_store_count: "Укажите количество торговых точек.",
+    retail_city: "Укажите город.",
+    horeca_company: "Укажите название компании.",
+    horeca_venue_type: "Выберите тип заведения.",
+    horeca_city: "Укажите город.",
+    distributor_company: "Укажите название компании.",
+    distributor_region: "Укажите регион.",
+    distributor_interest: "Кратко опишите задачу.",
+    request_type: "Выберите тип запроса.",
+    privacy: "Подтвердите согласие на обработку персональных данных.",
+  };
+
+  const getRequiredMessage = (field) => {
+    if (field.name === "company") {
+      const label = field.id
+        ? document.querySelector(`label[for="${field.id}"]`)?.textContent || ""
+        : "";
+      if (label.includes("сети")) return "Укажите название сети.";
+    }
+    if (requiredMessages[field.name]) return requiredMessages[field.name];
+    return field instanceof HTMLSelectElement
+      ? "Выберите один из вариантов."
+      : "Заполните обязательное поле.";
+  };
+
+  const isRequiredField = (field) =>
+    field.hasAttribute("data-required-field") ||
+    (field instanceof HTMLInputElement &&
+      field.type === "checkbox" &&
+      field.required);
+
+  const syncRequiredState = (form) => {
+    Array.from(form.elements).forEach((field) => {
+      if (!isFormField(field) || field.type === "hidden") return;
+      if (isRequiredField(field)) field.setAttribute("aria-required", "true");
+      else field.removeAttribute("aria-required");
+    });
+  };
+
+  const getFieldValidationMessage = (field) => {
+    if (
+      field instanceof HTMLInputElement &&
+      field.type === "checkbox" &&
+      field.required &&
+      !field.checked
+    ) {
+      return requiredMessages.privacy;
+    }
+
+    const value = field.value.trim();
+    if (isRequiredField(field) && !value) return getRequiredMessage(field);
+
+    if (
+      field instanceof HTMLInputElement &&
+      field.type === "email" &&
+      value &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+    ) {
+      return "Введите email в формате name@example.com.";
+    }
+
+    if (
+      field instanceof HTMLInputElement &&
+      field.hasAttribute("data-phone-field") &&
+      isRequiredField(field) &&
+      value &&
+      getDigits(value).length < 11
+    ) {
+      return "Проверьте номер телефона.";
+    }
+
+    return "";
+  };
+
+  const validateField = (form, field) => {
+    const message = getFieldValidationMessage(field);
+    if (message) {
+      setFieldError(form, field, message);
+      return false;
+    }
+    clearFieldError(form, field);
+    return true;
+  };
+
+  const getValidatedFields = (form) => {
+    const fields = Array.from(form.elements).filter(
+      (field) =>
+        isFormField(field) &&
+        field.type !== "hidden" &&
+        isRequiredField(field) &&
+        !field.disabled &&
+        !field.closest("[hidden]"),
+    );
+    return [...new Set(fields)];
+  };
+
+  const validateForm = (form, focusFirst = true) => {
+    const invalidFields = getValidatedFields(form).filter(
+      (field) => !validateField(form, field),
+    );
+    if (invalidFields.length === 0) {
+      hideValidationSummary(form);
+      return [];
+    }
+
+    showValidationSummary(form, invalidFields.length);
+    if (focusFirst) {
+      const firstInvalid = invalidFields[0];
+      firstInvalid.focus({ preventScroll: true });
+      firstInvalid.scrollIntoView({ block: "center", behavior: "auto" });
+    }
+    return invalidFields;
+  };
+
+  const clearFormErrors = (form) => {
+    Array.from(form.elements).forEach((field) => {
+      if (isFormField(field) && field.name) clearFieldError(form, field);
+    });
+    hideValidationSummary(form);
+    const requestError = form.querySelector("[data-form-request-error]");
+    if (requestError instanceof HTMLElement) {
+      requestError.hidden = true;
+      requestError.textContent = "";
+    }
+  };
+
+  const setupFormSemantics = (form) => {
+    const summary = form.querySelector("[data-form-error-summary]");
+    if (summary instanceof HTMLElement) {
+      summary.setAttribute("role", "alert");
+      summary.setAttribute("aria-atomic", "true");
+      summary.hidden = true;
+    }
+
+    const requestError = form.querySelector("[data-form-request-error]");
+    if (requestError instanceof HTMLElement) {
+      requestError.setAttribute("role", "alert");
+      requestError.setAttribute("aria-atomic", "true");
+      requestError.hidden = true;
+    }
+
+    const status = form.querySelector("[data-form-success]");
+    if (status instanceof HTMLElement) {
+      status.setAttribute("role", "status");
+      status.setAttribute("aria-live", "polite");
+      status.setAttribute("aria-atomic", "true");
+      status.hidden = true;
+    }
+
+    form.querySelectorAll("[data-error-for]").forEach((node) => {
+      if (!(node instanceof HTMLElement)) return;
+      const field = getFormField(form, node.dataset.errorFor || "");
+      if (!field) return;
+      node.id = node.id || getFieldErrorId(form, field);
+      node.hidden = true;
     });
 
-    form.querySelectorAll("[data-phone-field]").forEach((field) => {
-      if (!(field instanceof HTMLInputElement)) return;
-      const digits = getDigits(field.value);
-      if (field.hasAttribute("data-required-field") && digits.length < 11) {
-        valid = false;
-        setFieldError(
-          form,
-          field.name,
-          "Пожалуйста, укажите телефон в формате +7 (___) ___-__-__.",
-        );
-      }
+    syncRequiredState(form);
+  };
+
+  const initFieldValidation = (form) => {
+    Array.from(form.elements).forEach((field) => {
+      if (!isFormField(field) || !field.name || field.type === "hidden") return;
+      const revalidate = () => {
+        if (field.getAttribute("aria-invalid") !== "true") return;
+        hideValidationSummary(form);
+        validateField(form, field);
+      };
+      field.addEventListener("blur", revalidate);
+      field.addEventListener("input", revalidate);
+      field.addEventListener("change", revalidate);
     });
-
-    form
-      .querySelectorAll('input[type="checkbox"][required]')
-      .forEach((field) => {
-        if (!(field instanceof HTMLInputElement)) return;
-        if (!field.checked) {
-          valid = false;
-          setFieldError(
-            form,
-            field.name,
-            "Необходимо согласие для отправки формы.",
-          );
-        }
-      });
-
-    return valid;
   };
 
   const getFormPayload = (form) => {
@@ -326,7 +517,12 @@
 
     const submitButton = form.querySelector('button[type="submit"]');
     const successNode = form.querySelector("[data-form-success]");
-    if (successNode instanceof HTMLElement) successNode.hidden = true;
+    const successMessage =
+      form.dataset.successMessage ||
+      (successNode instanceof HTMLElement ? successNode.textContent?.trim() : "") ||
+      "Спасибо. Заявка отправлена.";
+    setupFormSemantics(form);
+    initFieldValidation(form);
     initPhoneMasks(form);
 
     if (!resolveFormsEndpoint() && !publicAllowFormStub) {
@@ -339,19 +535,24 @@
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
+      hideStatus(form);
       clearFormErrors(form);
 
-      if (!validateForm(form)) return;
+      if (validateForm(form).length > 0) return;
 
       if (submitButton instanceof HTMLButtonElement) {
         submitButton.disabled = true;
+        submitButton.setAttribute("aria-disabled", "true");
         submitButton.dataset.prevLabel = submitButton.textContent || "";
-        submitButton.textContent = "Отправка...";
+        submitButton.textContent = "Отправляем заявку…";
       }
+      form.setAttribute("aria-busy", "true");
+      showStatus(form, "Отправляем заявку…");
 
       try {
         const result = await submitViaAdapter(form);
         if (!result.ok) {
+          hideStatus(form);
           if (result.mode === "unconfigured") {
             showRequestError(form, getFormsUnavailableMessage());
             return;
@@ -359,13 +560,20 @@
           showRequestError(form, getSubmissionFailureMessage(result.mode));
           return;
         }
-        showSuccess(form);
+        showStatus(form, successMessage);
         form.reset();
+        clearFormErrors(form);
       } catch {
-        showRequestError(form, "Не удалось отправить форму. Попробуйте позже.");
+        hideStatus(form);
+        showRequestError(
+          form,
+          "Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз.",
+        );
       } finally {
+        form.removeAttribute("aria-busy");
         if (submitButton instanceof HTMLButtonElement) {
           submitButton.disabled = false;
+          submitButton.removeAttribute("aria-disabled");
           submitButton.textContent =
             submitButton.dataset.prevLabel || "Отправить";
         }
@@ -478,6 +686,7 @@
           field.setAttribute("data-required-field", "");
         }
       });
+      syncRequiredState(form);
     };
 
     const syncScenario = () => {
@@ -522,6 +731,7 @@
     scenarioButtons.forEach((btn) => {
       if (!(btn instanceof HTMLButtonElement)) return;
       btn.addEventListener("click", () => {
+        clearFormErrors(form);
         currentScenario = btn.dataset.scenario || "retail";
         syncScenario();
       });
@@ -531,6 +741,8 @@
       if (!(btn instanceof HTMLButtonElement)) return;
       btn.addEventListener("click", () => {
         if (currentStep < 3) {
+          clearFormErrors(form);
+          if (validateForm(form).length > 0) return;
           currentStep += 1;
           syncStep();
         }

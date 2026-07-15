@@ -625,6 +625,7 @@ h3 { font-size: clamp(1.25rem, 2vw, 1.875rem); }
   background: #fffdfa;
   color: var(--text-primary);
   font: inherit;
+  scroll-margin-top: 120px;
 }
 .field textarea {
   min-height: 118px;
@@ -635,10 +636,12 @@ h3 { font-size: clamp(1.25rem, 2vw, 1.875rem); }
   display: flex;
   gap: 8px;
   align-items: flex-start;
+  min-height: 44px;
   margin-top: 14px;
 }
 .pd-checkbox input {
   margin-top: 3px;
+  scroll-margin-top: 120px;
 }
 .pd-checkbox span {
   color: var(--text-secondary);
@@ -650,8 +653,33 @@ h3 { font-size: clamp(1.25rem, 2vw, 1.875rem); }
 
 .pd-form-error {
   margin: 0;
-  color: #9a2d2d;
+  color: #8c2525;
   font-size: 0.84rem;
+}
+.pd-form-error--summary {
+  margin: 12px 0;
+  padding: 10px 12px;
+  border-left: 3px solid #8c2525;
+  border-radius: 6px;
+  background: #fff1f0;
+  font-weight: 600;
+}
+.field input[aria-invalid='true'],
+.field select[aria-invalid='true'],
+.field textarea[aria-invalid='true'] {
+  border-color: #8c2525;
+  box-shadow: 0 0 0 1px #8c2525;
+}
+.pd-checkbox input[aria-invalid='true'] {
+  outline: 2px solid #8c2525;
+  outline-offset: 2px;
+}
+.form-card button[type='submit']:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+.form-card[aria-busy='true'] button[type='submit'] {
+  cursor: progress;
 }
 .pd-form-success {
   margin: 10px 0 0;

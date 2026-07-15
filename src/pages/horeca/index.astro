@@ -69,6 +69,7 @@ const horecaProductLabels = Object.fromEntries(
     <div class="container pd-form-shell" id="horeca-form">
       <form class="surface-card form-card" data-validated-form data-form-name="horeca-request" data-success-message="Спасибо. Заявка отправлена. Мы свяжемся с вами после обработки обращения." novalidate>
         <SectionHead eyebrow="Форма" title="Заказать дегустацию" lead="Оставьте запрос, и мы вернёмся с удобным форматом коммуникации." />
+        <p id="horeca-request-form-errors" class="pd-form-error pd-form-error--summary" data-form-error-summary role="alert" aria-atomic="true" hidden></p>
         <div class="form-grid">
           <div class="field"><label for="horeca-name">Имя</label><input id="horeca-name" name="name" type="text" placeholder="Как к вам обращаться" data-required-field /><p class="pd-form-error" data-error-for="name"></p></div>
           <div class="field"><label for="horeca-company">Компания</label><input id="horeca-company" name="company" type="text" placeholder="Название компании" data-required-field /><p class="pd-form-error" data-error-for="company"></p></div>
@@ -79,14 +80,14 @@ const horecaProductLabels = Object.fromEntries(
           <div class="field field--full"><label for="horeca-product-interest">Интересующие позиции</label><textarea id="horeca-product-interest" name="product_interest" placeholder="Укажите, какие блюда или категории вам интересны"></textarea></div>
           <div class="field field--full"><label for="horeca-request-type">Тип запроса</label><select id="horeca-request-type" name="request_type" data-prefill-field="horeca-request" data-query-param="request" data-query-map='{"conditions":"Обсудить условия"}'><option value="Заказать дегустацию">Заказать дегустацию</option><option value="Обсудить условия">Обсудить условия</option><option value="Запрос по HoReCa">Запрос по HoReCa</option></select></div>
         </div>
-        <label class="pd-checkbox"><input type="checkbox" name="privacy" required /><span>Я согласен с <a href="/politika-konfidentsialnosti/">политикой конфиденциальности</a> и обработкой персональных данных.</span></label>
+        <label class="pd-checkbox"><input id="horeca-privacy" type="checkbox" name="privacy" required /><span>Я согласен с <a href="/politika-konfidentsialnosti/">политикой конфиденциальности</a> и обработкой персональных данных.</span></label>
         <p class="pd-form-error" data-error-for="privacy"></p>
-        <div class="form-honeypot" aria-hidden="true"><label for="horeca-company-site">Не заполняйте это поле</label><input id="horeca-company-site" name="company_site" type="text" tabindex="-1" autocomplete="off" /></div>
+        <div class="form-honeypot" aria-hidden="true" inert><label for="horeca-company-site">Не заполняйте это поле</label><input id="horeca-company-site" name="company_site" type="text" tabindex="-1" autocomplete="off" /></div>
         <div class="button-group"><button class="button" type="submit">Отправить заявку</button></div>
         <p class="pd-form-note">Свяжемся с вами после обработки обращения.</p>
         <p class="pd-form-note pd-form-note--muted">После отправки заявки мы свяжемся с вами для обсуждения формата и условий.</p>
-        <p class="pd-form-error" data-form-request-error hidden></p>
-        <p class="pd-form-success" data-form-success hidden>Спасибо. Заявка отправлена. Мы свяжемся с вами после обработки обращения.</p>
+        <p class="pd-form-error" data-form-request-error role="alert" aria-atomic="true" hidden></p>
+        <p class="pd-form-success" data-form-success role="status" aria-live="polite" aria-atomic="true" hidden>Спасибо. Заявка отправлена. Мы свяжемся с вами после обработки обращения.</p>
       </form>
     </div>
   </section>

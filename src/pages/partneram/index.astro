@@ -110,6 +110,7 @@ const productExamples = exampleSlugs.map((slug) => {
     <div class="container pd-form-shell" id="partner-form">
       <form class="surface-card form-card" data-validated-form data-form-name="partneram-b2b" data-success-message="Спасибо. Заявка отправлена. Мы свяжемся с вами по указанным контактам." novalidate>
         <SectionHead eyebrow="Форма заявки" title="Обсудить ассортимент и сотрудничество" lead="Оставьте контакты и кратко укажите задачу. Мы свяжемся с вами по указанным контактам." />
+        <p id="partneram-b2b-form-errors" class="pd-form-error pd-form-error--summary" data-form-error-summary role="alert" aria-atomic="true" hidden></p>
         <div class="form-grid">
           <div class="field"><label for="partner-company">Название сети</label><input id="partner-company" name="company" type="text" placeholder="Название сети" data-required-field /><p class="pd-form-error" data-error-for="company"></p></div>
           <div class="field"><label for="partner-stores">Количество ТТ</label><input id="partner-stores" name="store_count" type="text" placeholder="Например, 25" data-required-field /><p class="pd-form-error" data-error-for="store_count"></p></div>
@@ -126,13 +127,13 @@ const productExamples = exampleSlugs.map((slug) => {
           </div>
         </div>
         <input type="hidden" name="product" value="" data-prefill-field="partner-product" data-query-param="product" />
-        <label class="pd-checkbox"><input type="checkbox" name="privacy" required /><span>Я согласен с <a href="/politika-konfidentsialnosti/">политикой конфиденциальности</a> и обработкой персональных данных.</span></label>
+        <label class="pd-checkbox"><input id="partner-privacy" type="checkbox" name="privacy" required /><span>Я согласен с <a href="/politika-konfidentsialnosti/">политикой конфиденциальности</a> и обработкой персональных данных.</span></label>
         <p class="pd-form-error" data-error-for="privacy"></p>
-        <div class="form-honeypot" aria-hidden="true"><label for="partner-company-site">Не заполняйте это поле</label><input id="partner-company-site" name="company_site" type="text" tabindex="-1" autocomplete="off" /></div>
+        <div class="form-honeypot" aria-hidden="true" inert><label for="partner-company-site">Не заполняйте это поле</label><input id="partner-company-site" name="company_site" type="text" tabindex="-1" autocomplete="off" /></div>
         <div class="button-group"><button class="button" type="submit">Отправить заявку</button></div>
         <p class="pd-form-note">После отправки заявки мы свяжемся с вами по указанным контактам.</p>
-        <p class="pd-form-error" data-form-request-error hidden></p>
-        <p class="pd-form-success" data-form-success hidden>Спасибо. Заявка отправлена. Мы свяжемся с вами по указанным контактам.</p>
+        <p class="pd-form-error" data-form-request-error role="alert" aria-atomic="true" hidden></p>
+        <p class="pd-form-success" data-form-success role="status" aria-live="polite" aria-atomic="true" hidden>Спасибо. Заявка отправлена. Мы свяжемся с вами по указанным контактам.</p>
       </form>
     </div>
   </section>
