@@ -49,19 +49,32 @@ Required/common names are documented in `.env.example`:
 - `PASTODEL_FORMS_PORT` defaults to `8787`.
 - `PASTODEL_ALLOWED_ORIGIN` is exact; production must use HTTPS.
 - `PASTODEL_FORMS_DELIVERY` is `mock` or `smtp`.
+- `PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING` is a non-secret strict boolean. It defaults to `false` and is read only for staging mock mode.
 - `PASTODEL_FORMS_TO` supplies the approved server-side recipient.
 - `PASTODEL_FORMS_FROM` is required in SMTP mode.
 - `PASTODEL_FORMS_REPLY_TO_ENABLED` controls applicant Reply-To.
 - SMTP host, port, TLS mode, username, password and separate connection/greeting/socket/DNS timeouts are server-only.
 - Body, header, request, keep-alive, per-socket request, concurrent-delivery and shutdown limits are bounded and validated.
 
-The service fails closed for missing recipient/origin, invalid ports/limits, incomplete SMTP settings, non-loopback binding, and mock delivery under `NODE_ENV=production`.
+The service fails closed for missing recipient/origin, invalid ports/limits, incomplete SMTP settings, non-loopback binding, staging mock without explicit approval, and every production mock configuration.
 
 ## Delivery modes
 
 ### Mock
 
 Mock delivery stores messages only in the current process memory. Tests cover success, failure and timeout. It never opens an SMTP connection. Production mock mode is forbidden.
+
+Development and test may use mock under the existing policy. Isolated mock-only staging additionally requires all three values:
+
+```text
+NODE_ENV=staging
+PASTODEL_FORMS_DELIVERY=mock
+PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING=true
+```
+
+This staging mode sends no email. SMTP variables must remain absent, the listener must remain loopback-only, no public nginx route may be added, and the frontend must remain disconnected. The production unit must never copy the staging flag as `true`.
+
+Never set `PASTODEL_FORMS_DELIVERY=mock` in production. The service rejects production mock mode even if the staging flag is true.
 
 ### SMTP
 
@@ -109,13 +122,12 @@ Templates are documentation only. This prototype does not install users, files, 
 ## Staging plan
 
 1. Review code and threat model.
-2. Create an isolated service user and root-owned environment file.
-3. Configure a test SMTP destination and synthetic test data.
-4. Start the loopback service and verify `/health` without SMTP delivery.
-5. Apply the reviewed nginx route in staging only.
-6. Build the frontend with the staging same-origin endpoint.
-7. Send one approved staging submission per form and verify mail content/log privacy.
-8. Test SMTP failure, timeout, rate limiting and rollback.
+2. Create an isolated service user and root-owned staging environment file.
+3. Start mock-only staging with the explicit staging flag and no SMTP variables.
+4. Keep the listener loopback-only and verify `/health` plus synthetic submissions locally.
+5. Confirm no email, DNS/SMTP connection, payload log, public nginx route, or frontend traffic exists.
+6. Test shutdown, restart, hardening, and staging-only rollback.
+7. Treat SMTP staging, a public route, and frontend activation as separately approved later phases.
 
 ## Production activation gate
 

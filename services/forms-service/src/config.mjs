@@ -1,5 +1,10 @@
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/u;
-const ALLOWED_NODE_ENVS = new Set(["development", "test", "production"]);
+const ALLOWED_NODE_ENVS = new Set([
+  "development",
+  "test",
+  "staging",
+  "production",
+]);
 
 export class ConfigError extends Error {
   constructor(code) {
@@ -119,7 +124,17 @@ export const loadConfig = (env = process.env) => {
     throw new ConfigError("invalid_pastodel_forms_delivery");
   }
   if (nodeEnv === "production" && delivery === "mock") {
-    throw new ConfigError("mock_delivery_forbidden_in_production");
+    throw new ConfigError("mock_forbidden_in_production");
+  }
+  if (nodeEnv === "staging" && delivery === "mock") {
+    const allowMockInStaging = parseBoolean(
+      env,
+      "PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING",
+      "false",
+    );
+    if (!allowMockInStaging) {
+      throw new ConfigError("mock_not_allowed_in_staging");
+    }
   }
 
   const recipient = validateMailbox(

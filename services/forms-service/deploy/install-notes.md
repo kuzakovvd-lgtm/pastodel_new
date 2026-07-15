@@ -20,6 +20,20 @@ These notes describe a future audited deployment. They are not commands to run w
 5. Start the loopback service and verify process state plus `GET http://127.0.0.1:8787/health`.
 6. Run `npm run smtp:verify` only as a separately approved staging preflight. It authenticates but does not send mail; never call it in a production startup loop.
 
+## Isolated mock-only staging
+
+Mock-only staging requires this explicit policy combination:
+
+```text
+NODE_ENV=staging
+PASTODEL_FORMS_DELIVERY=mock
+PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING=true
+```
+
+The staging flag is not a secret, but it must default to `false`. In this phase, omit SMTP variables, keep the listener on loopback, add no public nginx route, and leave the frontend disconnected. Mock delivery remains in process only and sends no email.
+
+Never set `PASTODEL_FORMS_DELIVERY=mock` in production. Production rejects mock mode even when `PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING=true`. Do not add the staging flag to the production unit template.
+
 ## Nginx
 
 1. Add the rate-limit zone once to the `http` context.

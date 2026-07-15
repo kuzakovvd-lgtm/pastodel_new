@@ -52,13 +52,158 @@ test("mock delivery is forbidden in production", () => {
         baseEnv({
           NODE_ENV: "production",
           PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
+          PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "true",
         }),
       ),
     (error) =>
       error instanceof ConfigError &&
-      error.code === "mock_delivery_forbidden_in_production",
+      error.code === "mock_forbidden_in_production",
   );
 });
+
+const completeSmtp = {
+  PASTODEL_FORMS_DELIVERY: "smtp",
+  PASTODEL_FORMS_FROM: "forms@example.invalid",
+  PASTODEL_SMTP_HOST: "smtp.example.invalid",
+  PASTODEL_SMTP_USER: "test-user",
+  PASTODEL_SMTP_PASS: "test-only-value",
+};
+
+const policyCases = [
+  {
+    name: "development mock does not require the staging flag",
+    overrides: {
+      NODE_ENV: "development",
+      PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
+    },
+  },
+  { name: "test mock does not require the staging flag", overrides: {} },
+  {
+    name: "staging mock accepts an explicit true flag",
+    overrides: {
+      NODE_ENV: "staging",
+      PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
+      PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "true",
+    },
+  },
+  {
+    name: "staging mock accepts strict boolean case normalization",
+    overrides: {
+      NODE_ENV: "staging",
+      PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
+      PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "TRUE",
+    },
+  },
+  {
+    name: "staging mock rejects false",
+    overrides: {
+      NODE_ENV: "staging",
+      PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
+      PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "false",
+    },
+    code: "mock_not_allowed_in_staging",
+  },
+  {
+    name: "staging mock rejects an absent flag",
+    overrides: {
+      NODE_ENV: "staging",
+      PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
+    },
+    code: "mock_not_allowed_in_staging",
+  },
+  {
+    name: "staging mock rejects invalid flag text",
+    overrides: {
+      NODE_ENV: "staging",
+      PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
+      PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "yes",
+    },
+    code: "invalid_pastodel_forms_allow_mock_in_staging",
+  },
+  {
+    name: "staging mock rejects numeric flag text",
+    overrides: {
+      NODE_ENV: "staging",
+      PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
+      PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "1",
+    },
+    code: "invalid_pastodel_forms_allow_mock_in_staging",
+  },
+  {
+    name: "staging SMTP accepts complete configuration without the flag",
+    overrides: {
+      ...completeSmtp,
+      NODE_ENV: "staging",
+      PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
+    },
+  },
+  {
+    name: "staging SMTP ignores the staging mock flag",
+    overrides: {
+      ...completeSmtp,
+      NODE_ENV: "staging",
+      PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
+      PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "yes",
+    },
+  },
+  {
+    name: "production mock rejects an absent flag",
+    overrides: {
+      NODE_ENV: "production",
+      PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
+    },
+    code: "mock_forbidden_in_production",
+  },
+  {
+    name: "production mock cannot be bypassed by the staging flag",
+    overrides: {
+      NODE_ENV: "production",
+      PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
+      PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "true",
+    },
+    code: "mock_forbidden_in_production",
+  },
+  {
+    name: "production SMTP accepts complete configuration without the flag",
+    overrides: {
+      ...completeSmtp,
+      NODE_ENV: "production",
+      PASTODEL_ALLOWED_ORIGIN: "https://pastodel.ru",
+    },
+  },
+  {
+    name: "an invalid environment remains rejected",
+    overrides: {
+      NODE_ENV: "preview",
+      PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "true",
+    },
+    code: "invalid_node_env",
+  },
+  {
+    name: "an empty environment remains rejected",
+    overrides: {
+      NODE_ENV: "",
+      PASTODEL_FORMS_ALLOW_MOCK_IN_STAGING: "true",
+    },
+    code: "missing_node_env",
+  },
+];
+
+for (const { name, overrides, code } of policyCases) {
+  test(name, () => {
+    if (code) {
+      assert.throws(
+        () => loadConfig(baseEnv(overrides)),
+        (error) => error instanceof ConfigError && error.code === code,
+      );
+      return;
+    }
+    const config = loadConfig(baseEnv(overrides));
+    assert.equal(config.nodeEnv, overrides.NODE_ENV ?? "test");
+    assert.equal(config.delivery, overrides.PASTODEL_FORMS_DELIVERY ?? "mock");
+    assert.equal(Object.hasOwn(config, "allowMockInStaging"), false);
+  });
+}
 
 test("development and test mock are explicit while production requires delivery", () => {
   const development = loadConfig(
